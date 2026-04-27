@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DokumentasiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,32 +18,24 @@ Route::get('/', function () {
     return view('Customer.index');
 });
 
-Route::get("/profil", function(){ 
+Route::get('/profil', function () {
     return view('Customer.profile');
 });
 
-Route::get('/dokumentasi-desa', function() {
-    return view("Customer.dokumentasi");
+Route::get('/dokumentasi-desa', function () {
+    return view('Customer.dokumentasi');
 });
 
-Route::get('/dokumentasi-desa/1', function() {
-    return view("Customer.detail-dokumentasi");
+Route::get('/dokumentasi-desa/1', function () {
+    return view('Customer.detail-dokumentasi');
 });
 
-Route::get('/rental', function() {
-    return view("Customer.rental");
+Route::get('/rental', function () {
+    return view('Customer.rental');
 });
 
-Route::get("/dashboard", function() {
-    return view("Admin.Layouts.main");
+Route::get('/dashboard', function () {
+    return view('Admin.Layouts.main');
 });
 
-// Route::resource('news', UserController::class);('/news')
-
-Route::get('/berita', function() {
-    return view('/Admin.Berita.index');
-});
-
-Route::get('/berita/tambah', function(){
-    return view('/Admin.Berita.create');
-});
+Route::resource('/dokumentasi', DokumentasiController::class);
