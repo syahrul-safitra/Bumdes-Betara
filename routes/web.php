@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\DokumentasiController;
+use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\CustomerController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,3 +41,12 @@ Route::get('/dashboard', function () {
 });
 
 Route::resource('/dokumentasi', DokumentasiController::class);
+
+Route::resource('/vehicle', VehicleController::class);
+
+// ============= Customer ===========================
+Route::get('/registrasi', function() {
+    return view("Customer.registrasi");
+});
+
+Route::post('/register-customer', [CustomerController::class, 'store']);

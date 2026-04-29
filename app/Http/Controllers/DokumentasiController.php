@@ -37,7 +37,7 @@ class DokumentasiController extends Controller
             'judul' => 'required|string|max:255',
             'tanggal' => 'required|date',
             'kontent' => 'required', // Data dari Trix Editor
-            'gambar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         // 2. Menangani Upload Gambar dengan fungsi move()
