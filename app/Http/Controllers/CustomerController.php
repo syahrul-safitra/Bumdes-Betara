@@ -29,29 +29,28 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama'          => 'required|string|max:255',
-            'email'         => 'required|email|unique:users,email', // pastikan tabel & kolom sesuai
-            'no_telepon'    => 'required|string|max:15|unique:customers',
-            'alamat'        => 'required|string',
-            'password'      => 'required|string|min:8',
-            'gambar_ktp'    => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'nama' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email|min:15',
+            'no_telepon' => 'required|string|max:15|unique:customers',
+            'alamat' => 'required|string',
+            'password' => 'required|string|min:8',
+            'gambar_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             // Custom Pesan Error (Opsional agar lebih user-friendly)
-            'email.unique'        => 'Email sudah terdaftar, silakan gunakan email lain.',
+            'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
             'gambar_ktp.required' => 'Foto KTP wajib diunggah untuk verifikasi.',
-            'gambar_ktp.max'      => 'Ukuran foto KTP maksimal 2MB.',
+            'gambar_ktp.max' => 'Ukuran foto KTP maksimal 2MB.',
         ]);
 
-        // 2. Proses Upload Foto KTP
         if ($request->hasFile('gambar_ktp')) {
             $file = $request->file('gambar_ktp');
-            
+
             // Penamaan file: KTP-Timestamp-Nama.ext
-            $namaFileKtp = 'KTP-' . time() . '-' . $file->getClientOriginalExtension();
-            
+            $namaFileKtp = 'KTP-'.time().'-'.$file->getClientOriginalName();
+
             // Simpan ke folder public/KTP
             $file->move(public_path('File'), $namaFileKtp);
-            
+
             // Masukkan nama file ke array validated
             $validated['gambar_ktp'] = $namaFileKtp;
         }
