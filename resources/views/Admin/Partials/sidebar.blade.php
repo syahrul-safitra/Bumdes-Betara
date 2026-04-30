@@ -17,15 +17,17 @@
         <ul class="space-y-2">
             <li><a class="rounded-2xl bg-emerald-600 p-4 font-bold text-white shadow-lg shadow-emerald-900/20"><i
                         class="fa-solid fa-grid-2 w-6"></i> Dashboard</a></li>
-            <li><a href="{{ url('/dokumentasi') }}"
+            <li><a href="{{ url("/dokumentasi") }}"
                     class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
                         class="fa-solid fa-newspaper w-6 text-slate-500"></i> Dokumentasi</a></li>
-            <li><a href="{{ url('/vehicle') }}"
+            <li><a href="{{ url("/vehicle") }}"
                     class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
                         class="fa-solid fa-car-side w-6 text-slate-500"></i> Kendaraan</a></li>
-            <li><a class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
+            <li><a href="{{ url("/rental") }}"
+                    class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
                         class="fa-solid fa-calendar-check w-6 text-slate-500"></i> Rental Kendaraan</a></li>
-            <li><a class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
+            <li><a href="{{ url("/customer") }}"
+                    class="rounded-2xl p-4 transition-all hover:bg-slate-800 hover:text-white"><i
                         class="fa-solid fa-user-group w-6 text-slate-500"></i> Customer</a></li>
         </ul>
 

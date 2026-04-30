@@ -48,6 +48,15 @@ Route::resource('/dokumentasi', DokumentasiController::class);
 
 Route::resource('/vehicle', VehicleController::class);
 
+Route::resource('/rental', RentalController::class);
+
+Route::resource('/customer', CustomerController::class);
+
+Route::post('/set-pembayaran/{rental}', [RentalController::class, 'setPembayaran']);
+Route::post('/set-status/{rental}', [RentalController::class, 'setStatus']);
+
+Route::post('/laporan', [RentalController::class, 'laporan']);
+
 // ============= Customer ===========================
 Route::get('/registrasi', function () {
     return view('Customer.registrasi');
@@ -55,7 +64,7 @@ Route::get('/registrasi', function () {
 
 Route::get('/create-rental', function () {
     return view('Customer.create-rental', [
-        'car' => Vehicle::find(1),
+        'car' => Vehicle::first(),
     ]);
 });
 
@@ -63,7 +72,8 @@ Route::post('/rental', [RentalController::class, 'store']);
 
 Route::post('/register-customer', [CustomerController::class, 'store']);
 
-Route::get('/detail-rental', [RentalController::class, 'detail']);
+Route::get('/detail-rental/{rental}', [RentalController::class, 'detail']);
+Route::post('/upload-pembayaran/{rental}', [RentalController::class, 'uploadPembayaran']);
 
 // ============= Login ==============================
 Route::get('/login', function () {

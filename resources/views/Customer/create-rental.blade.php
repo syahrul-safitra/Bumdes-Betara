@@ -121,7 +121,7 @@
                                         <p class="mb-1 font-bold underline">Syarat & Ketentuan Buberta Rent:</p>
                                         <ul class="ml-4 list-disc space-y-1">
                                             <li>Pengambilan armada wajib menunjukkan KTP asli.</li>
-                                            <li>Keterlambatan pengembalian dikenakan denda per jam atau per hari sesuai
+                                            <li>Keterlambatan pengembalian dikenakan denda per hari sesuai
                                                 kebijakan.</li>
                                             <li>Bahan bakar dikembalikan dalam kondisi awal saat serah terima.</li>
                                         </ul>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 
 class CustomerController extends Controller
 {
@@ -12,7 +13,9 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        //
+        return view('Admin.Customer.index', [
+            'customers' => Customer::latest()->get(),
+        ]);
     }
 
     /**
@@ -79,7 +82,9 @@ class CustomerController extends Controller
      */
     public function edit(Customer $customer)
     {
-        //
+        return view('Admin.Customer.edit', [
+            'customer' => $customer,
+        ]);
     }
 
     /**
@@ -87,7 +92,45 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        //
+
+        $validated = $request->validate([
+            'nama' => 'required|string',
+            'email' => 'required|email|min:15|unique:customers,email,'.$customer->id,
+            'no_telepon' => 'required',
+            'alamat' => 'required',
+            'gambar_ktp' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'password' => 'nullable|min:8', // Password bersifat opsional
+        ]);
+
+        // Handle Password
+        if ($request->filled('password')) {
+            $validated['password'] = bcrypt($request->password);
+        } else {
+            unset($validated['password']); // Hapus dari array agar tidak mengubah password lama menjadi null
+        }
+
+        // Handle Upload Gambar
+        if ($request->hasFile('gambar_ktp')) {
+            // Hapus foto lama jika ingin menghemat storage
+            // Storage::delete($customer->gambar_ktp);
+
+            // File::delete('File/'.$customer->gambar_ktp);
+
+            $file = $request->file('gambar_ktp');
+
+            // Penamaan file: KTP-Timestamp-Nama.ext
+            $namaFileKtp = 'KTP-'.time().'-'.$file->getClientOriginalName();
+
+            // Simpan ke folder public/KTP
+            $file->move(public_path('File'), $namaFileKtp);
+
+            // Masukkan nama file ke array validated
+            $validated['gambar_ktp'] = $namaFileKtp;
+        }
+
+        $customer->update($validated);
+
+        return redirect('/customer')->with('success', 'Data customer berhasil diperbarui!');
     }
 
     /**
@@ -95,6 +138,10 @@ class CustomerController extends Controller
      */
     public function destroy(Customer $customer)
     {
-        //
+        File::delete('File/'.$customer->gambar_ktp);
+
+        $customer->delete();
+
+        return back()->with('success', 'Data Customer berhasil dihapus!');
     }
 }

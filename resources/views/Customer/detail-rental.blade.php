@@ -20,12 +20,40 @@
                             <p class="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">Ref:
                                 #INV-{{ $rental->id }}{{ date("mY") }}</p>
                         </div>
-                        <div class="text-right">
+                        <div class="flex flex-col items-end gap-2">
+                            {{-- Status Pembayaran --}}
+                            <span
+                                class="badge badge-lg {{ $rental->status_pembayaran == "pending" ? "bg-amber-400 text-amber-900" : "bg-emerald-500 text-white" }} rounded-xl border-none px-6 py-4 font-bold">
+                                <i class="fa-solid fa-money-bill-wave mr-2 opacity-50"></i>
+                                {{ strtoupper(str_replace("_", " ", $rental->status_pembayaran)) }}
+                            </span>
+
+                            {{-- Status Rental (Tambahan Baru) --}}
+                            @php
+                                $statusColor = [
+                                    "belum_diambil" => "bg-slate-700 text-slate-300",
+                                    "sedang_dipinjam" => "bg-blue-500 text-white",
+                                    "telah_dikembalikan" => "bg-indigo-500 text-white"
+                                ];
+                                $statusIcon = [
+                                    "belum_diambil" => "fa-clock",
+                                    "sedang_dipinjam" => "fa-car-side",
+                                    "telah_dikembalikan" => "fa-box-check"
+                                ];
+                            @endphp
+                            <span
+                                class="badge badge-md {{ $statusColor[$rental->status_rental] ?? "bg-slate-700" }} rounded-lg border-none px-4 py-3 text-[10px] font-black uppercase tracking-widest">
+                                <i
+                                    class="fa-solid {{ $statusIcon[$rental->status_rental] ?? "fa-circle" }} mr-1.5 opacity-70"></i>
+                                {{ str_replace("_", " ", $rental->status_rental) }}
+                            </span>
+                        </div>
+                        {{-- <div class="text-right">
                             <span
                                 class="badge badge-lg {{ $rental->status_pembayaran == "pending" ? "bg-amber-400 text-amber-900" : "bg-emerald-500 text-white" }} rounded-xl border-none px-6 py-4 font-bold">
                                 {{ strtoupper(str_replace("_", " ", $rental->status_pembayaran)) }}
                             </span>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="space-y-4 p-8 md:p-10">
@@ -57,28 +85,60 @@
                             </div>
 
                             <div class="grid grid-cols-2 gap-x-8 gap-y-4 pt-4">
+                                <!-- Sewa per Hari -->
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sewa/Hari</label>
-                                    <p class="font-bold italic text-slate-700">Rp
-                                        {{ number_format($rental->vehicle->harga_perhari, 0, ",", ".") }}</p>
+                                    <p class="font-bold italic text-slate-700">
+                                        Rp {{ number_format($rental->vehicle->harga_perhari, 0, ",", ".") }}
+                                    </p>
                                 </div>
+
+                                <!-- Lama Sewa -->
                                 <div>
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lama
                                         Sewa</label>
                                     <p class="font-bold italic text-slate-700">{{ $selisihHari }} Hari</p>
                                 </div>
+
+                                <!-- Denda per Hari -->
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Denda/Hari</label>
-                                    <p class="font-bold italic text-red-500">Rp
-                                        {{ number_format($rental->vehicle->denda_perhari, 0, ",", ".") }}</p>
+                                    <p class="font-bold italic text-red-500">
+                                        Rp {{ number_format($rental->vehicle->denda_perhari, 0, ",", ".") }}
+                                    </p>
                                 </div>
+
+                                <!-- Tanggal Dikembalikan (Penempatan Baru agar sejajar dengan Keterlambatan) -->
+                                <div>
+                                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tanggal
+                                        Dikembalikan</label>
+                                    <p
+                                        class="{{ $rental->tanggal_dikembalikan ? "text-emerald-600" : "text-slate-400" }} font-bold italic">
+                                        {{ $rental->tanggal_dikembalikan ? date("d/m/Y", strtotime($rental->tanggal_dikembalikan)) : "--/--/----" }}
+                                    </p>
+                                </div>
+
+                                <!-- Keterlambatan -->
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Keterlambatan</label>
                                     <p class="{{ $totalTelat > 0 ? "text-red-500" : "text-slate-700" }} font-bold italic">
-                                        {{ $totalTelat }} Hari</p>
+                                        {{ $totalTelat }} Hari
+                                    </p>
+                                </div>
+
+                                <!-- Kosongkan satu grid atau bisa diisi info lain jika perlu agar Total Denda tetap di bawah -->
+                                <div></div>
+
+                                <!-- Total Denda -->
+                                <div class="col-span-2 mt-2 border-t border-dashed border-slate-100 pt-4">
+                                    <label class="text-[10px] font-bold uppercase tracking-widest text-red-400">Total Biaya
+                                        Denda</label>
+                                    <p class="text-lg font-black italic text-red-600">
+                                        Rp {{ number_format($totalDenda, 0, ",", ".") }}
+                                    </p>
                                 </div>
                             </div>
 
@@ -105,7 +165,7 @@
                             <div class="relative z-10 flex items-center justify-between">
                                 <div>
                                     <p class="text-[10px] font-black uppercase italic tracking-[0.2em] opacity-80">Total
-                                        Pembayaran</p>
+                                        Rental</p>
                                     <h3 class="mt-1 text-3xl font-black italic leading-none tracking-tighter">Rp
                                         {{ number_format($totalHarga, 0, ",", ".") }}</h3>
                                 </div>
@@ -129,8 +189,8 @@
 
                     <h3 class="mb-2 text-xl font-black uppercase italic tracking-tight text-slate-800">Informasi Pembayaran
                     </h3>
-                    <p class="mb-8 text-sm italic text-slate-500">Silakan lakukan pembayaran via transfer bank untuk
-                        konfirmasi pesanan Anda.</p>
+                    <p class="mb-8 text-sm italic text-slate-500">Silakan lakukan pembayaran via transfer bank atau tunai
+                        untuk konfirmasi pesanan Anda.</p>
 
                     <div class="mb-10 space-y-4">
                         <div
@@ -141,6 +201,7 @@
                                 class="text-lg font-black italic tracking-tight text-slate-800 transition-colors group-hover:text-emerald-600">
                                 0856 4959 8578</p>
                         </div>
+
                         <div
                             class="group cursor-default rounded-3xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200">
                             <p class="mb-1 text-[10px] font-black uppercase italic tracking-widest text-slate-400">Bank BNI
@@ -148,6 +209,17 @@
                             <p
                                 class="text-lg font-black italic tracking-tight text-slate-800 transition-colors group-hover:text-emerald-600">
                                 0794 8037 85</p>
+                        </div>
+
+                        <div
+                            class="group rounded-3xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5 transition-all hover:bg-emerald-50">
+                            <div class="mb-1 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-money-bill-wave text-xs text-emerald-600"></i>
+                                <p class="text-[10px] font-black uppercase italic tracking-widest text-emerald-600">
+                                    Pembayaran Tunai (Cash)</p>
+                            </div>
+                            <p class="text-sm font-bold italic tracking-tight text-slate-700">Bayar langsung di kantor
+                                Buberta Rent saat pengambilan armada.</p>
                         </div>
                     </div>
 
@@ -168,7 +240,8 @@
                     </form>
 
                     <p class="mt-8 text-[10px] font-bold uppercase italic leading-relaxed tracking-wider text-slate-400">
-                        Pastikan nominal transfer sesuai dengan total pembayaran untuk mempercepat proses verifikasi admin.
+                        *Jika melakukan pembayaran <span class="text-emerald-600">Cash</span>, Anda tidak perlu mengunggah
+                        bukti transfer. Konfirmasi akan diproses secara manual oleh admin di lokasi.
                     </p>
                 </div>
             </div>

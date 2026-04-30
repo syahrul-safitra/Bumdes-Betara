@@ -11,11 +11,11 @@ class Vehicle extends Model
 
     protected $fillable = [
         'no_plat',
-        'merek', 
+        'merek',
         'tahun',
         'warna',
         'harga_perhari',
         'denda_perhari',
-        'gambar'
+        'gambar',
     ];
 }
