@@ -1,6 +1,6 @@
-@extends("Customer.Layouts.main")
+@extends('Customer.Layouts.main')
 
-@section("content")
+@section('content')
     <div class="container mx-auto px-4 py-12 md:px-10">
         <div class="mx-auto max-w-4xl">
             <div class="mb-10 text-center">
@@ -14,7 +14,7 @@
 
                     <div class="bg-slate-900 p-8 text-white lg:col-span-4">
                         <div class="sticky top-8">
-                            <img src="{{ asset("File/" . $car->gambar) }}" alt="{{ $car->merek }}"
+                            <img src="{{ asset('File/' . $car->gambar) }}" alt="{{ $car->merek }}"
                                 class="mb-6 h-40 w-full rounded-3xl object-cover shadow-lg">
                             <h2 class="mb-1 text-xl font-bold">{{ $car->merek }}</h2>
                             <p class="mb-6 text-sm font-medium uppercase tracking-wider text-emerald-400">
@@ -24,31 +24,31 @@
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-400">Harga /Hari</span>
                                     <span class="font-bold text-emerald-500">Rp
-                                        {{ number_format($car->harga_perhari, 0, ",", ".") }}</span>
+                                        {{ number_format($car->harga_perhari, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex justify-between text-sm">
                                     <span class="text-slate-400">Denda /Hari</span>
                                     <span class="font-bold text-red-400">Rp
-                                        {{ number_format($car->denda_perhari, 0, ",", ".") }}</span>
+                                        {{ number_format($car->denda_perhari, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="p-8 md:p-12 lg:col-span-8">
-                        <form action="{{ url("rental") }}" method="POST" class="space-y-6" id="rentalForm">
+                        <form action="{{ url('rental') }}" method="POST" class="space-y-6" id="rentalForm">
                             @csrf
 
-                            <input type="hidden" name="customer_id" value="{{ 1 }}">
+                            <input type="hidden" name="customer_id" value="{{ 2 }}">
 
                             {{-- <input type="hidden" name="customer_id" value="{{ Auth::guard("customer")->user()->id }}"> --}}
                             <input type="hidden" name="vehicle_id" value="{{ $car->id }}">
 
-                            @if ($errors->has("tanggal_peminjaman"))
+                            @if ($errors->has('tanggal_peminjaman'))
                                 <div
                                     class="alert alert-error mb-6 rounded-2xl border-red-200 bg-red-50 text-red-700 shadow-sm">
                                     <i class="fa-solid fa-calendar-xmark"></i>
-                                    <span>{{ $errors->first("tanggal_peminjaman") }}</span>
+                                    <span>{{ $errors->first('tanggal_peminjaman') }}</span>
                                 </div>
                             @endif
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -61,7 +61,7 @@
                                             class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                             <span class="text-sm font-bold">Rp</span>
                                         </div>
-                                        <input type="text" value="{{ number_format($car->harga_perhari, 0, ",", ".") }}"
+                                        <input type="text" value="{{ number_format($car->harga_perhari, 0, ',', '.') }}"
                                             readonly
                                             class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 pl-11 font-bold text-slate-700">
                                     </div>
@@ -75,7 +75,7 @@
                                             class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                                             <span class="text-sm font-bold">Rp</span>
                                         </div>
-                                        <input type="text" value="{{ number_format($car->denda_perhari, 0, ",", ".") }}"
+                                        <input type="text" value="{{ number_format($car->denda_perhari, 0, ',', '.') }}"
                                             readonly
                                             class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 pl-11 font-bold text-red-600">
                                     </div>
@@ -88,9 +88,9 @@
                                         class="label ml-1 text-xs font-bold uppercase text-slate-600">Tanggal
                                         Peminjaman</label>
                                     <input type="date" name="tanggal_peminjaman" id="tanggal_peminjaman"
-                                        value="{{ old("tanggal_peminjaman") }}"
-                                        class="input input-bordered @error("tanggal_peminjaman") border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-white transition-all focus:border-emerald-500">
-                                    {{-- @error("tanggal_peminjaman")
+                                        value="{{ old('tanggal_peminjaman') }}"
+                                        class="input input-bordered @error('tanggal_peminjaman') border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-white transition-all focus:border-emerald-500">
+                                    {{-- @error('tanggal_peminjaman')
                                         <p class="ml-1 mt-1 text-[11px] font-bold tracking-wide text-red-500">
                                             <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}
                                         </p>
@@ -102,9 +102,9 @@
                                         class="label ml-1 text-xs font-bold uppercase text-slate-600">Tanggal
                                         Pengembalian</label>
                                     <input type="date" name="tanggal_pengembalian" id="tanggal_pengembalian"
-                                        value="{{ old("tanggal_pengembalian") }}"
-                                        class="input input-bordered @error("tanggal_pengembalian") border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-white transition-all focus:border-emerald-500">
-                                    {{-- @error("tanggal_pengembalian")
+                                        value="{{ old('tanggal_pengembalian') }}"
+                                        class="input input-bordered @error('tanggal_pengembalian') border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-white transition-all focus:border-emerald-500">
+                                    {{-- @error('tanggal_pengembalian')
                                         <p class="ml-1 mt-1 text-[11px] font-bold tracking-wide text-red-500">
                                             <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}
                                         </p>
@@ -135,7 +135,7 @@
                                         class="btn h-14 w-full rounded-2xl border-none bg-emerald-600 text-lg font-black text-white shadow-xl shadow-emerald-200 transition-all hover:bg-emerald-700 active:scale-95">
                                         <i class="fa-solid fa-check-circle mr-2"></i> Simpan Data Rental
                                     </button>
-                                    <a href="{{ url("/rental-kendaraan") }}"
+                                    <a href="{{ url('/rental-kendaraan') }}"
                                         class="btn btn-ghost mt-2 w-full font-bold text-slate-400 hover:bg-transparent">Batal</a>
                                 </div>
 

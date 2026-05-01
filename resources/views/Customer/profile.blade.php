@@ -95,7 +95,8 @@
         <section id="struktur" class="scroll-mt-32 text-center">
             <h2 class="text-3xl font-bold text-slate-800 mb-8">Struktur Organisasi</h2>
             <div class="max-w-4xl mx-auto bg-white p-4 rounded-3xl shadow-xl border border-emerald-100">
-                <img src="{{ asset('Img/struktur.jpg') }}" class="w-full rounded-2xl" alt="Struktur Organisasi BUMDes">
+                <img src="{{ asset('Img/struktur_susunan.jpeg') }}" class="w-full rounded-2xl"
+                    alt="Struktur Organisasi BUMDes">
                 <p class="mt-4 text-sm text-slate-400">Periode Kepengurusan 2026</p>
             </div>
         </section>

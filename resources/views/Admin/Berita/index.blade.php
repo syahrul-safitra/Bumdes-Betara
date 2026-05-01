@@ -1,9 +1,9 @@
-    @extends("Admin.Layouts.main")
+    @extends('Admin.Layouts.main')
 
-    @section("content")
+    @section('content')
         <main class="space-y-8 p-6 lg:p-10">
 
-            @if (session("success"))
+            @if (session('success'))
                 <div role="alert"
                     class="alert mb-6 flex items-center rounded-2xl border-emerald-200 bg-emerald-100 text-emerald-800 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current text-emerald-600"
@@ -13,7 +13,7 @@
                     </svg>
                     <div class="flex flex-col">
                         <span class="font-bold">Berhasil!</span>
-                        <span class="text-sm opacity-90">{{ session("success") }}</span>
+                        <span class="text-sm opacity-90">{{ session('success') }}</span>
                     </div>
                     <button onclick="this.parentElement.remove()" class="btn btn-ghost btn-xs btn-circle ml-auto">
                         <i class="fa-solid fa-xmark"></i>
@@ -27,25 +27,25 @@
                     </h1>
                     <p class="mt-1 text-sm text-slate-500">Kelola publikasi kegiatan dan dokumentasi Desa Betara Ikd.</p>
                 </div>
-                <a href="{{ url("/dokumentasi/create") }}"
+                <a href="{{ url('/dokumentasi/create') }}"
                     class="btn rounded-2xl border-none bg-emerald-600 px-6 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
                     <i class="fa-solid fa-plus mr-2"></i> Tambah Berita Baru
                 </a>
             </div>
 
-            <div class="flex flex-col gap-4 rounded-[2rem] border border-slate-100 bg-white p-4 shadow-sm md:flex-row">
-                <div class="relative flex-1">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" placeholder="Cari judul berita..."
-                        class="input input-bordered w-full rounded-xl border-none bg-slate-50 pl-12 focus:ring-2 focus:ring-emerald-500" />
-                </div>
+            {{-- <div class="flex flex-col gap-4 rounded-[2rem] border border-slate-100 bg-white p-4 shadow-sm md:flex-row">
+                    <div class="relative flex-1">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" placeholder="Cari judul berita..."
+                            class="input input-bordered w-full rounded-xl border-none bg-slate-50 pl-12 focus:ring-2 focus:ring-emerald-500" />
+                    </div>
 
-                <button
-                    class="btn rounded-xl border-none bg-emerald-600 px-8 text-white shadow-lg shadow-emerald-100 transition-all duration-300 hover:bg-emerald-700">
-                    <i class="fa-solid fa-magnifying-glass mr-2 text-sm"></i>
-                    Cari
-                </button>
-            </div>
+                    <button
+                        class="btn rounded-xl border-none bg-emerald-600 px-8 text-white shadow-lg shadow-emerald-100 transition-all duration-300 hover:bg-emerald-700">
+                        <i class="fa-solid fa-magnifying-glass mr-2 text-sm"></i>
+                        Cari
+                    </button>
+                </div> --}}
 
             <div class="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm">
                 <div class="overflow-x-auto">
@@ -68,7 +68,7 @@
                                     <td class="max-w-md">
                                         <div class="flex items-center gap-4">
                                             <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-2xl shadow-md">
-                                                <img src="{{ asset("/File/" . $item->gambar) }}"
+                                                <img src="{{ asset('/File/' . $item->gambar) }}"
                                                     class="h-full w-full object-cover" alt="Thumbnail">
                                             </div>
                                             <div>
@@ -84,17 +84,17 @@
                                         <div class="flex items-center gap-2">
                                             <i class="fa-regular fa-calendar text-emerald-500"></i>
                                             <span
-                                                class="text-sm font-medium">{{ date("d-m-Y", strtotime($item->tanggal)) }}</span>
+                                                class="text-sm font-medium">{{ date('d-m-Y', strtotime($item->tanggal)) }}</span>
                                         </div>
                                     </td>
                                     <td>
                                         <p class="line-clamp-2 text-xs italic text-slate-400">
-                                            {!! \Illuminate\Support\Str::limit(strip_tags($item->kontent), 50, "...") !!}
+                                            {!! \Illuminate\Support\Str::limit(strip_tags($item->kontent), 50, '...') !!}
                                         </p>
                                     </td>
                                     <td>
                                         <div class="flex justify-center gap-2">
-                                            <a href="{{ url("/dokumentasi/" . $item->id . "/edit") }}"
+                                            <a href="{{ url('/dokumentasi/' . $item->id . '/edit') }}"
                                                 class="btn btn-square btn-sm btn-ghost bg-blue-50 text-blue-500 hover:bg-blue-500 hover:text-white">
                                                 <i class="fa-solid fa-pen-to-square"></i>
                                             </a>
@@ -134,7 +134,7 @@
 
                             <form id="delete_form" method="POST">
                                 @csrf
-                                @method("DELETE")
+                                @method('DELETE')
                                 <button type="submit"
                                     class="btn rounded-2xl border-none bg-red-500 px-8 font-bold text-white shadow-lg shadow-red-100 hover:bg-red-600">
                                     Ya, Hapus
@@ -147,7 +147,7 @@
                     </form>
                 </dialog>
 
-                <div class="flex items-center justify-between bg-slate-50 p-6 text-xs text-slate-500">
+                {{-- <div class="flex items-center justify-between bg-slate-50 p-6 text-xs text-slate-500">
                     <p>Menampilkan 1 sampai 10 dari 24 Berita</p>
                     <div class="join">
                         <button class="join-item btn btn-xs">Prev</button>
@@ -155,7 +155,7 @@
                         <button class="join-item btn btn-xs">2</button>
                         <button class="join-item btn btn-xs">Next</button>
                     </div>
-                </div>
+                </div> --}}
             </div>
         </main>
 

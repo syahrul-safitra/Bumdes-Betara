@@ -1,12 +1,12 @@
-@extends("Customer.Layouts.main")
+@extends('Customer.Layouts.main')
 
-@section("content")
+@section('content')
     <div class="container mx-auto px-4 py-12">
-        @if (session()->has("success"))
+        @if (session()->has('success'))
             <div
                 class="alert alert-success mx-auto mb-8 max-w-5xl rounded-2xl border-none bg-emerald-100 text-emerald-800 shadow-lg">
                 <i class="fa-solid fa-circle-check text-xl"></i>
-                <span class="font-bold">{{ session("success") }}</span>
+                <span class="font-bold">{{ session('success') }}</span>
             </div>
         @endif
 
@@ -18,34 +18,34 @@
                         <div>
                             <h2 class="text-2xl font-black uppercase italic tracking-tighter text-white">Invoice</h2>
                             <p class="mt-1 text-xs font-bold uppercase tracking-widest text-slate-400">Ref:
-                                #INV-{{ $rental->id }}{{ date("mY") }}</p>
+                                #-{{ $rental->id }}</p>
                         </div>
                         <div class="flex flex-col items-end gap-2">
                             {{-- Status Pembayaran --}}
                             <span
-                                class="badge badge-lg {{ $rental->status_pembayaran == "pending" ? "bg-amber-400 text-amber-900" : "bg-emerald-500 text-white" }} rounded-xl border-none px-6 py-4 font-bold">
+                                class="badge badge-lg {{ $rental->status_pembayaran == 'pending' ? 'bg-amber-400 text-amber-900' : 'bg-emerald-500 text-white' }} rounded-xl border-none px-6 py-4 font-bold">
                                 <i class="fa-solid fa-money-bill-wave mr-2 opacity-50"></i>
-                                {{ strtoupper(str_replace("_", " ", $rental->status_pembayaran)) }}
+                                {{ strtoupper(str_replace('_', ' ', $rental->status_pembayaran)) }}
                             </span>
 
                             {{-- Status Rental (Tambahan Baru) --}}
                             @php
                                 $statusColor = [
-                                    "belum_diambil" => "bg-slate-700 text-slate-300",
-                                    "sedang_dipinjam" => "bg-blue-500 text-white",
-                                    "telah_dikembalikan" => "bg-indigo-500 text-white"
+                                    'belum_diambil' => 'bg-slate-700 text-slate-300',
+                                    'sedang_dipinjam' => 'bg-blue-500 text-white',
+                                    'telah_dikembalikan' => 'bg-indigo-500 text-white',
                                 ];
                                 $statusIcon = [
-                                    "belum_diambil" => "fa-clock",
-                                    "sedang_dipinjam" => "fa-car-side",
-                                    "telah_dikembalikan" => "fa-box-check"
+                                    'belum_diambil' => 'fa-clock',
+                                    'sedang_dipinjam' => 'fa-car-side',
+                                    'telah_dikembalikan' => 'fa-box-check',
                                 ];
                             @endphp
                             <span
-                                class="badge badge-md {{ $statusColor[$rental->status_rental] ?? "bg-slate-700" }} rounded-lg border-none px-4 py-3 text-[10px] font-black uppercase tracking-widest">
+                                class="badge badge-md {{ $statusColor[$rental->status_rental] ?? 'bg-slate-700' }} rounded-lg border-none px-4 py-3 text-[10px] font-black uppercase tracking-widest">
                                 <i
-                                    class="fa-solid {{ $statusIcon[$rental->status_rental] ?? "fa-circle" }} mr-1.5 opacity-70"></i>
-                                {{ str_replace("_", " ", $rental->status_rental) }}
+                                    class="fa-solid {{ $statusIcon[$rental->status_rental] ?? 'fa-circle' }} mr-1.5 opacity-70"></i>
+                                {{ str_replace('_', ' ', $rental->status_rental) }}
                             </span>
                         </div>
                         {{-- <div class="text-right">
@@ -74,13 +74,13 @@
                                 <div class="rounded-2xl bg-slate-50 p-4">
                                     <span class="block text-[10px] font-bold uppercase text-slate-400">Tanggal Pinjam</span>
                                     <span
-                                        class="text-sm font-black italic text-slate-700">{{ date("d M Y", strtotime($rental->tanggal_peminjaman)) }}</span>
+                                        class="text-sm font-black italic text-slate-700">{{ date('d M Y', strtotime($rental->tanggal_peminjaman)) }}</span>
                                 </div>
                                 <div class="rounded-2xl border-l-4 border-emerald-500 bg-slate-50 p-4">
                                     <span class="block text-[10px] font-bold uppercase text-slate-400">Tanggal
                                         Kembali</span>
                                     <span
-                                        class="text-sm font-black italic text-slate-700">{{ date("d M Y", strtotime($rental->tanggal_pengembalian)) }}</span>
+                                        class="text-sm font-black italic text-slate-700">{{ date('d M Y', strtotime($rental->tanggal_pengembalian)) }}</span>
                                 </div>
                             </div>
 
@@ -90,7 +90,7 @@
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sewa/Hari</label>
                                     <p class="font-bold italic text-slate-700">
-                                        Rp {{ number_format($rental->vehicle->harga_perhari, 0, ",", ".") }}
+                                        Rp {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }}
                                     </p>
                                 </div>
 
@@ -106,7 +106,7 @@
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Denda/Hari</label>
                                     <p class="font-bold italic text-red-500">
-                                        Rp {{ number_format($rental->vehicle->denda_perhari, 0, ",", ".") }}
+                                        Rp {{ number_format($rental->vehicle->denda_perhari, 0, ',', '.') }}
                                     </p>
                                 </div>
 
@@ -115,8 +115,8 @@
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tanggal
                                         Dikembalikan</label>
                                     <p
-                                        class="{{ $rental->tanggal_dikembalikan ? "text-emerald-600" : "text-slate-400" }} font-bold italic">
-                                        {{ $rental->tanggal_dikembalikan ? date("d/m/Y", strtotime($rental->tanggal_dikembalikan)) : "--/--/----" }}
+                                        class="{{ $rental->tanggal_dikembalikan ? 'text-emerald-600' : 'text-slate-400' }} font-bold italic">
+                                        {{ $rental->tanggal_dikembalikan ? date('d/m/Y', strtotime($rental->tanggal_dikembalikan)) : '--/--/----' }}
                                     </p>
                                 </div>
 
@@ -124,7 +124,7 @@
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Keterlambatan</label>
-                                    <p class="{{ $totalTelat > 0 ? "text-red-500" : "text-slate-700" }} font-bold italic">
+                                    <p class="{{ $totalTelat > 0 ? 'text-red-500' : 'text-slate-700' }} font-bold italic">
                                         {{ $totalTelat }} Hari
                                     </p>
                                 </div>
@@ -137,7 +137,7 @@
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-red-400">Total Biaya
                                         Denda</label>
                                     <p class="text-lg font-black italic text-red-600">
-                                        Rp {{ number_format($totalDenda, 0, ",", ".") }}
+                                        Rp {{ number_format($totalDenda, 0, ',', '.') }}
                                     </p>
                                 </div>
                             </div>
@@ -147,7 +147,7 @@
                                 <span class="text-xs font-black uppercase italic tracking-widest text-white">Bukti
                                     Bayar</span>
                                 @if (!empty($rental->bukti_pembayaran))
-                                    <a href="{{ asset("file/" . $rental->bukti_pembayaran) }}" target="_blank"
+                                    <a href="{{ asset('file/' . $rental->bukti_pembayaran) }}" target="_blank"
                                         class="btn btn-sm rounded-xl border-none bg-emerald-500 text-[10px] font-black uppercase italic text-white transition-all hover:bg-emerald-600">
                                         <i class="fa-solid fa-image mr-1"></i> Lihat Bukti
                                     </a>
@@ -167,12 +167,12 @@
                                     <p class="text-[10px] font-black uppercase italic tracking-[0.2em] opacity-80">Total
                                         Rental</p>
                                     <h3 class="mt-1 text-3xl font-black italic leading-none tracking-tighter">Rp
-                                        {{ number_format($totalHarga, 0, ",", ".") }}</h3>
+                                        {{ number_format($totalHarga, 0, ',', '.') }}</h3>
                                 </div>
-                                <a href="{{ url("struk/" . $rental->id) }}"
-                                    class="btn rounded-2xl border-none bg-white/20 text-xs font-black uppercase italic text-white shadow-lg backdrop-blur-md transition-all hover:bg-white hover:text-emerald-700">
-                                    <i class="fa-solid fa-print mr-2"></i> Print
-                                </a>
+                                {{-- <a href="{{ url('struk/' . $rental->id) }}"
+                                        class="btn rounded-2xl border-none bg-white/20 text-xs font-black uppercase italic text-white shadow-lg backdrop-blur-md transition-all hover:bg-white hover:text-emerald-700">
+                                        <i class="fa-solid fa-print mr-2"></i> Print
+                                    </a> --}}
                             </div>
                         </div>
                     </div>
@@ -223,7 +223,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ url("upload-pembayaran/" . $rental->id) }}" method="POST"
+                    <form action="{{ url('upload-pembayaran/' . $rental->id) }}" method="POST"
                         enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         <div class="form-control">

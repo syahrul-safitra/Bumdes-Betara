@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Rental;
 use App\Models\Vehicle;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,9 +25,11 @@ class RentalController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Vehicle $vehicle)
     {
-        //
+        return view('Customer.create-rental', [
+            'car' => $vehicle,
+        ]);
     }
 
     /**
@@ -286,16 +289,17 @@ class RentalController extends Controller
             'rentals' => $getRental,
         ]);
 
-        // return pdf->stream('Laporan-rental-bumdes.pdf');
-
-        // $pdf = Pdf::loadView('Admin.laporan');
-
         return $pdf->stream('invoice.pdf');
 
-        // return view('Admin.laporan', [
-        //     'tanggal_awal' => $request->tanggal_awal,
-        //     'tanggal_akhir' => $request->tanggal_akhir,
-        //     'rentals' => $getRental,
-        // ]);
+    }
+
+    public function riwayat() {
+
+        $customer = auth()->guard('customer')->user();
+
+        return view('Customer.riwayat', [
+            'customer' => $customer->load('rental.vehicle')
+        ]);
+
     }
 }

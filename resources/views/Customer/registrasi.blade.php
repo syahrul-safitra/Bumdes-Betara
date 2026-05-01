@@ -139,7 +139,7 @@
 
                     <div class="form-control">
                         <label class="label text-xs font-bold text-slate-600 uppercase ml-1">Password Akun</label>
-                        <input type="password" name="password"
+                        <input type="text" name="password"
                             class="input input-bordered w-full rounded-2xl bg-slate-50 @error('password') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all"
                             placeholder="••••••••">
                         @error('password')

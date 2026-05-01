@@ -1,23 +1,23 @@
-@extends("Admin.Layouts.main")
+@extends('Admin.Layouts.main')
 
-@section("content")
+@section('content')
     <main class="space-y-8 p-6 lg:p-10">
 
         <div class="mb-8 flex items-center justify-between">
             <div>
-                <h1 class="text-3xl font-black uppercase italic tracking-tighter text-slate-800">Data <span
+                <h1 class="text-3xl font-black  tracking-tighter text-slate-800">Data <span
                         class="text-emerald-600">Customer</span></h1>
                 <p class="text-sm font-medium text-slate-500">Kelola informasi pelanggan dan verifikasi identitas.</p>
             </div>
         </div>
 
-        @if (session("success"))
+        @if (session('success'))
             <div role="alert"
                 class="alert flex items-center rounded-2xl border-emerald-200 bg-emerald-100 text-emerald-800 shadow-sm">
                 <i class="fa-solid fa-circle-check text-xl text-emerald-600"></i>
                 <div class="flex flex-col">
                     <span class="text-sm font-bold">Berhasil!</span>
-                    <span class="text-xs opacity-90">{{ session("success") }}</span>
+                    <span class="text-xs opacity-90">{{ session('success') }}</span>
                 </div>
                 <button onclick="this.parentElement.remove()" class="btn btn-ghost btn-xs btn-circle ml-auto">
                     <i class="fa-solid fa-xmark"></i>
@@ -30,12 +30,18 @@
                 <table class="table-zebra table w-full whitespace-nowrap">
                     <thead>
                         <tr class="border-b border-slate-100">
-                            <th>No</th>
-                            <th class="py-6 pl-8">Customer</th>
-                            <th>Kontak & Email</th>
-                            <th>Alamat</th>
-                            <th class="text-center">Identitas (KTP)</th>
-                            <th class="pr-8 text-center">Aksi</th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">No
+                            </th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
+                                Customer</th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
+                                Kontak & Email</th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
+                                Alamat</th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
+                                Identitas (KTP)</th>
+                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="text-slate-600">
@@ -67,8 +73,8 @@
                                         <div class="avatar">
                                             <div
                                                 class="w-16 cursor-zoom-in rounded-xl ring ring-emerald-50 ring-offset-2 transition-transform hover:scale-110">
-                                                <a href="{{ asset("File/" . $item->gambar_ktp) }}" target="_blank">
-                                                    <img src="{{ asset("File/" . $item->gambar_ktp) }}"
+                                                <a href="{{ asset('File/' . $item->gambar_ktp) }}" target="_blank">
+                                                    <img src="{{ asset('File/' . $item->gambar_ktp) }}"
                                                         alt="KTP {{ $item->nama }}" />
                                                 </a>
                                             </div>
@@ -81,7 +87,7 @@
                                 <td class="pr-8 text-center">
                                     <div class="flex justify-center gap-2">
                                         {{-- Tombol Edit --}}
-                                        <a href="{{ url("customer/" . $item->id . "/edit") }}"
+                                        <a href="{{ url('customer/' . $item->id . '/edit') }}"
                                             class="btn btn-square btn-sm rounded-xl border-none bg-amber-400 text-amber-900 shadow-md shadow-amber-100 transition-all hover:-translate-y-1 hover:bg-amber-500">
                                             <i class="fa-solid fa-pen-to-square text-xs"></i>
                                         </a>
@@ -122,7 +128,7 @@
                 </form>
                 <form id="delete_form" method="POST">
                     @csrf
-                    @method("DELETE")
+                    @method('DELETE')
                     <button type="submit"
                         class="btn rounded-2xl border-none bg-red-600 px-10 font-bold text-white shadow-lg shadow-red-100 hover:bg-red-700">
                         Ya, Hapus Permanen

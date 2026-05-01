@@ -33,10 +33,10 @@ class CustomerController extends Controller
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email|min:15',
+            'email' => 'required|email|unique:customers,email|min:15|unique:admin',
             'no_telepon' => 'required|string|max:15|unique:customers',
             'alamat' => 'required|string',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|max:20',
             'gambar_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             // Custom Pesan Error (Opsional agar lebih user-friendly)
@@ -95,11 +95,17 @@ class CustomerController extends Controller
 
         $validated = $request->validate([
             'nama' => 'required|string',
-            'email' => 'required|email|min:15|unique:customers,email,'.$customer->id,
+            'email' => [
+                'required',
+                'email',
+                'min:15',
+                'unique:customers,email,' . $customer->id,
+                'unique:admins,email',
+            ],
             'no_telepon' => 'required',
             'alamat' => 'required',
             'gambar_ktp' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
-            'password' => 'nullable|min:8', // Password bersifat opsional
+            'password' => 'nullable|min:8|max:20', // Password bersifat opsional
         ]);
 
         // Handle Password

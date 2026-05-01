@@ -69,7 +69,9 @@ class DokumentasiController extends Controller
      */
     public function show(Dokumentasi $dokumentasi)
     {
-        //
+        return view('Customer.detail-dokumentasi', [
+            'dokumentasi' => $dokumentasi
+        ]);
     }
 
     /**

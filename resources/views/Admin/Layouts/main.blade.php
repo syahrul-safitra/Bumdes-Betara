@@ -7,6 +7,8 @@
     <title>Dashboard Admin - BUMDes Betara IKD</title>
     @vite('resources/css/app.css')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    {{-- <link rel="stylesheet" href="{{ asset('Js/fw_all.min.css') }}"> --}}
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
@@ -77,9 +79,13 @@
                         </div>
                         <ul tabindex="0"
                             class="mt-3 z-[1] p-2 shadow-xl menu menu-sm dropdown-content bg-white rounded-2xl w-52 border border-slate-100">
-                            <li><a>Profile</a></li>
-                            <li><a>Settings</a></li>
-                            <li><a class="text-red-500">Logout</a></li>
+                            {{-- <li><a>Profile</a></li>
+                            <li><a>Settings</a></li> --}}
+
+                            <form action="{{ url('/logout') }}" method="POST">
+                                @csrf
+                                <li><button class="text-red-500">Logout</button></li>
+                            </form>
                         </ul>
                     </div>
                 </div>
