@@ -11,10 +11,21 @@ class CustomerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {$search = $request->input('search');
+
+        $customers = Customer::when($search, function ($query) use ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama', 'like', '%' . $search . '%')
+                  ->orWhere('no_telepon', 'like', '%' . $search . '%');
+            });
+        })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+        
         return view('Admin.Customer.index', [
-            'customers' => Customer::latest()->get(),
+            'customers' => $customers,
         ]);
     }
 
@@ -100,7 +111,7 @@ class CustomerController extends Controller
                 'email',
                 'min:15',
                 'unique:customers,email,' . $customer->id,
-                'unique:admins,email',
+                'unique:admin,email',
             ],
             'no_telepon' => 'required',
             'alamat' => 'required',

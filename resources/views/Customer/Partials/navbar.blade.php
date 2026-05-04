@@ -19,8 +19,10 @@
         {{-- Logo --}}
         <a href="/" class="flex items-center gap-3 transition-all hover:scale-105 active:scale-95">
             <div
-                class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 text-white flex items-center justify-center rounded-xl shadow-lg shadow-emerald-200 font-black text-xl italic">
-                B
+                class="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center rounded-xl shadow-lg shadow-emerald-200 overflow-hidden">
+                {{-- Huruf "B" dihapus, diganti dengan logo --}}
+                <img src="{{ asset('Img/logo_betaraa.png') }}" alt="Logo B"
+                    class="w-full h-full object-contain p-1.5">
             </div>
             <div class="flex flex-col leading-none hidden sm:flex">
                 <span class="font-black text-xl tracking-tighter text-slate-800">BUMDes</span>

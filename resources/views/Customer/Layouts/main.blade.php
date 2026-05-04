@@ -14,6 +14,24 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
     </style>
+
+    <style>
+        /* Mengubah warna default pagination Laravel agar jadi Hijau Emerald */
+        .pagination-custom nav svg {
+            width: 20px;
+        }
+
+        .pagination-custom nav span[aria-current="page"] span {
+            @apply bg-emerald-600 border-emerald-600 text-white rounded-xl;
+        }
+
+        .pagination-custom nav a {
+            @apply rounded-xl hover:bg-emerald-50 transition-all;
+        }
+    </style>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
 </head>
 
 <body class="bg-base-200 min-h-screen">
@@ -36,7 +54,7 @@
                             class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-xl font-bold text-white">
                             BB
                         </div> --}}
-                        <span class="text-2xl font-bold tracking-tight text-white">BUMDes <span
+                        <span class="text-2xl font-bold tracking-tight text-white">BUMDES <span
                                 class="text-emerald-500">Bersama Betara</span></span>
                     </div>
                     <p class="text-sm leading-relaxed">
@@ -45,15 +63,7 @@
                         lokal yang berkelanjutan.
                     </p>
                     <div class="flex gap-4">
-                        <a href="#"
-                            class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 transition-all hover:bg-emerald-600 hover:text-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                    d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                            </svg>
-                        </a>
-                        <a href="#"
+                        <a href="{{ url('https://www.instagram.com/bumdes_betara/') }}"
                             class="flex h-10 w-10 items-center justify-center rounded-full bg-slate-800 transition-all hover:bg-emerald-600 hover:text-white">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
                                 viewBox="0 0 24 24">
@@ -114,9 +124,8 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
-                            <span>Jl. Lintas Jambi-Kuala Tungkal, Desa Betara Ikd, Kec. Betara, Tanjung Jabung
-                                Barat,
-                                Jambi.</span>
+                            <span>29FH+Q2P, Jl. Lintas Kuala Tungkal-Jambi, Mekar Jaya, Kec. Betara, Kabupaten Tanjung
+                                Jabung Barat, Jambi 36514.</span>
                         </li>
                         <li class="flex items-center gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none"
@@ -124,16 +133,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                             </svg>
-                            <span>+62 812-3456-7890</span>
+                            <span>0823 0651 1239</span>
                         </li>
-                        <li class="flex items-center gap-3">
+                        {{-- <li class="flex items-center gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-emerald-500" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                             <span>admin@bumdesbetaraikd.id</span>
-                        </li>
+                        </li> --}}
                     </ul>
                 </div>
             </div>
@@ -141,7 +150,7 @@
             <hr class="mb-8 border-slate-800" />
 
             <div class="flex flex-col items-center justify-between gap-4 text-xs md:flex-row">
-                <p>&copy; 2026 <span class="font-bold">BUMDes Bersama Betara</span>. Seluruh Hak Cipta
+                <p>&copy; 2026 <span class="font-bold">BUMDES Bersama Betara</span>. Seluruh Hak Cipta
                     Dilindungi.</p>
                 <div class="flex gap-6">
                     <a href="#" class="hover:text-emerald-500">Syarat & Ketentuan</a>

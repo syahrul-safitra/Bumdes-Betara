@@ -93,34 +93,35 @@
                                                         <i class="fa-solid fa-car"></i>
                                                     </div>
                                                     <span
-                                                        class="font-bold text-slate-800">{{ $item->vehicle->nama_kendaraan }}</span>
+                                                        class="font-bold text-slate-800">{{ $item->vehicle->merek }}</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="flex flex-col">
-                                                    <span class="text-sm font-bold">{{ $item->tanggal_mulai }}</span>
+                                                    <span
+                                                        class="text-sm font-bold">{{ date('d-M-Y', strtotime($item->tanggal_peminjaman)) }}</span>
                                                     <span class="text-[10px] text-slate-400 italic">s/d
-                                                        {{ $item->tanggal_selesai }}</span>
+                                                        {{ date('d-M-Y', strtotime($item->tanggal_pengembalian)) }}</span>
                                                 </div>
                                             </td>
                                             <td>
                                                 <span class="font-black text-emerald-700">Rp
-                                                    {{ number_format($item->total_harga, 0, ',', '.') }}</span>
+                                                    {{ number_format($item->total_sewa, 0, ',', '.') }}</span>
                                             </td>
                                             <td>
-                                                @if ($item->status == 'selesai')
+                                                @if ($item->status == 'telah_dikembalikan')
                                                     <div class="badge badge-success gap-2 py-3 px-4 font-bold text-white">
-                                                        Selesai</div>
-                                                @elseif($item->status == 'proses')
+                                                        Telah Dikembalikan</div>
+                                                @elseif($item->status == 'sedang_dipinjam')
                                                     <div class="badge badge-warning gap-2 py-3 px-4 font-bold text-white">
-                                                        Berjalan</div>
+                                                        Sedang di Pinjam</div>
                                                 @else
                                                     <div class="badge badge-ghost gap-2 py-3 px-4 font-bold opacity-50">
-                                                        Dibatalkan</div>
+                                                        Belum Diambil</div>
                                                 @endif
                                             </td>
                                             <td class="text-center">
-                                                <a href="{{ url('/rental/' . $item->id) }}"
+                                                <a href="{{ url('/detail-rental/' . $item->id) }}"
                                                     class="btn btn-ghost btn-sm btn-square rounded-xl hover:bg-emerald-50 hover:text-emerald-600">
                                                     <i class="fa-solid fa-eye text-lg"></i>
                                                 </a>

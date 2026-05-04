@@ -39,7 +39,7 @@
                         <form action="{{ url('rental') }}" method="POST" class="space-y-6" id="rentalForm">
                             @csrf
 
-                            <input type="hidden" name="customer_id" value="{{ 2 }}">
+                            <input type="hidden" name="customer_id" value="{{ auth()->guard('customer')->user()->id }}">
 
                             {{-- <input type="hidden" name="customer_id" value="{{ Auth::guard("customer")->user()->id }}"> --}}
                             <input type="hidden" name="vehicle_id" value="{{ $car->id }}">

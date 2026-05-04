@@ -4,7 +4,7 @@
     <section class="bg-emerald-600 py-16">
         <div class="container mx-auto px-4 md:px-10 text-center text-white">
             <h1 class="text-4xl md:text-5xl font-bold mb-4">Profil Lembaga</h1>
-            <p class="text-emerald-100 max-w-2xl mx-auto">Mengenal lebih dekat BUM Desa Bersama Betara IKD, perjalanan
+            <p class="text-emerald-100 max-w-2xl mx-auto">Mengenal lebih dekat BUMDES Bersama Betara IKD, perjalanan
                 sejarah, visi, misi, dan komitmen kami untuk masyarakat.</p>
         </div>
     </section>
@@ -30,13 +30,13 @@
                     <h2 class="text-3xl font-bold mb-6 text-slate-800 italic">Transformasi Menuju Kemandirian</h2>
                     <div class="text-slate-600 leading-relaxed space-y-4 text-justify">
                         <p>
-                            <strong>BUM Desa Bersama Betara IKD</strong> berdiri pada tahun 2018 sebagai bentuk respon
+                            <strong>BUMDES Bersama Betara IKD</strong> berdiri pada tahun 2018 sebagai bentuk respon
                             terhadap peluang ekonomi yang semakin terbuka. Kelahiran lembaga ini merupakan hasil
                             transformasi dari <strong>UPK ex. PNPM Mandiri</strong>.
                         </p>
                         <p>
                             Seiring terbitnya UU Desa No. 6 Tahun 2014 dan PP No. 43 Tahun 2015, melalui Musyawarah Antar
-                            Desa disepakati perubahan nama menjadi Badan Usaha Milik Bersama (BUM Desa Bersama Betara).
+                            Desa disepakati perubahan nama menjadi Badan Usaha Milik Bersama (BUMDES Bersama Betara).
                             Resmi didirikan pada <strong>30 Juli 2018</strong> di Kecamatan Betara berdasarkan Peraturan
                             Bersama Kepala Desa se-Kecamatan Betara.
                         </p>
@@ -48,9 +48,10 @@
                     </div>
                 </div>
                 <div class="lg:w-1/2">
-                    <div class="bg-emerald-100 rounded-[2rem] p-4 rotate-3">
-                        <img src="{{ asset('Img/kantor.jpg') }}"
-                            class="rounded-[1.5rem] shadow-xl -rotate-3 hover:rotate-0 transition-transform duration-500"
+                    <div
+                        class="bg-emerald-100 rounded-[2rem] p-4 rotate-3 flex justify-center items-center overflow-hidden">
+                        <img src="{{ asset('Img/kantor_bumdes.jpg') }}"
+                            class="rounded-[1.5rem] shadow-xl -rotate-3 hover:rotate-0 transition-transform duration-500 w-full h-full object-cover"
                             alt="Kantor BUMDes">
                     </div>
                 </div>

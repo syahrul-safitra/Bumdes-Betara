@@ -35,17 +35,18 @@
                 <table class="table table-zebra w-full">
                     <thead class="bg-slate-50/50">
                         <tr class="border-b border-slate-100 text-slate-600">
-                            <th class="px-6 py-5 font-black uppercase tracking-wider text-[11px]">Unit</th>
-                            <th class="px-6 py-5 font-black uppercase tracking-wider text-[11px]">Informasi</th>
-                            <th class="px-6 py-5 font-black uppercase tracking-wider text-[11px]">Harga & Denda</th>
-                            <th class="px-6 py-5 font-black uppercase tracking-wider text-[11px] text-center">Aksi</th>
+                            <th>Unit</th>
+                            <th>Informasi</th>
+                            <th>Harga & Denda</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @forelse ($vehicles as $item)
+                        @foreach ($vehicles as $item)
                             <tr class="border-b border-slate-50 transition-colors hover:bg-slate-50/50">
                                 <td class="px-6 py-4">
+                                    {{-- Konten Unit (Merek & Plat) --}}
                                     <div class="flex items-center gap-4">
                                         <div class="avatar">
                                             <div class="mask mask-squircle h-16 w-16 shadow-sm">
@@ -61,59 +62,40 @@
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-2 text-xs text-slate-600">
-                                            <i class="fa-solid fa-palette w-4 text-slate-300"></i>
-                                            <span>Warna: <span class="font-semibold">{{ $item->warna }}</span></span>
-                                        </div>
-                                        <div class="flex items-center gap-2 text-xs text-slate-600">
-                                            <i class="fa-solid fa-calendar-days w-4 text-slate-300"></i>
-                                            <span>Tahun: <span class="font-semibold">{{ $item->tahun }}</span></span>
-                                        </div>
+                                    {{-- Konten Informasi (Warna & Tahun) --}}
+                                    <div class="space-y-1 text-xs text-slate-600">
+                                        <p>Warna: <span class="font-semibold">{{ $item->warna }}</span></p>
+                                        <p>Tahun: <span class="font-semibold">{{ $item->tahun }}</span></p>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm">
+                                    {{-- Konten Harga --}}
+                                    <div class="font-black text-slate-800 italic">
+                                        Rp {{ number_format($item->harga_perhari, 0, ',', '.') }}
                                     </div>
                                 </td>
 
                                 <td class="px-6 py-4">
-                                    <div class="space-y-1">
-                                        <div class="text-sm font-black text-slate-800 italic">
-                                            Rp {{ number_format($item->harga_perhari, 0, ',', '.') }} <span
-                                                class="text-[10px] font-normal text-slate-400 not-italic">/Hari</span>
-                                        </div>
-                                        <div class="text-[11px] font-bold text-red-500 flex items-center gap-1">
-                                            <i class="fa-solid fa-clock-rotate-left"></i>
-                                            Denda: Rp {{ number_format($item->denda_perhari, 0, ',', '.') }}/jam
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <td class="px-6 py-4">
+                                    {{-- Konten Aksi --}}
+                                    {{-- Konten Aksi --}}
                                     <div class="flex items-center justify-center gap-2">
+                                        {{-- Tombol Edit --}}
                                         <a href="{{ url('/vehicle/' . $item->id . '/edit') }}"
-                                            class="btn btn-square btn-sm btn-ghost bg-slate-100 text-slate-600 hover:bg-yellow-100 hover:text-yellow-600">
+                                            class="btn btn-square btn-sm btn-ghost bg-slate-100 text-slate-600 hover:bg-amber-100 hover:text-amber-600 transition-colors">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </a>
+
+                                        {{-- Tombol Delete --}}
                                         <button type="button"
                                             onclick="openDeleteModal('{{ $item->id }}', '{{ $item->merek }} ({{ $item->no_plat }})')"
-                                            class="btn btn-square btn-sm btn-ghost bg-red-50 text-red-500 hover:bg-red-500 hover:text-white">
-                                            <i class="fa-solid fa-trash"></i>
+                                            class="btn btn-square btn-sm btn-ghost bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                                            <i class="fa-solid fa-trash-can"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="4" class="p-0">
-                                    <div class="flex flex-col items-center justify-center py-20 text-center">
-                                        <div class="bg-slate-50 p-6 rounded-full mb-4">
-                                            <i class="fa-solid fa-car-side text-4xl text-slate-200"></i>
-                                        </div>
-                                        <h3 class="text-lg font-bold text-slate-800">Belum Ada Armada</h3>
-                                        <p class="text-sm text-slate-400 max-w-xs mx-auto">Mulai tambahkan kendaraan untuk
-                                            disewakan.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforelse
+                        @endforeach
                     </tbody>
                 </table>
             </div>
@@ -146,14 +128,19 @@
         <form method="dialog" class="modal-backdrop"><button>close</button></form>
     </dialog>
 
+    {{-- <script>
+        
+    </script> --}}
+
     <script>
-        function openDeleteModal(id, title) {
+        // Fungsi Modal Delete (Gunakan merek & plat yang sudah dikirim)
+        function openDeleteModal(id, info) {
             const modal = document.getElementById('delete_modal');
             const form = document.getElementById('delete_form');
-            const titlePlaceholder = document.getElementById('delete_item_title');
+            const titleSpan = document.getElementById('delete_item_title');
 
-            form.action = `/vehicle/${id}`;
-            titlePlaceholder.innerText = title;
+            titleSpan.innerText = info;
+            form.action = '/vehicle/' + id;
             modal.showModal();
         }
     </script>

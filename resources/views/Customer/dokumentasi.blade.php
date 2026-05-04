@@ -12,7 +12,7 @@
                     <h1 class="text-4xl font-black text-slate-800">Dokumentasi & <span class="text-emerald-600">Berita
                             Kegiatan</span></h1>
                     <p class="text-slate-500 mt-3 text-lg">Ikuti perkembangan terbaru, peresmian unit usaha, dan laporan
-                        kegiatan BUMDes Bersama Betara secara transparan.</p>
+                        kegiatan BUMDES Bersama Betara secara transparan.</p>
                 </div>
 
                 {{-- <div class="flex gap-2 overflow-x-auto pb-2">
@@ -123,6 +123,55 @@
                     </div>
                 </article>
             @endforeach
+        </div>
+
+        <div class="mt-16 flex flex-col items-center gap-5">
+            {{-- Info Data --}}
+            <p class="text-xs font-black uppercase tracking-[0.2em] text-slate-400">
+                Halaman {{ $dokumentasis->currentPage() }} dari {{ $dokumentasis->lastPage() }}
+            </p>
+
+            {{-- Tombol Navigasi --}}
+            <div class="join bg-white shadow-sm border border-slate-200 p-1 rounded-2xl">
+                {{-- Tombol Previous --}}
+                @if ($dokumentasis->onFirstPage())
+                    <button class="join-item btn btn-ghost btn-disabled btn-md text-slate-300">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+                @else
+                    <a href="{{ $dokumentasis->previousPageUrl() }}"
+                        class="join-item btn btn-ghost btn-md hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </a>
+                @endif
+
+                {{-- Nomor Halaman (Hanya tampil di desktop untuk menjaga kerapian) --}}
+                <div class="hidden md:flex">
+                    @foreach ($dokumentasis->getUrlRange(max(1, $dokumentasis->currentPage() - 1), min($dokumentasis->lastPage(), $dokumentasis->currentPage() + 1)) as $page => $url)
+                        <a href="{{ $url }}"
+                            class="join-item btn btn-md {{ $page == $dokumentasis->currentPage() ? 'bg-emerald-600 text-white hover:bg-emerald-700 border-none' : 'btn-ghost hover:bg-emerald-50' }}">
+                            {{ $page }}
+                        </a>
+                    @endforeach
+                </div>
+
+                {{-- Indikator Mobile --}}
+                <button class="join-item btn btn-md btn-ghost md:hidden no-animation cursor-default">
+                    {{ $dokumentasis->currentPage() }}
+                </button>
+
+                {{-- Tombol Next --}}
+                @if ($dokumentasis->hasMorePages())
+                    <a href="{{ $dokumentasis->nextPageUrl() }}"
+                        class="join-item btn btn-ghost btn-md hover:bg-emerald-50 hover:text-emerald-600 transition-all">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </a>
+                @else
+                    <button class="join-item btn btn-ghost btn-disabled btn-md text-slate-300">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                @endif
+            </div>
         </div>
 
         {{-- <div class="flex justify-center mt-16">

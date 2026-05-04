@@ -162,13 +162,14 @@
         <table class="header-table">
             <tr>
                 <td width="80">
-                    <img src="{{ public_path('gambar/logo.jpg') }}" class="logo">
+                    <img src="{{ public_path('Img/logo_betaraa.png') }}" class="logo">
                 </td>
                 <td class="kop-text">
                     <h2>Laporan Resmi</h2>
                     <h1>BUMDES BERSAMA BETARA</h1>
-                    <p>Kecamatan Betara, Kabupaten Tanjung Jabung Barat, Jambi</p>
-                    <p>Email: bumdesbersama.betara@gmail.com | Telp: 0812-XXXX-XXXX</p>
+                    <p>Jl. Lintas Kuala Tungkal-Jambi, Mekar Jaya, Kec. Betara, Kabupaten Tanjung
+                        Jabung Barat, Jambi</p>
+                    <p>Telp: 0823 0651 1239</p>
                 </td>
             </tr>
         </table>

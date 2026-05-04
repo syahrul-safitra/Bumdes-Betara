@@ -184,7 +184,9 @@
                     class="sticky top-8 rounded-[2.5rem] border border-slate-100 bg-white p-8 text-center shadow-xl md:p-10">
                     <div
                         class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-emerald-100 text-emerald-600 shadow-inner">
-                        <i class="fa-solid fa-credit-card text-3xl"></i>
+                        {{-- <i class="fa-solid fa-credit-card text-3xl"></i> --}}
+
+                        <i class="fa-solid fa-credit-card"></i>
                     </div>
 
                     <h3 class="mb-2 text-xl font-black uppercase italic tracking-tight text-slate-800">Informasi Pembayaran

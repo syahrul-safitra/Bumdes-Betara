@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="hero min-h-[85vh] relative overflow-hidden"
-        style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ asset('Img/bgg.jpg') }}'); 
+        style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ asset('Img/compres_bg.jpg') }}'); 
             background-size: cover; 
             background-position: center; 
             background-attachment: fixed;">
@@ -10,7 +10,7 @@
         <div class="hero-content text-center text-white z-10 p-6">
             <div class="max-w-3xl">
                 <h1 class="mb-6 text-6xl md:text-7xl font-extrabold tracking-tight">
-                    Bumdes <br /> <span class="text-emerald-400">Bersama Betara</span>
+                    BUMDES <br /> <span class="text-emerald-400">Bersama Betara</span>
                 </h1>
                 <p class="mb-10 text-xl md:text-2xl text-slate-100">
                     Mengelola potensi desa untuk kemandirian ekonomi Desa Betara.
@@ -40,14 +40,14 @@
 
                 <div class="lg:w-1/2 grid grid-cols-2 gap-4">
                     <div class="space-y-4">
-                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=500"
-                            class="rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500" alt="Sawah">
-                        <img src="https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5?q=80&w=500"
+                        {{-- <img src="{{ asset('Img/kantor_desa.jpg') }}"
+                            class="rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500" alt="Sawah"> --}}
+                        <img src="{{ asset('Img/kantor_bumdes.jpg') }}"
                             class="rounded-2xl shadow-lg hover:scale-105 transition-transform duration-500"
                             alt="Perkebunan">
                     </div>
                     <div class="pt-8">
-                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?q=80&w=500"
+                        <img src="{{ asset('Img/foto_bupati.jpg') }}"
                             class="rounded-2xl shadow-lg h-full object-cover hover:scale-105 transition-transform duration-500"
                             alt="Aktivitas Desa">
                     </div>
@@ -76,7 +76,7 @@
                             dan berkelanjutan.
                         </p> --}}
                         <p>
-                            Melalui **BUMDes Bersama Betara**, kami berkomitmen untuk menjadi motor penggerak ekonomi desa.
+                            Melalui **BUMDES Bersama Betara**, kami berkomitmen untuk menjadi motor penggerak ekonomi desa.
                             Kami hadir bukan sekadar sebagai badan usaha, melainkan sebagai mitra warga dalam menyediakan
                             layanan transportasi yang andal, pendampingan produk UMKM, hingga keterbukaan informasi publik
                             demi mewujudkan Desa Betara yang modern tanpa meninggalkan akar budaya.
@@ -116,17 +116,17 @@
             <div class="text-center mb-10">
                 <h2 class="text-3xl font-extrabold text-slate-800">Lokasi <span class="text-emerald-600">Desa Betara</span>
                 </h2>
-                <p class="text-slate-500 mt-2">Kunjungi kantor BUMDes kami atau lihat jangkauan layanan kami di peta bawah
+                <p class="text-slate-500 mt-2">Kunjungi kantor BUMDES kami atau lihat jangkauan layanan kami di peta bawah
                     ini.</p>
             </div>
 
             <div class="bg-white p-4 rounded-3xl shadow-xl border border-emerald-100">
                 <div class="overflow-hidden rounded-2xl h-[450px]">
+
                     <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d127622.86311681944!2d103.3218859!3d-1.1070557!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e2fafa01eaeecf5%3A0xeac7bb554de9f2cd!2sBetara%2C%20Kabupaten%20Tanjung%20Jabung%20Barat%2C%20Jambi!5e0!3m2!1sid!2sid!4v1715000000000!5m2!1sid!2sid"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.240013737293!2d103.37498977485414!3d-0.9755406990150441!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e28a5bb9eaa4035%3A0x89b7a031bb6b9097!2sBUMDES%20BERSAMA%20BETARA%20(B3)!5e0!3m2!1sid!2sid!4v1777810295255!5m2!1sid!2sid"
                         width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
                 </div>
             </div>
 
@@ -142,7 +142,7 @@
                         </svg>
                     </div>
                     <div>
-                        <h4 class="font-bold text-lg">Kantor BUMDes</h4>
+                        <h4 class="font-bold text-lg">Kantor BUMDES</h4>
                         <p class="text-emerald-50 text-sm">Jalan Lintas Jambi-Kuala Tungkal, Desa Betara, Kec. Betara,
                             Jambi.</p>
                     </div>
@@ -158,7 +158,7 @@
                     </div>
                     <div>
                         <h4 class="font-bold text-lg text-slate-800">Jam Operasional</h4>
-                        <p class="text-slate-500 text-sm">Senin - Jumat: 08.00 - 16.00 WIB <br> Sabtu: 08.00 - 12.00 WIB
+                        <p class="text-slate-500 text-sm">Senin - Jumat: 08.00 - 15.00 WIB
                         </p>
                     </div>
                 </div>

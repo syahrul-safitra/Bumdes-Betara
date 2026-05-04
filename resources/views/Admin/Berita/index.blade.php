@@ -21,35 +21,34 @@
                 </div>
             @endif
 
+            {{-- Header & Tombol Tambah --}}
             <div class="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
                 <div>
                     <h1 class="text-3xl font-black text-slate-800">Manajemen <span class="text-emerald-600">Berita</span>
                     </h1>
                     <p class="mt-1 text-sm text-slate-500">Kelola publikasi kegiatan dan dokumentasi Desa Betara Ikd.</p>
                 </div>
-                <a href="{{ url('/dokumentasi/create') }}"
-                    class="btn rounded-2xl border-none bg-emerald-600 px-6 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
-                    <i class="fa-solid fa-plus mr-2"></i> Tambah Berita Baru
-                </a>
+
+                <div class="flex flex-wrap items-center gap-3">
+                    {{-- Form Pencarian --}}
+                    <form action="{{ url()->current() }}" method="GET" class="relative">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari judul berita..."
+                            class="input input-bordered w-full max-w-xs rounded-2xl bg-white pl-10 focus:border-emerald-500 focus:outline-none shadow-sm border-slate-200">
+                        <i
+                            class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    </form>
+
+                    <a href="{{ url('/dokumentasi/create') }}"
+                        class="btn rounded-2xl border-none bg-emerald-600 px-6 text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
+                        <i class="fa-solid fa-plus mr-2"></i> Tambah Berita Baru
+                    </a>
+                </div>
             </div>
-
-            {{-- <div class="flex flex-col gap-4 rounded-[2rem] border border-slate-100 bg-white p-4 shadow-sm md:flex-row">
-                    <div class="relative flex-1">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                        <input type="text" placeholder="Cari judul berita..."
-                            class="input input-bordered w-full rounded-xl border-none bg-slate-50 pl-12 focus:ring-2 focus:ring-emerald-500" />
-                    </div>
-
-                    <button
-                        class="btn rounded-xl border-none bg-emerald-600 px-8 text-white shadow-lg shadow-emerald-100 transition-all duration-300 hover:bg-emerald-700">
-                        <i class="fa-solid fa-magnifying-glass mr-2 text-sm"></i>
-                        Cari
-                    </button>
-                </div> --}}
 
             <div class="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm">
                 <div class="overflow-x-auto">
-                    <table class="table-lg table">
+                    <table class="table-lg table w-full">
                         <thead class="bg-slate-50/50 text-[11px] uppercase tracking-widest text-slate-400">
                             <tr>
                                 <th>No</th>
@@ -109,6 +108,18 @@
                             @endforeach
                         </tbody>
                     </table>
+
+                    {{-- Letakkan tepat sebelum penutup tag kartu putih --}}
+                    <div
+                        class="flex flex-col items-center justify-between border-t border-slate-50 bg-slate-50/50 p-6 md:flex-row">
+                        <p class="mb-4 text-[10px] font-black uppercase tracking-widest text-slate-400 md:mb-0">
+                            Menampilkan {{ $dokumentasis->firstItem() ?? 0 }} sampai {{ $dokumentasis->lastItem() ?? 0 }}
+                            dari {{ $dokumentasis->total() }} Berita
+                        </p>
+                        <div class="pagination-custom">
+                            {{ $dokumentasis->links() }}
+                        </div>
+                    </div>
                 </div>
 
                 <dialog id="delete_modal" class="modal modal-bottom sm:modal-middle">
@@ -160,18 +171,14 @@
         </main>
 
         <script>
+            // Fungsi Modal Delete Anda
             function openDeleteModal(id, title) {
                 const modal = document.getElementById('delete_modal');
                 const form = document.getElementById('delete_form');
-                const titlePlaceholder = document.getElementById('delete_item_title');
+                const titleSpan = document.getElementById('delete_item_title');
 
-                // 1. Set Action URL secara dinamis
-                form.action = `/dokumentasi/${id}`;
-
-                // 2. Set judul berita agar admin tidak salah hapus
-                titlePlaceholder.innerText = `"${title}"`;
-
-                // 3. Munculkan modal (fungsi bawaan DaisyUI/HTML5 Dialog)
+                titleSpan.innerText = title;
+                form.action = '/dokumentasi/' + id; // Sesuaikan dengan route delete Anda
                 modal.showModal();
             }
         </script>

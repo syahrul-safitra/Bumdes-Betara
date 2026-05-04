@@ -15,10 +15,31 @@ class RentalController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        $search = $request->input('search');
+
+        $rentals = Rental::with(['customer', 'vehicle'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    // Cari di tabel Customer
+                    $q->whereHas('customer', function ($c) use ($search) {
+                        $c->where('nama', 'like', '%' . $search . '%');
+                    })
+                    // Atau cari di tabel Vehicle (Armada)
+                    ->orWhereHas('vehicle', function ($v) use ($search) {
+                        $v->where('merek', 'like', '%' . $search . '%');
+                    });
+                });
+            })
+                ->latest()
+                ->paginate(10)
+                ->withQueryString();
+
+
         return view('Admin.Rental.index', [
-            'rentals' => Rental::with('vehicle', 'customer')->latest()->get(),
+            'rentals' => $rentals,
         ]);
     }
 

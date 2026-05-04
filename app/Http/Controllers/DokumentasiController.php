@@ -11,10 +11,20 @@ class DokumentasiController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+
+        $query = $request->input('search');
+
+        $dokumentasis = Dokumentasi::when($query, function ($q) use ($query) {
+            return $q->where('judul', 'like', '%' . $query . '%');
+        })
+            ->latest()
+            ->paginate(10) 
+            ->withQueryString();
+
         return view('Admin.Berita.index', [
-            'dokumentasis' => Dokumentasi::latest()->get(),
+            'dokumentasis' => $dokumentasis,
         ]);
     }
 
