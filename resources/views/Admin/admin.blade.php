@@ -6,8 +6,8 @@
         <div class="mb-8 flex items-center justify-between">
             <div>
                 <h1 class="text-3xl font-black  tracking-tighter text-slate-800">Data <span
-                        class="text-emerald-600">Customer</span></h1>
-                <p class="text-sm font-medium text-slate-500">Kelola informasi pelanggan dan verifikasi identitas.</p>
+                        class="text-emerald-600">Admin</span></h1>
+                {{-- <p class="text-sm font-medium text-slate-500">Kelola informasi pelanggan dan verifikasi identitas.</p> --}}
             </div>
         </div>
 
