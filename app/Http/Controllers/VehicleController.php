@@ -42,14 +42,6 @@ class VehicleController extends Controller
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
 
-        $file = $request->file('gambar');
-
-        $renameFile = time().'-'.$file->getClientOriginalName();
-
-        $file->move(public_path('File'), $renameFile);
-
-        $validated['gambar'] = $renameFile;
-
         Vehicle::create($validated);
 
         return redirect('vehicle')->with('success', "Kendaraan berhasil di input");
