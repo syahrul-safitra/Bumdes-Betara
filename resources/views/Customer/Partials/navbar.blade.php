@@ -12,6 +12,13 @@
                 <li><a href="/" class="py-3">Beranda</a></li>
                 <li><a href="/profil" class="py-3">Profil</a></li>
                 <li><a href="/dokumentasi-desa" class="py-3">Dokumentasi</a></li>
+                <li>
+                    <button onclick="panduan_modal.showModal()"
+                        class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
+                        <i class="fa-solid fa-circle-info text-sm text-emerald-500"></i>
+                        <span>Cara Booking</span>
+                    </button>
+                </li>
                 <li><a href="/rental-kendaraan" class="py-3">Rental</a></li>
             </ul>
         </div>
@@ -32,16 +39,26 @@
     </div>
 
     <div class="navbar-center hidden lg:flex">
-        <ul class="menu menu-horizontal px-1 font-bold text-slate-500 gap-2">
+        <ul class="menu menu-horizontal px-1 font-bold text-slate-500 gap-2 items-center">
             <li><a href="/" class="hover:text-emerald-600 rounded-xl transition-all">Beranda</a></li>
             <li><a href="/profil" class="hover:text-emerald-600 rounded-xl transition-all">Profil</a></li>
             <li><a href="/dokumentasi-desa" class="hover:text-emerald-600 rounded-xl transition-all">Dokumentasi</a>
             </li>
             <li><a href="/rental-kendaraan" class="hover:text-emerald-600 rounded-xl transition-all">Rental</a></li>
+
+            {{-- Tombol Pemicu Modal Panduan Baru --}}
+            <li>
+                <button onclick="panduan_modal.showModal()"
+                    class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
+                    <i class="fa-solid fa-circle-info text-sm text-emerald-500"></i>
+                    <span>Cara Booking</span>
+                </button>
+            </li>
         </ul>
     </div>
 
     <div class="navbar-end gap-4">
+
         @auth('customer')
             {{-- Tampilan Jika Sudah Login --}}
             <div class="dropdown dropdown-end">
@@ -95,3 +112,131 @@
         @endauth
     </div>
 </div>
+
+<dialog id="panduan_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box rounded-[2.5rem] bg-white p-8 max-w-xl border border-slate-100 shadow-2xl">
+
+        <div class="flex items-start justify-between mb-6">
+            <div>
+                <h3 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+                    <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><i class="fa-solid fa-route"></i></span>
+                    Panduan & Tata Cara Sewa
+                </h3>
+                <p class="text-xs text-slate-400 mt-1 uppercase font-black tracking-widest">Buberta Rent Armada</p>
+            </div>
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-slate-400 hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="space-y-6">
+
+            <div class="flex gap-4 relative">
+                <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
+                <div
+                    class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
+                    1</div>
+                <div class="space-y-1 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Registrasi Akun Sesuai Tipe</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Buka halaman pendaftaran, pilih tipe keanggotaan Anda:
+                    </p>
+                    <div class="flex gap-2 mt-2">
+                        <span
+                            class="badge badge-sm border-none bg-emerald-50 text-emerald-700 font-bold text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-user mr-1 text-[9px]"></i> INDIVIDU: Siapkan KTP
+                        </span>
+                        <span
+                            class="badge badge-sm border-none bg-indigo-50 text-indigo-700 font-bold text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-building mr-1 text-[9px]"></i> PERUSAHAAN: Siapkan NPWP
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 relative">
+                <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
+                <div
+                    class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
+                    2</div>
+                <div class="space-y-1 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Pilih Armada & Tentukan Tanggal</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Masuk ke katalog kendaraan, pilih unit mobil yang tersedia, lalu tentukan <span
+                            class="font-bold text-slate-700">Tanggal Peminjaman</span> serta <span
+                            class="font-bold text-slate-700">Tanggal Pengembalian</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Tahap 3: Konfirmasi & Pembayaran (Terupdate) -->
+            <div class="flex gap-4 relative">
+                <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
+                <div
+                    class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
+                    3</div>
+                <div class="space-y-2 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Verifikasi & Metode Pembayaran</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Admin Buberta Rent akan memverifikasi berkas Anda. Setelah disetujui, Anda dapat melakukan
+                        pembayaran hingga status berubah menjadi <span
+                            class="badge badge-xs border-none bg-emerald-500 text-white font-black uppercase text-[9px] px-1.5 py-1">LUNAS</span>.
+                    </p>
+
+                    {{-- Keterangan Metode Pembayaran --}}
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <span
+                            class="badge badge-sm border-none bg-slate-100 text-slate-700 font-medium text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-bank mr-1.5 text-slate-400"></i> Transfer Bank
+                        </span>
+                        <span
+                            class="badge badge-sm border-none bg-slate-100 text-slate-700 font-medium text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-money-bill-wave mr-1.5 text-slate-400"></i> Cash / Bayar di Tempat
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <div
+                    class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
+                    4</div>
+                <div class="space-y-2 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Pengambilan Unit Armada</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Datang ke lokasi kantor BUMDes/Buberta Rent untuk serah terima unit dengan membawa dokumen asli
+                        saat status operasional Anda:
+                    </p>
+                    <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 space-y-2">
+                        <div class="flex items-center gap-2 text-[11px]">
+                            <i class="fa-solid fa-id-card text-emerald-500 w-4"></i>
+                            <span class="text-slate-600"><strong class="text-slate-800">Individu:</strong>
+                                Memperlihatkan KTP asli & SIM A pengemudi.</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-[11px]">
+                            <i class="fa-solid fa-file-contract text-indigo-500 w-4"></i>
+                            <span class="text-slate-600"><strong class="text-slate-800">Perusahaan:</strong> Membawa
+                                Surat Kuasa asli/Surat Tugas dari PT terkait.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="modal-action mt-8 flex justify-end">
+            <form method="dialog">
+                <button
+                    class="btn bg-slate-900 hover:bg-slate-800 text-white border-none rounded-2xl px-8 font-black uppercase italic tracking-widest text-xs">
+                    Saya Mengerti
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>

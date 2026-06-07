@@ -42,31 +42,33 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'tipe' => 'required',
             'email' => 'required|email|unique:customers,email|min:15|unique:admin',
             'no_telepon' => 'required|string|max:15|unique:customers',
             'alamat' => 'required|string',
             'password' => 'required|string|min:8|max:20',
-            'gambar_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'file_identitas' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             // Custom Pesan Error (Opsional agar lebih user-friendly)
             'email.unique' => 'Email sudah terdaftar, silakan gunakan email lain.',
-            'gambar_ktp.required' => 'Foto KTP wajib diunggah untuk verifikasi.',
-            'gambar_ktp.max' => 'Ukuran foto KTP maksimal 2MB.',
+            'file_identitas.required' => 'Foto KTP wajib diunggah untuk verifikasi.',
+            'file_identitas.max' => 'Ukuran foto KTP maksimal 2MB.',
         ]);
 
-        if ($request->hasFile('gambar_ktp')) {
-            $file = $request->file('gambar_ktp');
+        if ($request->hasFile('file_identitas')) {
+            $file = $request->file('file_identitas');
 
             // Penamaan file: KTP-Timestamp-Nama.ext
-            $namaFileKtp = 'KTP-'.time().'-'.$file->getClientOriginalName();
+            $namaFileKtp = 'Identitas-'.time().'-'.$file->getClientOriginalName();
 
             // Simpan ke folder public/KTP
             $file->move(public_path('File'), $namaFileKtp);
 
             // Masukkan nama file ke array validated
-            $validated['gambar_ktp'] = $namaFileKtp;
+            $validated['file_identitas'] = $namaFileKtp;
         }
 
         // 3. Enkripsi Password
@@ -115,7 +117,8 @@ class CustomerController extends Controller
             ],
             'no_telepon' => 'required',
             'alamat' => 'required',
-            'gambar_ktp' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
+            'tipe' => 'required',
+            'file_identitas' => 'nullable|image|mimes:jpg,png,jpeg|max:2048',
             'password' => 'nullable|min:8|max:20', // Password bersifat opsional
         ]);
 
@@ -127,22 +130,22 @@ class CustomerController extends Controller
         }
 
         // Handle Upload Gambar
-        if ($request->hasFile('gambar_ktp')) {
+        if ($request->hasFile('file_identitas')) {
             // Hapus foto lama jika ingin menghemat storage
             // Storage::delete($customer->gambar_ktp);
 
             // File::delete('File/'.$customer->gambar_ktp);
 
-            $file = $request->file('gambar_ktp');
+            $file = $request->file('file_identitas');
 
             // Penamaan file: KTP-Timestamp-Nama.ext
-            $namaFileKtp = 'KTP-'.time().'-'.$file->getClientOriginalName();
+            $namaFileKtp = 'Identitas-'.time().'-'.$file->getClientOriginalName();
 
             // Simpan ke folder public/KTP
             $file->move(public_path('File'), $namaFileKtp);
 
             // Masukkan nama file ke array validated
-            $validated['gambar_ktp'] = $namaFileKtp;
+            $validated['file_identitas'] = $namaFileKtp;
         }
 
         $customer->update($validated);

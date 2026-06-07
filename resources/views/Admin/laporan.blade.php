@@ -189,6 +189,7 @@
             <tr>
                 <th width="3%">No</th>
                 <th>Nama Customer</th>
+                <th>Tipe</th>
                 <th>Unit Mobil</th>
                 <th width="10%">Pinjam</th>
                 <th width="10%">Kembali</th>
@@ -210,6 +211,9 @@
                         <span class="font-bold">{{ $d->customer->nama }}</span><br>
                         <small>{{ $d->customer->no_telepon }}</small>
                     </td>
+                    <td class="text-center">
+                        {{ $d->customer->tipe }}
+                    </td>
                     <td class="text-center">{{ $d->vehicle->merek }}</td>
                     <td class="text-center">{{ date('d/m/y', strtotime($d->tanggal_peminjaman)) }}</td>
                     <td class="text-center">{{ date('d/m/y', strtotime($d->tanggal_pengembalian)) }}</td>
@@ -230,12 +234,12 @@
         </tbody>
         <tfoot>
             <tr style="background-color: #eee;">
-                <td colspan="7" class="text-right font-bold" style="padding: 10px;">TOTAL KESELURUHAN :</td>
+                <td colspan="8" class="text-right font-bold" style="padding: 10px;">TOTAL KESELURUHAN :</td>
                 <td class="text-right font-bold">{{ number_format($sumTotal, 0, ',', '.') }}</td>
                 <td class="text-right font-bold">{{ number_format($sumDenda, 0, ',', '.') }}</td>
             </tr>
             <tr style="background-color: #15803d; color: white;">
-                <td colspan="7" class="text-right font-bold" style="padding: 10px;">GRAND TOTAL (SEWA + DENDA) :
+                <td colspan="8" class="text-right font-bold" style="padding: 10px;">GRAND TOTAL (SEWA + DENDA) :
                 </td>
                 <td colspan="2" class="text-center font-bold" style="font-size: 14px;">
                     Rp {{ number_format($sumTotal + $sumDenda, 0, ',', '.') }}

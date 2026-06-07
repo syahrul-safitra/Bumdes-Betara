@@ -16,9 +16,10 @@ return new class extends Migration
 
             $table->string('nama');
             $table->string('email')->unique();
+            $table->enum('tipe', ['individu', 'perusahaan'])->default('individu');
             $table->string('alamat');
             $table->string('no_telepon', 15)->unique();
-            $table->string('gambar_ktp');
+            $table->string('file_identitas');
             $table->string('password');
 
             $table->timestamps();

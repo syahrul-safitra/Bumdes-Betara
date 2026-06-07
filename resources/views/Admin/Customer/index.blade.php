@@ -76,13 +76,13 @@
                                     </p>
                                 </td>
                                 <td class="text-center">
-                                    @if ($item->gambar_ktp)
+                                    @if ($item->file_identitas)
                                         <div class="avatar">
                                             <div
                                                 class="w-16 cursor-zoom-in rounded-xl ring ring-emerald-50 ring-offset-2 transition-transform hover:scale-110">
-                                                <a href="{{ asset('File/' . $item->gambar_ktp) }}" target="_blank">
-                                                    <img src="{{ asset('File/' . $item->gambar_ktp) }}"
-                                                        alt="KTP {{ $item->nama }}" />
+                                                <a href="{{ asset('File/' . $item->file_identitas) }}" target="_blank">
+                                                    <img src="{{ asset('File/' . $item->file_identitas) }}"
+                                                        alt="IDENTITAS {{ $item->nama }}" />
                                                 </a>
                                             </div>
                                         </div>

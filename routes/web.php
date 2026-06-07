@@ -3,6 +3,8 @@
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DokumentasiController;
 use App\Http\Controllers\RentalController;
+use App\Http\Controllers\SppGroupController;
+use App\Http\Controllers\SppLoanController;
 use App\Http\Controllers\VehicleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
@@ -56,6 +58,34 @@ Route::get('/admin', [AdminController::class, 'index'])->middleware('isAdmin');
 Route::get('/admin/{admin}/edit', [AdminController::class, 'edit'])->middleware('isAdmin');
 Route::put('/admin/{admin}', [AdminController::class, 'update'])->middleware('isAdmin');
 
+// ============= Peminjaman =============================================================
+Route::get('/spp-group', [SppGroupController::class, 'index']);
+
+Route::controller(SppGroupController::class)->group(function() {
+    Route::get('/spp-group/create', 'create')->middleware('isAdmin');
+    Route::post('/spp-group', 'store')->middleware('isAdmin');
+    Route::get('/spp-group/{group}', 'show')->middleware('isAdmin');
+    Route::get('/spp-group/{group}/edit', 'edit')->middleware('isAdmin');
+    Route::put('/spp-group/{group}', 'update')->middleware('isAdmin');
+});
+
+Route::controller(SppLoanController::class)->group(function() {
+    Route::get('/spp-loan', 'index')->middleware('isAdmin');
+    Route::get('/spp-loan/create', 'create')->middleware('isAdmin');
+    Route::post('/spp-loan', 'store')->middleware('isAdmin');
+    Route::get('/spp-loan/{loan}', 'show')->middleware('isAdmin');
+    Route::post('/spp-loan/{loan}/disburse', 'disburse')->middleware('isAdmin');
+    Route::get('/spp-installment/{id}/receipt', [SppLoanController::class, 'printReceipt'])->middleware('isAdmin');
+    Route::get('/spp-loan/{id}/report', [SppLoanController::class, 'singleLoanReport'])->middleware('isAdmin');
+    
+    // Dana awal 
+    Route::post('/spp-loan/{loan}/disburse', [SppLoanController::class, 'disburse'])->middleware('isAdmin');
+    Route::post('/spp-loan/{loan}/disburse-next', [SppLoanController::class, 'disburseNext'])->middleware('isAdmin');
+    Route::post('/spp-installment/{id}/pay', [SppLoanController::class, 'payInstallment'])->middleware('isAdmin');
+});
+
+
+
 // ============= Customer ===========================
 Route::get('/registrasi', function () {
 
@@ -70,7 +100,7 @@ Route::get('/create-rental/{vehicle}', [RentalController::class, 'create'])->mid
 
 Route::post('/rental', [RentalController::class, 'store'])->middleware('isCustomer');
 
-Route::post('/register-customer', [CustomerController::class, 'store'])->middleware('isCustomer');
+Route::post('/register-customer', [CustomerController::class, 'store']);
 
 Route::get('/detail-rental/{rental}', [RentalController::class, 'detail'])->middleware('isCustomer');
 Route::post('/upload-pembayaran/{rental}', [RentalController::class, 'uploadPembayaran'])->middleware('isCustomer');
@@ -115,3 +145,7 @@ Route::get('/dokumentasi-desa/{dokumentasi}', [DokumentasiController::class, 'sh
 Route::post('/authentication', [AuthController::class, 'authentication']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::get('/login', [AuthController::class, 'login']);
+
+Route::get('/test', function() {
+    return view('Admin.SPP.show_loan');
+});

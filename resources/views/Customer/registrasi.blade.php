@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <div class="lg:col-span-7 p-8 md:p-14 bg-white">
+        {{-- <div class="lg:col-span-7 p-8 md:p-14 bg-white">
             <div class="max-w-md mx-auto">
                 <div class="mb-10">
                     <h3 class="text-2xl font-black text-slate-800">Pendaftaran Akun</h3>
@@ -192,6 +192,150 @@
                         Akun</a>
                 </p>
             </div>
+        </div> --}}
+
+        <div class="lg:col-span-7 p-8 md:p-14 bg-white">
+            <div class="max-w-md mx-auto">
+                <div class="mb-10">
+                    <h3 class="text-2xl font-black text-slate-800">Pendaftaran Akun</h3>
+                    <p class="text-sm text-slate-500">Silakan isi formulir sesuai dengan identitas resmi Anda.</p>
+                </div>
+
+                <form action="{{ url('/register-customer') }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-5">
+                    @csrf
+
+                    <div class="form-control bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                        <label class="label text-xs font-black text-slate-600 uppercase ml-1 mb-2">Pilih Tipe
+                            Keanggotaan</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label
+                                class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 cursor-pointer transition-all hover:border-emerald-500 has-[:checked]:border-emerald-500 has-[:checked]:bg-emerald-50/50">
+                                <input type="radio" name="tipe" value="individu" id="tipe-individu"
+                                    class="radio radio-success"
+                                    {{ old('tipe', 'individu') == 'individu' ? 'checked' : '' }}
+                                    onchange="toggleFormType('individu')">
+                                <span class="text-sm font-bold text-slate-700">Individu / Pribadi</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-3 bg-white p-3 rounded-xl border border-slate-200 cursor-pointer transition-all hover:border-indigo-500 has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50/50">
+                                <input type="radio" name="tipe" value="perusahaan" id="tipe-perusahaan"
+                                    class="radio radio-primary" {{ old('tipe') == 'perusahaan' ? 'checked' : '' }}
+                                    onchange="toggleFormType('perusahaan')">
+                                <span class="text-sm font-bold text-slate-700">Perusahaan / PT</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-5">
+                        <div class="form-control">
+                            <label id="label-nama" class="label text-xs font-bold text-slate-600 uppercase ml-1">Nama
+                                Lengkap (Sesuai KTP)</label>
+                            <input type="text" name="nama" id="input-nama" value="{{ old('nama') }}"
+                                class="input input-bordered w-full rounded-2xl bg-slate-50 @error('nama') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all custom-focus"
+                                placeholder="Contoh: Budi Santoso">
+                            @error('nama')
+                                <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                        class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="form-control">
+                                <label class="label text-xs font-bold text-slate-600 uppercase ml-1">Email</label>
+                                <input type="email" name="email" value="{{ old('email') }}"
+                                    class="input input-bordered w-full rounded-2xl bg-slate-50 @error('email') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all custom-focus"
+                                    placeholder="email@domain.com">
+                                @error('email')
+                                    <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                            class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <div class="form-control">
+                                <label id="label-telepon"
+                                    class="label text-xs font-bold text-slate-600 uppercase ml-1">No.
+                                    HP/WhatsApp</label>
+                                <input type="text" name="no_telepon" value="{{ old('no_telepon') }}"
+                                    class="input input-bordered w-full rounded-2xl bg-slate-50 @error('no_telepon') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all custom-focus"
+                                    placeholder="0812xxxx">
+                                @error('no_telepon')
+                                    <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                            class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-control">
+                        <label id="label-alamat" class="label text-xs font-bold text-slate-600 uppercase ml-1">Alamat
+                            Domisili</label>
+                        <textarea name="alamat" id="textarea-alamat"
+                            class="textarea textarea-bordered w-full rounded-2xl bg-slate-50 @error('alamat') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all h-24 custom-focus"
+                            placeholder="Tulis alamat lengkap Anda di sini...">{{ old('alamat') }}</textarea>
+                        @error('alamat')
+                            <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                    class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="form-control">
+                        <label class="label text-xs font-bold text-slate-600 uppercase ml-1">Password Akun</label>
+                        <input type="text" name="password"
+                            class="input input-bordered w-full rounded-2xl bg-slate-50 @error('password') border-red-500 @else border-slate-200 @enderror focus:border-emerald-500 transition-all custom-focus"
+                            placeholder="••••••••">
+                        @error('password')
+                            <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                    class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="form-control">
+                        <label id="label-identitas"
+                            class="label text-xs font-bold text-slate-600 uppercase ml-1">Unggah Foto KTP</label>
+                        <div id="identitas-input-container"
+                            class="relative group h-44 rounded-[2rem] border-2 border-dashed @error('file_identitas') border-red-300 bg-red-50 @else border-slate-200 bg-slate-50 @enderror hover:bg-emerald-50 hover:border-emerald-200 transition-all overflow-hidden flex items-center justify-center cursor-pointer"
+                            onclick="document.getElementById('identitas-input').click();">
+
+                            <input type="file" name="file_identitas" id="identitas-input" class="hidden"
+                                onchange="previewIdentitas(this)" accept="image/*">
+
+                            <div id="identitas-placeholder" class="text-center transition-opacity duration-300">
+                                <div id="icon-container"
+                                    class="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-3 @error('file_identitas') text-red-400 @else text-slate-400 @enderror group-hover:text-emerald-500 transition-colors">
+                                    <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
+                                </div>
+                                <p id="text-placeholder-click"
+                                    class="text-xs font-bold @error('file_identitas') text-red-500 @else text-slate-500 @enderror">
+                                    Klik untuk upload foto KTP
+                                </p>
+                                <p class="text-[10px] text-slate-400 mt-1 uppercase">Format JPG/PNG (Maks 2MB)</p>
+                            </div>
+
+                            <img id="identitas-preview"
+                                class="absolute inset-0 w-full h-full object-cover hidden z-0 transition-opacity duration-300">
+                            <div id="identitas-overlay"
+                                class="absolute inset-0 bg-emerald-900/50 backdrop-blur-sm hidden items-center justify-center text-white text-xs font-bold uppercase z-20 transition-opacity duration-300">
+                                <i class="fa-solid fa-sync-alt mr-2"></i> Ganti File
+                            </div>
+                        </div>
+                        @error('file_identitas')
+                            <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
+                                    class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <button type="submit" id="btn-submit"
+                        class="btn w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-2xl font-black text-lg shadow-xl shadow-emerald-200 mt-4 transition-all active:scale-95">
+                        Daftar Akun Pelanggan
+                    </button>
+                </form>
+
+                <p class="text-center text-sm text-slate-500 mt-8">
+                    Sudah terdaftar? <a href="/login" id="link-login"
+                        class="text-emerald-600 font-bold hover:underline">Masuk Akun</a>
+                </p>
+            </div>
         </div>
     </div>
 
@@ -209,6 +353,110 @@
                 reader.readAsDataURL(input.files[0]);
             }
         }
+    </script>
+
+    <script>
+        function toggleFormType(type) {
+            // Element-element yang akan dirubah karakteristiknya
+            const labelNama = document.getElementById('label-nama');
+            const inputNama = document.getElementById('input-nama');
+            const labelTelepon = document.getElementById('label-telepon');
+            const labelAlamat = document.getElementById('label-alamat');
+            const textareaAlamat = document.getElementById('textarea-alamat');
+            const labelIdentitas = document.getElementById('label-identitas');
+            const textPlaceholderClick = document.getElementById('text-placeholder-click');
+
+            // Container & Button Elements untuk Perubahan Warna Tema
+            const containerUpload = document.getElementById('identitas-input-container');
+            const iconContainer = document.getElementById('icon-container');
+            const btnSubmit = document.getElementById('btn-submit');
+            const linkLogin = document.getElementById('link-login');
+            const focusInputs = document.querySelectorAll('.custom-focus');
+
+            if (type === 'perusahaan') {
+                // 1. Perubahan Teks Karakteristik Perusahaan (PT)
+                labelNama.innerText = "Nama Perusahaan / PT (Sesuai Legalitas)";
+                inputNama.placeholder = "Contoh: PT. Betara Sukses Mandiri";
+                labelTelepon.innerText = "No. HP/Telepon Kantor (PIC)";
+                labelAlamat.innerText = "Alamat Kantor Utama / Pusat";
+                textareaAlamat.placeholder = "Tulis alamat lengkap kantor perusahaan di sini...";
+                labelIdentitas.innerText = "Unggah Dokumen NPWP Perusahaan";
+                textPlaceholderClick.innerText = "Klik untuk upload foto NPWP Perusahaan";
+
+                // 2. Perubahan Skema Warna Tema ke INDIGO/PURPLE (Tema PT Korporat)
+                btnSubmit.className =
+                    "btn w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white border-none rounded-2xl font-black text-lg shadow-xl shadow-indigo-200 mt-4 transition-all active:scale-95";
+                linkLogin.className = "text-indigo-600 font-bold hover:underline";
+
+                // Mengubah hover class pada area upload berkas
+                containerUpload.classList.remove('hover:bg-emerald-50', 'hover:border-emerald-200');
+                containerUpload.classList.add('hover:bg-indigo-50', 'hover:border-indigo-200');
+                iconContainer.classList.remove('group-hover:text-emerald-500');
+                iconContainer.classList.add('group-hover:text-indigo-500');
+
+                // Mengubah fokus input border menjadi Indigo saat diklik
+                focusInputs.forEach(input => {
+                    input.classList.remove('focus:border-emerald-500');
+                    input.classList.add('focus:border-indigo-500');
+                });
+
+            } else {
+                // 1. Kembalikan ke Karakteristik Individu
+                labelNama.innerText = "Nama Lengkap (Sesuai KTP)";
+                inputNama.placeholder = "Contoh: Budi Santoso";
+                labelTelepon.innerText = "No. HP/WhatsApp";
+                labelAlamat.innerText = "Alamat Domisili";
+                textareaAlamat.placeholder = "Tulis alamat lengkap Anda di sini...";
+                labelIdentitas.innerText = "Unggah Foto KTP";
+                textPlaceholderClick.innerText = "Klik untuk upload foto KTP";
+
+                // 2. Kembalikan ke Skema Warna Tema EMERALD/HIJAU (Tema Individu)
+                btnSubmit.className =
+                    "btn w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-2xl font-black text-lg shadow-xl shadow-emerald-200 mt-4 transition-all active:scale-95";
+                linkLogin.className = "text-emerald-600 font-bold hover:underline";
+
+                containerUpload.classList.remove('hover:bg-indigo-50', 'hover:border-indigo-200');
+                containerUpload.classList.add('hover:bg-emerald-50', 'hover:border-emerald-200');
+                iconContainer.classList.remove('group-hover:text-indigo-500');
+                iconContainer.classList.add('group-hover:text-emerald-500');
+
+                focusInputs.forEach(input => {
+                    input.classList.remove('focus:border-indigo-500');
+                    input.classList.add('focus:border-emerald-500');
+                });
+            }
+        }
+
+        // Fungsi Preview Upload Gambar Dinamis
+        function previewIdentitas(input) {
+            const preview = document.getElementById('identitas-preview');
+            const placeholder = document.getElementById('identitas-placeholder');
+            const overlay = document.getElementById('identitas-overlay');
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    placeholder.classList.add('opacity-0');
+
+                    // Set overlay ganti foto saat hover
+                    container = document.getElementById('identitas-input-container');
+                    container.onmouseenter = () => overlay.className =
+                        "absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center text-white text-xs font-bold uppercase z-20 transition-opacity duration-300";
+                    container.onmouseleave = () => overlay.className =
+                        "absolute inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center text-white text-xs font-bold uppercase z-20 transition-opacity duration-300";
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Trigger state ketika form reload / ada error validation dari Laravel agar state radio-button tetap konsisten
+        document.addEventListener("DOMContentLoaded", function() {
+            if (document.getElementById('tipe-perusahaan').checked) {
+                toggleFormType('perusahaan');
+            }
+        });
     </script>
 </body>
 

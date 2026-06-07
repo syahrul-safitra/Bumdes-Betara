@@ -13,10 +13,11 @@ class Customer extends Authenticatable
 
     protected $fillable = [
         'nama', 
+        'tipe',
         'email',
         'alamat',
         'no_telepon', 
-        'gambar_ktp', 
+        'file_identitas', 
         'password'
     ];
 

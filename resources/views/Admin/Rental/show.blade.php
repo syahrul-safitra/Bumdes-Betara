@@ -1,10 +1,10 @@
-@extends("Admin.Layouts.main")
+@extends('Admin.Layouts.main')
 
-@section("content")
+@section('content')
     {{-- Container dibuat max-w-5xl agar konsisten lebarnya dengan halaman Create Anda --}}
     <main class="space-y-8 p-6 lg:p-10">
 
-        @if (session()->has("success"))
+        @if (session()->has('success'))
             <div
                 class="animate-in fade-in slide-in-from-top-4 mb-8 flex items-center justify-between rounded-3xl border border-emerald-100 bg-emerald-50/50 p-4 shadow-sm duration-500">
                 <div class="flex items-center gap-4">
@@ -14,7 +14,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-black uppercase tracking-widest text-emerald-600">Berhasil</p>
-                        <p class="font-bold text-slate-700">{{ session("success") }}</p>
+                        <p class="font-bold text-slate-700">{{ session('success') }}</p>
                     </div>
                 </div>
                 <button onclick="this.parentElement.remove()"
@@ -27,7 +27,7 @@
         {{-- Header Section --}}
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="{{ url("/rental") }}" class="btn btn-ghost btn-circle border border-slate-100 bg-white shadow-sm">
+                <a href="{{ url('/rental') }}" class="btn btn-ghost btn-circle border border-slate-100 bg-white shadow-sm">
                     <i class="fa-solid fa-arrow-left text-slate-600"></i>
                 </a>
                 <div>
@@ -54,8 +54,12 @@
                             </h3>
                             <div class="space-y-4 rounded-3xl border border-slate-100 bg-slate-50 p-6">
                                 <div class="flex justify-between border-b border-slate-200/50 pb-2">
-                                    <span class="text-slate-500">Nama Lengkap</span>
+                                    <span class="text-slate-500">Nama </span>
                                     <span class="font-bold text-slate-800">{{ $rental->customer->nama }}</span>
+                                </div>
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
+                                    <span class="text-slate-500">Status</span>
+                                    <span class="font-bold text-slate-800">{{ $rental->customer->tipe }}</span>
                                 </div>
                                 <div class="flex justify-between">
                                     <span class="text-slate-500">Unit Kendaraan</span>
@@ -74,13 +78,13 @@
                                 <div class="rounded-2xl border border-slate-100 p-4">
                                     <p class="text-[10px] font-bold uppercase text-slate-400">Tanggal Pinjam</p>
                                     <p class="text-lg font-black text-slate-700">
-                                        {{ date("d M Y", strtotime($rental->tanggal_peminjaman)) }}
+                                        {{ date('d M Y', strtotime($rental->tanggal_peminjaman)) }}
                                     </p>
                                 </div>
                                 <div class="rounded-2xl border border-slate-100 p-4">
                                     <p class="text-[10px] font-bold uppercase text-slate-400">Estimasi Kembali</p>
                                     <p class="text-lg font-black text-slate-700">
-                                        {{ date("d M Y", strtotime($rental->tanggal_pengembalian)) }}
+                                        {{ date('d M Y', strtotime($rental->tanggal_pengembalian)) }}
                                     </p>
                                 </div>
                                 {{-- Field Tanggal Dikembalikan (Realisasi) --}}
@@ -88,7 +92,7 @@
                                     <p class="text-[10px] font-bold uppercase text-emerald-600/60">Tgl. Dikembalikan</p>
                                     <p class="text-lg font-black text-emerald-700">
                                         @if ($rental->tanggal_dikembalikan)
-                                            {{ date("d M Y", strtotime($rental->tanggal_dikembalikan)) }}
+                                            {{ date('d M Y', strtotime($rental->tanggal_dikembalikan)) }}
                                         @else
                                             <span class="font-medium italic text-slate-300">Belum Ada</span>
                                         @endif
@@ -112,7 +116,7 @@
                             <div class="space-y-4">
                                 <div class="flex justify-between text-slate-400">
                                     <span>Harga Sewa ({{ $selisihHari }}x)</span>
-                                    <span>Rp {{ number_format($rental->vehicle->harga_perhari, 0, ",", ".") }}</span>
+                                    <span>Rp {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }}</span>
                                 </div>
 
                                 <div class="flex justify-between text-orange-400">
@@ -126,7 +130,7 @@
                                             </span>
                                         @endif
                                     </div>
-                                    <span>+ Rp {{ number_format($totalDenda, 0, ",", ".") }}</span>
+                                    <span>+ Rp {{ number_format($totalDenda, 0, ',', '.') }}</span>
                                 </div>
                                 {{-- <div class="flex justify-between text-orange-400">
                                     <span>Denda Keterlambatan</span>
@@ -135,7 +139,7 @@
                                 <div class="mt-6 flex items-center justify-between border-t border-slate-800 pt-6">
                                     <span class="text-lg font-bold text-emerald-400">Grand Total</span>
                                     <span class="text-3xl font-black">Rp
-                                        {{ number_format($totalHarga + $totalDenda, 0, ",", ".") }}</span>
+                                        {{ number_format($totalHarga + $totalDenda, 0, ',', '.') }}</span>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +167,7 @@
                         <div class="text-center lg:text-left">
                             <p class="text-[10px] font-black uppercase text-slate-400">Status Pembayaran</p>
                             <span
-                                class="{{ $rental->status_pembayaran == "pending" ? "text-orange-500" : "text-emerald-600" }} text-xl font-black">
+                                class="{{ $rental->status_pembayaran == 'pending' ? 'text-orange-500' : 'text-emerald-600' }} text-xl font-black">
                                 {{ strtoupper($rental->status_pembayaran) }}
                             </span>
                         </div>
@@ -171,14 +175,14 @@
                         <div class="text-center lg:text-left">
                             <p class="text-[10px] font-black uppercase text-slate-400">Status Rental</p>
                             <span class="text-xl font-black text-slate-700">
-                                {{ strtoupper(str_replace("_", " ", $rental->status_rental)) }}
+                                {{ strtoupper(str_replace('_', ' ', $rental->status_rental)) }}
                             </span>
                         </div>
                     </div>
 
                     <div class="flex w-full flex-col gap-3 lg:w-auto lg:flex-row">
                         @if (!empty($rental->bukti_pembayaran))
-                            <a href="{{ asset("file/" . $rental->bukti_pembayaran) }}" target="_blank"
+                            <a href="{{ asset('file/' . $rental->bukti_pembayaran) }}" target="_blank"
                                 class="btn rounded-2xl border-slate-200 bg-white px-6 font-bold text-slate-600 shadow-sm hover:bg-slate-50">
                                 Lihat Bukti Bayar
                             </a>
@@ -202,13 +206,13 @@
             <h3 class="mb-6 text-2xl font-black text-slate-800">Update <span class="text-emerald-600">Progres</span></h3>
 
             {{-- Tambahkan id="formUpdateStatus" untuk dideteksi oleh JavaScript --}}
-            <form id="formUpdateStatus" action="{{ url("set-status/" . $rental->id) }}" method="POST" class="space-y-3">
+            <form id="formUpdateStatus" action="{{ url('set-status/' . $rental->id) }}" method="POST" class="space-y-3">
                 @csrf
-                @foreach (["belum_diambil", "sedang_dipinjam", "telah_dikembalikan"] as $status)
+                @foreach (['belum_diambil', 'sedang_dipinjam', 'telah_dikembalikan'] as $status)
                     <label
                         class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200 hover:bg-emerald-50">
                         <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">
-                            {{ str_replace("_", " ", $status) }}
+                            {{ str_replace('_', ' ', $status) }}
                         </span>
                         <input type="radio" name="status_rental" value="{{ $status }}" class="radio radio-emerald"
                             @checked($rental->status_rental == $status) />
@@ -290,7 +294,7 @@
             <h3 class="mb-6 text-2xl font-black text-slate-800">Update <span class="text-emerald-600">Status Bayar</span>
             </h3>
 
-            <form action="{{ url("set-pembayaran/" . $rental->id) }}" method="POST" class="space-y-3">
+            <form action="{{ url('set-pembayaran/' . $rental->id) }}" method="POST" class="space-y-3">
                 @csrf
 
                 {{-- Opsi Pending --}}
@@ -298,7 +302,7 @@
                     class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-orange-200 hover:bg-orange-50">
                     <span class="font-bold capitalize text-slate-600 group-hover:text-orange-700">Pending</span>
                     <input type="radio" name="status_pembayaran" value="pending" class="radio radio-warning"
-                        @checked($rental->status_pembayaran == "pending") />
+                        @checked($rental->status_pembayaran == 'pending') />
                 </label>
 
                 {{-- Opsi Telah Dibayar --}}
@@ -306,7 +310,7 @@
                     class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200 hover:bg-emerald-50">
                     <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">Telah Dibayar</span>
                     <input type="radio" name="status_pembayaran" value="telah_dibayar" class="radio radio-emerald"
-                        @checked($rental->status_pembayaran == "telah_dibayar") />
+                        @checked($rental->status_pembayaran == 'telah_dibayar') />
                 </label>
 
                 <div class="modal-action gap-3 pt-4">
