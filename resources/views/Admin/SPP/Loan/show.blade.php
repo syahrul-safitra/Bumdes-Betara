@@ -429,7 +429,7 @@
                             <label class="mb-1 ml-1 text-xs font-bold text-slate-500">Nominal Dicairkan Sekarang
                                 (Rp)</label>
                             <input type="number" name="nominal_cair_lanjut" max="{{ $sisaPlafonKontrak }}"
-                                value="{{ $sisaPlafonKontrak }}" placeholder="Masukkan nominal"
+                                value="{{ $sisaPlafonKontrak }}" placeholder="Masukkan nominal" readonly
                                 class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-indigo-500 focus:outline-none focus:ring-0 font-bold text-sky-600"
                                 required />
                         </div>

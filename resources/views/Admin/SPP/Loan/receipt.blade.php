@@ -175,8 +175,8 @@
     <table class="meta-box">
         <tr>
             <td width="55%">
-                No. Kuitansi: <span
-                    class="font-bold">KW/SPP/{{ date('Ymd', strtotime($installment->tanggal_bayar)) }}/{{ $installment->id }}</span><br>
+                {{-- No. Kuitansi: <span
+                    class="font-bold">KW/SPP/{{ date('Ymd', strtotime($installment->tanggal_bayar)) }}/{{ $installment->id }}</span><br> --}}
                 Nama Kelompok: <span class="font-bold">Kelompok {{ $installment->loan->group->nama_kelompok }}</span>
             </td>
             <td class="text-right">
