@@ -179,7 +179,13 @@ class RentalController extends Controller
      */
     public function destroy(Rental $rental)
     {
-        //
+                // hapus file lama :
+        File::delete('File/'.$rental->bukti_pembayaran);
+
+        $rental->delete();
+
+        return back()->with('success', "Berhasil menghapus data rental");
+
     }
 
     public function detail(Rental $rental)
@@ -250,6 +256,33 @@ class RentalController extends Controller
         $file->move('File', $renameFile);
 
         return back()->with('success', 'Berhasil mengupload pembayaran');
+    }
+
+    public function uploadIdentitas(Rental $rental, Request $request)
+    {
+
+        $validated = $request->validate([
+            'file_identitas' => 'max:2100',
+            'alamat' => 'required|max:100',
+        ]);
+
+        if ($request->file('file_identitas')) {
+            // hapus file lama :
+            File::delete('File/'.$rental->file_identitas);
+
+            $file = $request->file('file_identitas');
+
+            $renameFile = time().'-'.$file->getClientOriginalName();
+
+            $validated['file_identitas'] = $renameFile;
+
+            $file->move('File', $renameFile);
+        }
+        
+        $rental->update($validated);
+
+
+        return back()->with('success', 'Berhasil mengupload file identitas');
     }
 
     public function setPembayaran(Request $request, Rental $rental)

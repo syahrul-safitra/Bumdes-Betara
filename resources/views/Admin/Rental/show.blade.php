@@ -61,6 +61,15 @@
                                     <span class="text-slate-500">Status</span>
                                     <span class="font-bold text-slate-800">{{ $rental->customer->tipe }}</span>
                                 </div>
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
+                                    <span class="text-slate-500">No HP</span>
+                                    <span class="font-bold text-slate-800">{{ $rental->customer->no_telepon }}</span>
+                                </div>
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
+                                    <span class="text-slate-500">Alamat</span>
+                                    <span
+                                        class="font-bold text-slate-800">{{ $rental->alamat ? $rental->alamat : 'Belum di isi' }}</span>
+                                </div>
                                 <div class="flex justify-between">
                                     <span class="text-slate-500">Unit Kendaraan</span>
                                     <span class="font-bold text-emerald-700">{{ $rental->vehicle->merek }}</span>
@@ -181,10 +190,10 @@
                     </div>
 
                     <div class="flex w-full flex-col gap-3 lg:w-auto lg:flex-row">
-                        @if (!empty($rental->bukti_pembayaran))
-                            <a href="{{ asset('file/' . $rental->bukti_pembayaran) }}" target="_blank"
+                        @if (!empty($rental->file_identitas))
+                            <a href="{{ asset('File/' . $rental->file_identitas) }}" target="_blank"
                                 class="btn rounded-2xl border-slate-200 bg-white px-6 font-bold text-slate-600 shadow-sm hover:bg-slate-50">
-                                Lihat Bukti Bayar
+                                Lihat File Identitas
                             </a>
                         @endif
                         {{-- <a href="{{ url("struk/" . $rental->id) }}"
@@ -214,8 +223,8 @@
                         <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">
                             {{ str_replace('_', ' ', $status) }}
                         </span>
-                        <input type="radio" name="status_rental" value="{{ $status }}" class="radio radio-emerald"
-                            @checked($rental->status_rental == $status) />
+                        <input type="radio" name="status_rental" value="{{ $status }}"
+                            class="radio radio-emerald" @checked($rental->status_rental == $status) />
                     </label>
                 @endforeach
 

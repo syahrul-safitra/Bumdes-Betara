@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SppGroup;
 use Illuminate\Http\Request;
 use App\Models\SppLoan;
+use App\Models\User;
 use App\Models\SppDisbursement;
 use App\Models\SppInstallment;
 use Illuminate\Support\Facades\DB;
@@ -243,13 +244,17 @@ class SppLoanController extends Controller
 
     public function printReceipt($id) {
         $installment = SppInstallment::with(['loan.group'])->findOrFail($id);
+
+        $nama_admin = User::find(1);
+
+        $nama_admin = $nama_admin->name;
         
         if ($installment->status_bayar != 'lunas') {
             return redirect()->back()->with('error', 'Kuitansi belum bisa dicetak karena angsuran belum lunas.');
         }
 
         // Set ukuran kertas custom untuk kuitansi (A5 Lanskap agar pas)
-        $pdf = Pdf::loadView('Admin.SPP.Loan.receipt', compact('installment'))
+        $pdf = Pdf::loadView('Admin.SPP.Loan.receipt', compact('installment', 'nama_admin'))
                 ->setPaper('A4', 'portrait');
 
         return $pdf->stream('Kuitansi_Ags_' . $installment->angsuran_ke . '_' . $installment->loan->group->nama_kelompok . '.pdf');
@@ -262,13 +267,17 @@ class SppLoanController extends Controller
             $query->orderBy('angsuran_ke', 'asc');
         }])->findOrFail($id);
 
+        $nama_admin = User::find(1);
+
+        $nama_admin = $nama_admin->name;
+
         // Hitung total-total untuk footers laporan
         $totalPokok = $loan->installments->sum('jumlah_pokok');
         $totalBunga = $loan->installments->sum('jumlah_bunga');
         $totalDenda = $loan->installments->sum('denda_kumulatif');
         $totalSetoran = $totalPokok + $totalBunga + $totalDenda;
 
-        $pdf = Pdf::loadView('Admin.SPP.Loan.report', compact('loan', 'totalPokok', 'totalBunga', 'totalDenda', 'totalSetoran'))
+        $pdf = Pdf::loadView('Admin.SPP.Loan.report', compact('loan', 'totalPokok', 'totalBunga', 'totalDenda', 'totalSetoran', 'nama_admin'))
                 ->setPaper('a4', 'portrait');
 
         return $pdf->stream('Laporan_SPP_Kelompok_' . $loan->group->nama_kelompok . '.pdf');

@@ -230,13 +230,13 @@
             <td>
                 <p>Penyetor,</p>
                 <div style="margin-bottom: 50px;"></div>
-                <p class="font-bold">( Perwakilan Kelompok )</p>
+                <p class="font-bold">( {{ $installment->loan->group->nama_ketua }} )</p>
             </td>
             <td>
                 <p>Jambi, {{ date('d F Y', strtotime($installment->tanggal_bayar)) }}</p>
-                <p>Kasir & Admin BUMDes,</p>
+                <p>Admin BUMDes,</p>
                 <div style="margin-bottom: 50px;"></div>
-                <p class="font-bold">( ____________________ )</p>
+                <p class="font-bold">( {{ $nama_admin }} )</p>
             </td>
         </tr>
     </table>

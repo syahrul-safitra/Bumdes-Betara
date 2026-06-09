@@ -42,10 +42,10 @@
                                 Customer</th>
                             <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
                                 Kontak & Email</th>
+                            {{-- <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
+                                Alamat</th> --}}
                             <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
-                                Alamat</th>
-                            <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">
-                                Identitas (KTP)</th>
+                                Tipe</th>
                             <th class="bg-white text-[10px] font-black uppercase italic tracking-widest text-slate-400">Aksi
                             </th>
                         </tr>
@@ -70,26 +70,14 @@
                                                 class="fa-solid fa-phone mr-2 text-xs opacity-30"></i>{{ $item->no_telepon }}</span>
                                     </div>
                                 </td>
-                                <td>
+                                {{-- <td>
                                     <p class="line-clamp-2 max-w-[200px] text-xs font-medium italic leading-relaxed">
                                         {{ $item->alamat }}
                                     </p>
-                                </td>
+                                </td> --}}
                                 <td class="text-center">
-                                    @if ($item->file_identitas)
-                                        <div class="avatar">
-                                            <div
-                                                class="w-16 cursor-zoom-in rounded-xl ring ring-emerald-50 ring-offset-2 transition-transform hover:scale-110">
-                                                <a href="{{ asset('File/' . $item->file_identitas) }}" target="_blank">
-                                                    <img src="{{ asset('File/' . $item->file_identitas) }}"
-                                                        alt="IDENTITAS {{ $item->nama }}" />
-                                                </a>
-                                            </div>
-                                        </div>
-                                    @else
-                                        <span class="badge badge-ghost text-[10px] font-bold uppercase opacity-50">No
-                                            File</span>
-                                    @endif
+                                    <span
+                                        class="badge badge-ghost text-[10px] font-bold uppercase opacity-50">{{ $item->tipe }}</span>
                                 </td>
                                 <td class="pr-8 text-center">
                                     <div class="flex justify-center gap-2">

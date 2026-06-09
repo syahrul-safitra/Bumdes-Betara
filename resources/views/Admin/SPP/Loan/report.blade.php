@@ -262,8 +262,8 @@
             <td></td>
             <td>
                 <p>Jambi, {{ date('d F Y') }}</p>
-                <p style="margin-bottom: 50px;">Manajer Unit SPP BUMDes,</p>
-                <p class="font-bold">( ____________________ )</p>
+                <p style="margin-bottom: 50px;">Admin BUMDes,</p>
+                <p class="font-bold">( {{ $nama_admin }} )</p>
             </td>
         </tr>
     </table>

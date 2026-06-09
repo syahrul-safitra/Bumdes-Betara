@@ -1,11 +1,11 @@
-@extends("Admin.Layouts.main")
+@extends('Admin.Layouts.main')
 
-@section("content")
+@section('content')
     <main class="mx-auto max-w-5xl space-y-8 p-6 lg:p-10">
 
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="/admin/berita" class="btn btn-ghost btn-circle bg-white shadow-sm">
+                <a href="{{ url('/dokumentasi') }}" class="btn btn-ghost btn-circle bg-white shadow-sm">
                     <i class="fa-solid fa-arrow-left text-slate-600"></i>
                 </a>
                 <div>
@@ -17,7 +17,7 @@
         </div>
 
         <div class="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-xl shadow-slate-200/50">
-            <form action="{{ url("/dokumentasi") }}" method="POST" class="space-y-8 p-8 lg:p-12"
+            <form action="{{ url('/dokumentasi') }}" method="POST" class="space-y-8 p-8 lg:p-12"
                 enctype="multipart/form-data">
                 @csrf
 
@@ -26,10 +26,10 @@
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Judul Berita</span>
                         </label>
-                        <input type="text" name="judul" value="{{ old("judul") }}"
+                        <input type="text" name="judul" value="{{ old('judul') }}"
                             placeholder="Contoh: Peresmian Unit Usaha Baru"
-                            class="input input-bordered @error("judul") border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50 text-lg font-semibold focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
-                        @error("judul")
+                            class="input input-bordered @error('judul') border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50 text-lg font-semibold focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
+                        @error('judul')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -40,10 +40,10 @@
                         </label>
                         <div class="relative">
                             <i class="fa-regular fa-calendar absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                            <input type="date" name="tanggal" value="{{ old("tanggal") }}"
-                                class="input input-bordered @error("tanggal") border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50 pl-12 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
+                            <input type="date" name="tanggal" value="{{ old('tanggal') }}"
+                                class="input input-bordered @error('tanggal') border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50 pl-12 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
                         </div>
-                        @error("tanggal")
+                        @error('tanggal')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -65,8 +65,8 @@
                         </div>
 
                         <input type="file" name="gambar" id="gambar-input" onchange="previewImage()"
-                            class="file-input file-input-bordered @error("gambar") border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50" />
-                        @error("gambar")
+                            class="file-input file-input-bordered @error('gambar') border-red-500 @else border-slate-200 @enderror w-full rounded-2xl bg-slate-50" />
+                        @error('gambar')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -76,12 +76,12 @@
                     <label class="label mb-2">
                         <span class="label-text font-bold text-slate-700">Isi Berita</span>
                     </label>
-                    <input id="kontent" type="hidden" name="kontent" value="{{ old("kontent") }}">
-                    <div class="@error("kontent") border border-red-500 rounded-xl p-1 @enderror">
+                    <input id="kontent" type="hidden" name="kontent" value="{{ old('kontent') }}">
+                    <div class="@error('kontent') border border-red-500 rounded-xl p-1 @enderror">
                         <trix-editor input="kontent" placeholder="Tuliskan detail berita di sini..."
                             class="bg-slate-50"></trix-editor>
                     </div>
-                    @error("kontent")
+                    @error('kontent')
                         <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                     @enderror
                     <p class="mt-2 px-2 text-[11px] text-slate-400">*Gunakan toolbar di atas untuk memformat teks (Tebal,
@@ -89,7 +89,8 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-4 border-t border-slate-50 pt-6">
-                    <button type="button" class="btn btn-ghost rounded-2xl px-8 font-bold text-slate-500">Batal</button>
+                    <a href="{{ url('/dokumentasi') }}"
+                        class="btn btn-ghost rounded-2xl px-8 font-bold text-slate-500">Batal</a>
                     <button type="submit"
                         class="btn rounded-2xl border-none bg-emerald-600 px-10 font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
                         <i class="fa-solid fa-paper-plane mr-2"></i> Simpan & Publikasi

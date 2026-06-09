@@ -31,6 +31,9 @@ return new class extends Migration
 
             $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
 
+            $table->string('file_identitas')->nullable();
+            $table->string('alamat')->nullable();
+
             $table->timestamps();
         });
     }

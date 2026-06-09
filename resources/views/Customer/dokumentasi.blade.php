@@ -9,7 +9,7 @@
                         <span class="w-8 h-[2px] bg-emerald-600"></span>
                         Kabar Betara Ikd
                     </div>
-                    <h1 class="text-4xl font-black text-slate-800">Dokumentasi & <span class="text-emerald-600">Berita
+                    <h1 class="text-4xl font-black text-slate-800"><span class="text-emerald-600">Berita
                             Kegiatan</span></h1>
                     <p class="text-slate-500 mt-3 text-lg">Ikuti perkembangan terbaru, peresmian unit usaha, dan laporan
                         kegiatan BUMDES Bersama Betara secara transparan.</p>

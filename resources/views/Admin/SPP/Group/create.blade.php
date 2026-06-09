@@ -58,6 +58,15 @@
                                 required />
                         </div>
 
+                        {{-- NIK Ketua (Tambahan Baru) --}}
+                        <div class="flex w-full flex-col">
+                            <label class="mb-2 ml-1 text-sm font-bold text-slate-600">NIK Ketua Kelompok</label>
+                            <input type="text" name="nik_ketua" value="{{ old('nik_ketua') }}"
+                                placeholder="Contoh: 16 digit nomor induk kependudukan" maxlength="16" minlength="16"
+                                class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-indigo-500 focus:outline-none focus:ring-0 font-medium"
+                                required />
+                        </div>
+
                         {{-- No HP Ketua --}}
                         <div class="flex w-full flex-col">
                             <label class="mb-2 ml-1 text-sm font-bold text-slate-600">Nomor HP / WhatsApp Ketua</label>
@@ -65,6 +74,16 @@
                                 placeholder="Contoh: 0812xxxxxxxx"
                                 class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-indigo-500 focus:outline-none focus:ring-0"
                                 required />
+                        </div>
+
+                        {{-- File KTP Ketua (Tambahan Baru) --}}
+                        <div class="flex w-full flex-col md:col-span-2">
+                            <label class="mb-2 ml-1 text-sm font-bold text-slate-600">Upload KTP Ketua Kelompok</label>
+                            <input type="file" name="file_ktp" accept="image/*,application/pdf"
+                                class="file-input file-input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 font-medium text-slate-600 file:bg-slate-900 file:text-white file:border-none file:h-full file:px-5"
+                                required />
+                            <span class="text-[10px] text-slate-400 mt-1 ml-1">* Format berkas: JPG, PNG, atau PDF (Maksimal
+                                2MB)</span>
                         </div>
 
                         {{-- Alamat Kelompok --}}

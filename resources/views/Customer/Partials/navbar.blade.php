@@ -11,7 +11,7 @@
                 class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100 rounded-2xl w-64 border border-base-100 font-medium">
                 <li><a href="/" class="py-3">Beranda</a></li>
                 <li><a href="/profil" class="py-3">Profil</a></li>
-                <li><a href="/dokumentasi-desa" class="py-3">Dokumentasi</a></li>
+                <li><a href="/dokumentasi-desa" class="py-3">Berita</a></li>
                 <li>
                     <button onclick="panduan_modal.showModal()"
                         class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
@@ -42,7 +42,7 @@
         <ul class="menu menu-horizontal px-1 font-bold text-slate-500 gap-2 items-center">
             <li><a href="/" class="hover:text-emerald-600 rounded-xl transition-all">Beranda</a></li>
             <li><a href="/profil" class="hover:text-emerald-600 rounded-xl transition-all">Profil</a></li>
-            <li><a href="/dokumentasi-desa" class="hover:text-emerald-600 rounded-xl transition-all">Dokumentasi</a>
+            <li><a href="/dokumentasi-desa" class="hover:text-emerald-600 rounded-xl transition-all">Berita</a>
             </li>
             <li><a href="/rental-kendaraan" class="hover:text-emerald-600 rounded-xl transition-all">Rental</a></li>
 
@@ -176,24 +176,28 @@
                 <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
                 <div
                     class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
-                    3</div>
+                    3
+                </div>
                 <div class="space-y-2 pt-1">
-                    <h4 class="font-black text-slate-800 text-sm">Verifikasi & Metode Pembayaran</h4>
+                    <h4 class="font-black text-slate-800 text-sm">Upload Identitas & Pembayaran Tunai</h4>
                     <p class="text-xs text-slate-500 leading-relaxed">
-                        Admin Buberta Rent akan memverifikasi berkas Anda. Setelah disetujui, Anda dapat melakukan
-                        pembayaran hingga status berubah menjadi <span
+                        Customer wajib mengunggah berkas identitas (<span class="font-bold text-slate-700">KTP /
+                            NPWP</span>) beserta <span class="font-bold text-slate-700">alamat lengkap domisili</span>
+                        saat melakukan rental. Pembayaran dilakukan secara tunai hingga status berubah menjadi
+                        <span
                             class="badge badge-xs border-none bg-emerald-500 text-white font-black uppercase text-[9px] px-1.5 py-1">LUNAS</span>.
                     </p>
 
-                    {{-- Keterangan Metode Pembayaran --}}
+                    {{-- Keterangan Metode Pembayaran Resmi --}}
                     <div class="flex flex-wrap gap-2 pt-1">
                         <span
-                            class="badge badge-sm border-none bg-slate-100 text-slate-700 font-medium text-[10px] py-2 px-3">
-                            <i class="fa-solid fa-bank mr-1.5 text-slate-400"></i> Transfer Bank
+                            class="badge badge-sm border-none bg-emerald-50 text-emerald-700 font-bold text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-money-bill-wave mr-1.5 text-emerald-600"></i> Hanya Pembayaran Tunai
+                            (Cash)
                         </span>
                         <span
-                            class="badge badge-sm border-none bg-slate-100 text-slate-700 font-medium text-[10px] py-2 px-3">
-                            <i class="fa-solid fa-money-bill-wave mr-1.5 text-slate-400"></i> Cash / Bayar di Tempat
+                            class="badge badge-sm border-none bg-indigo-50 text-indigo-700 font-bold text-[10px] py-2 px-3">
+                            <i class="fa-solid fa-file-invoice mr-1.5 text-indigo-600"></i> Wajib Berkas & Alamat
                         </span>
                     </div>
                 </div>

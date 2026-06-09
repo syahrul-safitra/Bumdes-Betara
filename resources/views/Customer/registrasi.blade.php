@@ -267,7 +267,7 @@
                         </div>
                     </div>
 
-                    <div class="form-control">
+                    {{-- <div class="form-control">
                         <label id="label-alamat" class="label text-xs font-bold text-slate-600 uppercase ml-1">Alamat
                             Domisili</label>
                         <textarea name="alamat" id="textarea-alamat"
@@ -277,7 +277,7 @@
                             <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
                                     class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <div class="form-control">
                         <label class="label text-xs font-bold text-slate-600 uppercase ml-1">Password Akun</label>
@@ -290,7 +290,7 @@
                         @enderror
                     </div>
 
-                    <div class="form-control">
+                    {{-- <div class="form-control">
                         <label id="label-identitas"
                             class="label text-xs font-bold text-slate-600 uppercase ml-1">Unggah Foto KTP</label>
                         <div id="identitas-input-container"
@@ -323,7 +323,7 @@
                             <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
                                     class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
                         @enderror
-                    </div>
+                    </div> --}}
 
                     <button type="submit" id="btn-submit"
                         class="btn w-full h-14 bg-emerald-600 hover:bg-emerald-700 text-white border-none rounded-2xl font-black text-lg shadow-xl shadow-emerald-200 mt-4 transition-all active:scale-95">

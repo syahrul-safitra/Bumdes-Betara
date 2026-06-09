@@ -35,14 +35,14 @@
                                     <i class="fa-solid fa-phone text-emerald-500 w-5"></i>
                                     <span class="text-sm font-semibold text-slate-600">{{ $customer->no_telepon }}</span>
                                 </div>
-                                <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                                {{-- <div class="flex items-start gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
                                     <i class="fa-solid fa-location-dot text-emerald-500 mt-1 w-5"></i>
                                     <span
                                         class="text-sm font-semibold text-slate-600 leading-relaxed">{{ $customer->alamat }}</span>
-                                </div>
+                                </div> --}}
 
                                 {{-- Preview KTP --}}
-                                <div class="mt-6">
+                                {{-- <div class="mt-6">
                                     <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 px-1">
                                         Identitas KTP</p>
                                     <div
@@ -56,7 +56,7 @@
                                                 class="btn btn-sm btn-white rounded-xl">Lihat Detail</a>
                                         </div>
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                     </div>

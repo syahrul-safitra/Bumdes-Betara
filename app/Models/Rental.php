@@ -18,8 +18,10 @@ class Rental extends Model
         'bukti_pembayaran',
         'total_sewa',
         'total_denda',
+        'alamat',
         'customer_id',
         'vehicle_id',
+        'file_identitas'
     ];
 
     public function customer()

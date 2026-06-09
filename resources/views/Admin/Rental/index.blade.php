@@ -336,14 +336,25 @@
 
 
     <script>
-        function openDeleteModal(id, name) {
-            const modal = document.getElementById('delete_modal');
-            const form = document.getElementById('delete_form');
-            const titleSpan = document.getElementById('delete_item_title');
+        function openDeleteModal(id, customerName) {
+            // 1. Set nama customer ke elemen span id="delete_item_name"
+            const nameSpan = document.getElementById('delete_item_name');
+            if (nameSpan) {
+                nameSpan.innerText = customerName;
+            }
 
-            titleSpan.innerText = "Pesanan atas nama " + name;
-            form.action = '/rental/' + id;
-            modal.showModal();
+            // 2. Set action URL pada form agar mengarah ke route destroy yang tepat
+            const deleteForm = document.getElementById('delete_form');
+            if (deleteForm) {
+                // Sesuaikan URL rute hapus sesuai dengan konfigurasi web.php Anda (misal: /rental atau /rental-mobil)
+                deleteForm.action = '/rental/' + id;
+            }
+
+            // 3. Tampilkan modal menggunakan fungsi bawaan DaisyUI/HTML5 Dialog
+            const modal = document.getElementById('delete_modal');
+            if (modal) {
+                modal.showModal();
+            }
         }
     </script>
 @endsection

@@ -24,17 +24,28 @@ class SppGroupController extends Controller
 
     public function store(Request $request)
     {
+
         // Validasi data induk kelompok & array anggotanya
         $request->validate([
             'nama_kelompok'   => 'required|string|max:255',
             'nama_ketua'      => 'required|string|max:255',
             'no_hp_ketua'     => 'required|string|max:15',
             'alamat_kelompok' => 'required|string',
+            'nik_ketua' => 'required|string|size:16|unique:spp_groups,nik_ketua',
+            'file_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'anggota'         => 'required|array|min:1',
             'anggota.*.nama'  => 'required|string|max:255',
             'anggota.*.nik'   => 'required|string|size:16|unique:spp_members,nik',
             'anggota.*.file_ktp' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
+
+        if ($request->file('file_ktp')) {
+            $file = $request->file('file_ktp');
+
+            $namaFileKtpKetua = 'KTP_' . $request->nik_ketua . '_'  . time() . '.' .  $file->getClientOriginalExtension();
+
+            $file->move('File/SPP/KTP', $namaFileKtpKetua);
+        }
 
         // Mulai transaksi database
         DB::beginTransaction();
@@ -45,6 +56,8 @@ class SppGroupController extends Controller
                 'nama_kelompok'   => $request->nama_kelompok,
                 'nama_ketua'      => $request->nama_ketua,
                 'no_hp_ketua'     => $request->no_hp_ketua,
+                'nik_ketua' => $request->nik_ketua,
+                'file_ktp' => $namaFileKtpKetua,
                 'alamat_kelompok' => $request->alamat_kelompok,
                 'status'          => 'aktif'
             ]);
@@ -104,11 +117,113 @@ class SppGroupController extends Controller
         ]);
     }
 
+    // public function update(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'nama_kelompok'   => 'required|string|max:255',
+    //         'nama_ketua'      => 'required|string|max:255',
+    //         'no_hp_ketua'     => 'required|string|max:15',
+    //         'alamat_kelompok' => 'required|string',
+    //         'status'          => 'required|in:aktif,non_aktif',
+    //         'anggota'         => 'required|array|min:1',
+    //         'anggota.*.id'    => 'nullable',
+    //         'anggota.*.nama'  => 'required|string|max:255',
+    //         'anggota.*.nik'   => 'required|string|size:16',
+    //     ]);
+
+    //     DB::beginTransaction();
+
+    //     try {
+    //         $group = SppGroup::findOrFail($id);
+            
+    //         // 1. Update Profil Data Induk Kelompok
+    //         $group->update([
+    //             'nama_kelompok'   => $request->nama_kelompok,
+    //             'nama_ketua'      => $request->nama_ketua,
+    //             'no_hp_ketua'     => $request->no_hp_ketua,
+    //             'alamat_kelompok' => $request->alamat_kelompok,
+    //             'status'          => $request->status,
+    //         ]);
+
+    //         // Kumpulkan semua ID Anggota yang dikirim dari form untuk melacak penghapusan
+    //         $keptMemberIds = [];
+
+    //         // 2. Olah Data Array Anggota
+    //         foreach ($request->anggota as $index => $dataAnggota) {
+                
+    //             if (!empty($dataAnggota['id'])) {
+    //                 // KONDISI A: Anggota Lama (Lakukan Update Data)
+    //                 $member = SppMember::where('group_id', $group->id)->findOrFail($dataAnggota['id']);
+    //                 $keptMemberIds[] = $member->id;
+
+    //                 $updateData = [
+    //                     'nama_anggota' => $dataAnggota['nama'],
+    //                     'nik'          => $dataAnggota['nik']
+    //                 ];
+
+    //                 // Jika ganti berkas foto KTP
+    //                 if (isset($dataAnggota['file_ktp'])) {
+    //                     // Hapus file KTP lama dari folder public jika ada
+    //                     if ($member->file_ktp && file_exists(public_path('File/SPP/KTP/' . $member->file_ktp))) {
+    //                         unlink(public_path('File/SPP/KTP/' . $member->file_ktp));
+    //                     }
+
+    //                     $file = $dataAnggota['file_ktp'];
+    //                     $namaFileKtp = 'KTP_' . $dataAnggota['nik'] . '_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+    //                     $file->move(public_path('File/SPP/KTP'), $namaFileKtp);
+    //                     $updateData['file_ktp'] = $namaFileKtp;
+    //                 }
+
+    //                 $member->update($updateData);
+
+    //             } else {
+    //                 // KONDISI B: Anggota Baru yang Ditambahkan Saat Edit (Lakukan Insert Baru)
+    //                 $namaFileKtp = null;
+    //                 if (isset($dataAnggota['file_ktp'])) {
+    //                     $file = $dataAnggota['file_ktp'];
+    //                     $namaFileKtp = 'KTP_' . $dataAnggota['nik'] . '_' . time() . '_' . $index . '.' . $file->getClientOriginalExtension();
+    //                     $file->move(public_path('File/SPP/KTP'), $namaFileKtp);
+    //                 }
+
+    //                 $newMember = SppMember::create([
+    //                     'group_id'     => $group->id,
+    //                     'nik'          => $dataAnggota['nik'],
+    //                     'nama_anggota' => $dataAnggota['nama'],
+    //                     'file_ktp'     => $namaFileKtp
+    //                 ]);
+
+    //                 $keptMemberIds[] = $newMember->id;
+    //             }
+    //         }
+
+    //         // KONDISI C: Hapus Anggota yang Dibuang oleh Admin dari Form Edit
+    //         // Cari anggota di database yang ID-nya tidak terdaftar di variabel $keptMemberIds
+    //         $deletedMembers = SppMember::where('group_id', $group->id)->whereNotIn('id', $keptMemberIds)->get();
+    //         foreach ($deletedMembers as $delMember) {
+    //             // Hapus file fisik KTP-nya
+    //             if ($delMember->file_ktp && file_exists(public_path('File/SPP/KTP/' . $delMember->file_ktp))) {
+    //                 unlink(public_path('File/SPP/KTP/' . $delMember->file_ktp));
+    //             }
+    //             // Hapus baris di DB
+    //             $delMember->delete();
+    //         }
+
+    //         DB::commit();
+    //         return redirect('/spp-group')->with('success', 'Data Kelompok ' . $request->nama_kelompok . ' berhasil diperbarui!');
+
+    //     } catch (\Exception $e) {
+    //         DB::rollBack();
+    //         return redirect()->back()->withInput()->withErrors(['error_sistem' => 'Gagal mengubah data: ' . $e->getMessage()]);
+    //     }
+    // }
+
     public function update(Request $request, $id)
     {
         $request->validate([
             'nama_kelompok'   => 'required|string|max:255',
             'nama_ketua'      => 'required|string|max:255',
+            'nik_ketua'       => 'required|string|size:16', // Tambahan Validasi NIK Ketua
+            'file_ktp'        => 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2048', // Tambahan Validasi File KTP Ketua (Nullable)
             'no_hp_ketua'     => 'required|string|max:15',
             'alamat_kelompok' => 'required|string',
             'status'          => 'required|in:aktif,non_aktif',
@@ -123,14 +238,33 @@ class SppGroupController extends Controller
         try {
             $group = SppGroup::findOrFail($id);
             
-            // 1. Update Profil Data Induk Kelompok
-            $group->update([
+            // Siapkan data induk yang akan diupdate
+            $updateGroupData = [
                 'nama_kelompok'   => $request->nama_kelompok,
                 'nama_ketua'      => $request->nama_ketua,
+                'nik_ketua'       => $request->nik_ketua, // Simpan NIK Ketua Baru/Lama
                 'no_hp_ketua'     => $request->no_hp_ketua,
                 'alamat_kelompok' => $request->alamat_kelompok,
                 'status'          => $request->status,
-            ]);
+            ];
+
+            // Proses Upload Jika Admin Mengganti Berkas KTP Ketua Kelompok
+            if ($request->hasFile('file_ktp')) {
+                // Hapus file KTP lama milik ketua dari folder jika sebelumnya sudah ada
+                if ($group->file_ktp && file_exists(public_path('File/SPP/KTP/' . $group->file_ktp))) {
+                    unlink(public_path('File/SPP/KTP/' . $group->file_ktp));
+                }
+
+                $fileKetua = $request->file('file_ktp');
+                // Format penamaan berkas disamakan dengan sistem KTP Anggota Anda
+                $namaFileKtpKetua = 'KTP_KETUA_' . $request->nik_ketua . '_' . time() . '.' . $fileKetua->getClientOriginalExtension();
+                $fileKetua->move(public_path('File/SPP/KTP'), $namaFileKtpKetua);
+                
+                $updateGroupData['file_ktp'] = $namaFileKtpKetua;
+            }
+
+            // 1. Update Profil Data Induk Kelompok beserta Atribut Ketua Baru
+            $group->update($updateGroupData);
 
             // Kumpulkan semua ID Anggota yang dikirim dari form untuk melacak penghapusan
             $keptMemberIds = [];
@@ -148,7 +282,7 @@ class SppGroupController extends Controller
                         'nik'          => $dataAnggota['nik']
                     ];
 
-                    // Jika ganti berkas foto KTP
+                    // Jika ganti berkas foto KTP Anggota
                     if (isset($dataAnggota['file_ktp'])) {
                         // Hapus file KTP lama dari folder public jika ada
                         if ($member->file_ktp && file_exists(public_path('File/SPP/KTP/' . $member->file_ktp))) {
@@ -184,7 +318,6 @@ class SppGroupController extends Controller
             }
 
             // KONDISI C: Hapus Anggota yang Dibuang oleh Admin dari Form Edit
-            // Cari anggota di database yang ID-nya tidak terdaftar di variabel $keptMemberIds
             $deletedMembers = SppMember::where('group_id', $group->id)->whereNotIn('id', $keptMemberIds)->get();
             foreach ($deletedMembers as $delMember) {
                 // Hapus file fisik KTP-nya

@@ -23,10 +23,11 @@
 
                     <div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
 
-                        {{-- Kolom Kiri --}}
+                        {{-- Kolom Kiri: Data Profil Utama --}}
                         <div class="flex flex-col gap-6">
                             <h2 id="header-kiri" class="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">
-                                Informasi Pribadi / Instansi</h2>
+                                Informasi Pribadi / Instansi
+                            </h2>
 
                             {{-- Tipe Customer --}}
                             <div class="flex w-full flex-col">
@@ -34,23 +35,43 @@
                                 <select name="tipe" id="edit-tipe" onchange="handleEditTypeChange(this.value)"
                                     class="select select-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-emerald-500 focus:outline-none focus:ring-0 font-medium">
                                     <option value="individu"
-                                        {{ old('tipe', $customer->tipe) == 'individu' ? 'selected' : '' }}>Individu /
-                                        Pribadi</option>
+                                        {{ old('tipe', $customer->tipe) == 'individu' ? 'selected' : '' }}>
+                                        Individu / Pribadi
+                                    </option>
                                     <option value="perusahaan"
-                                        {{ old('tipe', $customer->tipe) == 'perusahaan' ? 'selected' : '' }}>Perusahaan / PT
+                                        {{ old('tipe', $customer->tipe) == 'perusahaan' ? 'selected' : '' }}>
+                                        Perusahaan / PT
                                     </option>
                                 </select>
                             </div>
 
                             {{-- Nama --}}
                             <div class="flex w-full flex-col">
-                                <label id="label-edit-nama" class="mb-2 ml-1 text-sm font-bold text-slate-600">Nama
-                                    Lengkap</label>
+                                <label id="label-edit-nama" class="mb-2 ml-1 text-sm font-bold text-slate-600">
+                                    Nama Lengkap
+                                </label>
                                 <input type="text" name="nama" id="input-edit-nama"
                                     value="{{ old('nama', $customer->nama) }}"
                                     class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-emerald-500 focus:outline-none focus:ring-0 custom-edit-focus"
                                     required />
                             </div>
+
+                            {{-- Alamat (Ditaruh di bawah nama agar textarea mengambil ruang vertikal yang pas) --}}
+                            {{-- <div class="flex w-full flex-col">
+                                <label id="label-edit-alamat" class="mb-2 ml-1 text-sm font-bold text-slate-600">
+                                    Alamat Rumah / Kantor
+                                </label>
+                                <textarea name="alamat" id="textarea-edit-alamat"
+                                    class="textarea textarea-bordered min-h-[140px] w-full rounded-2xl border-slate-200 bg-slate-50 p-5 focus:border-emerald-500 focus:outline-none focus:ring-0 custom-edit-focus"
+                                    required>{{ old('alamat', $customer->alamat) }}</textarea>
+                            </div> --}}
+                        </div>
+
+                        {{-- Kolom Kanan: Kontak & Akses Keamanan --}}
+                        <div class="flex flex-col gap-6">
+                            <h2 id="header-kanan" class="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">
+                                Kontak & Kredensial
+                            </h2>
 
                             {{-- Email --}}
                             <div class="flex w-full flex-col">
@@ -62,76 +83,32 @@
 
                             {{-- Telepon --}}
                             <div class="flex w-full flex-col">
-                                <label id="label-edit-telepon" class="mb-2 ml-1 text-sm font-bold text-slate-600">Nomor
-                                    Telepon / WhatsApp</label>
+                                <label id="label-edit-telepon" class="mb-2 ml-1 text-sm font-bold text-slate-600">
+                                    Nomor Telepon / WhatsApp
+                                </label>
                                 <input type="text" name="no_telepon"
                                     value="{{ old('no_telepon', $customer->no_telepon) }}"
                                     class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-emerald-500 focus:outline-none focus:ring-0 custom-edit-focus"
                                     required />
                             </div>
 
-                            {{-- Alamat --}}
-                            <div class="flex w-full flex-col">
-                                <label id="label-edit-alamat" class="mb-2 ml-1 text-sm font-bold text-slate-600">Alamat
-                                    Rumah</label>
-                                <textarea name="alamat" id="textarea-edit-alamat"
-                                    class="textarea textarea-bordered min-h-[120px] w-full rounded-2xl border-slate-200 bg-slate-50 p-5 focus:border-emerald-500 focus:outline-none focus:ring-0 custom-edit-focus"
-                                    required>{{ old('alamat', $customer->alamat) }}</textarea>
-                            </div>
-                        </div>
-
-                        {{-- Kolom Kanan --}}
-                        <div class="flex flex-col gap-6">
-                            <h2 id="header-kanan" class="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">
-                                Keamanan & Identitas</h2>
-
                             {{-- Password --}}
                             <div class="flex w-full flex-col">
                                 <div class="mb-2 flex items-center justify-between px-1">
                                     <label class="text-sm font-bold text-slate-600">Ganti Password</label>
-                                    <span
-                                        class="text-[10px] font-medium uppercase italic tracking-tighter text-slate-400">Kosongkan
-                                        jika tetap</span>
+                                    <span class="text-[10px] font-medium uppercase italic tracking-tighter text-slate-400">
+                                        Kosongkan jika tetap
+                                    </span>
                                 </div>
-                                <input type="text" name="password" placeholder="••••••••"
+                                {{-- Diubah ke type="password" demi keamanan input --}}
+                                <input type="password" name="password" placeholder="••••••••"
                                     class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-emerald-500 focus:outline-none focus:ring-0 custom-edit-focus" />
                             </div>
-
-                            {{-- Berkas Identitas Dinamis --}}
-                            <div class="flex w-full flex-col">
-                                <label id="label-edit-identitas" class="mb-2 ml-1 text-sm font-bold text-slate-600">Dokumen
-                                    KTP</label>
-
-                                {{-- Container Preview --}}
-                                <div
-                                    class="group relative mb-4 mt-2 overflow-hidden rounded-3xl border border-slate-100 bg-slate-50 p-2">
-                                    <div
-                                        class="absolute inset-0 z-10 flex items-center justify-center bg-slate-900/40 opacity-0 transition-opacity group-hover:opacity-100">
-                                        <span id="text-edit-overlay"
-                                            class="text-[10px] font-black uppercase tracking-widest text-white">Preview
-                                            Dokumen</span>
-                                    </div>
-
-                                    {{-- Diganti dari gambar_ktp menjadi file_identitas --}}
-                                    <img id="preview-identitas"
-                                        src="{{ $customer->file_identitas ? asset('File/' . $customer->file_identitas) : 'https://placehold.co/600x400/f8fafc/cbd5e1?text=No+Image' }}"
-                                        class="h-44 w-full rounded-2xl object-cover transition-all" alt="Preview Identitas">
-                                </div>
-
-                                {{-- Input File diubah name-nya menjadi file_identitas --}}
-                                <input type="file" name="file_identitas" id="input-identitas"
-                                    onchange="previewEditImage(this)"
-                                    class="file-input file-input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 file:mr-4 file:border-none file:bg-slate-900 file:px-6 file:text-[10px] file:font-black file:uppercase file:text-white hover:file:bg-emerald-600" />
-
-                                <span
-                                    class="ml-1 mt-2 text-[10px] font-bold uppercase italic tracking-widest text-slate-400">
-                                    Max 2MB (JPG/PNG)
-                                </span>
-                            </div>
                         </div>
+
                     </div>
 
-                    {{-- Footer --}}
+                    {{-- Footer Tombol Aksi --}}
                     <div class="mt-12 flex items-center justify-end gap-4 border-t border-slate-50 pt-10">
                         <a href="{{ url('customer') }}"
                             class="btn btn-ghost rounded-2xl px-10 font-black uppercase tracking-widest text-slate-400">
@@ -139,7 +116,7 @@
                         </a>
                         <button type="submit" id="btn-edit-submit"
                             class="btn rounded-2xl border-none bg-emerald-600 px-12 font-black uppercase tracking-widest text-white shadow-xl shadow-emerald-100 transition-all hover:-translate-y-1 hover:bg-emerald-700">
-                            Simpan
+                            Simpan Changes
                         </button>
                     </div>
                 </form>

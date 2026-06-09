@@ -61,6 +61,15 @@
                                 required />
                         </div>
 
+                        {{-- NIK Ketua (Tambahan Baru) --}}
+                        <div class="flex w-full flex-col">
+                            <label class="mb-2 ml-1 text-sm font-bold text-slate-600">NIK Ketua Kelompok</label>
+                            <input type="text" name="nik_ketua" value="{{ old('nik_ketua', $group->nik_ketua) }}"
+                                maxlength="16" placeholder="Contoh: 16 digit nomor induk kependudukan"
+                                class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-indigo-500 focus:outline-none focus:ring-0 font-medium"
+                                required />
+                        </div>
+
                         {{-- No HP Ketua --}}
                         <div class="flex w-full flex-col">
                             <label class="mb-2 ml-1 text-sm font-bold text-slate-600">Nomor HP / WhatsApp Ketua</label>
@@ -80,6 +89,28 @@
                                     {{ old('status', $group->status) == 'non_aktif' ? 'selected' : '' }}>Non-Aktif /
                                     Dibekukan</option>
                             </select>
+                        </div>
+
+                        {{-- File KTP Ketua (Tambahan Baru) --}}
+                        <div class="flex w-full flex-col">
+                            <div class="mb-2 flex items-center justify-between px-1">
+                                <label class="text-sm font-bold text-slate-600">Ganti KTP Ketua Kelompok</label>
+                                <span
+                                    class="text-[10px] font-medium uppercase italic tracking-tighter text-slate-400">Kosongkan
+                                    jika tetap</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <input type="file" name="file_ktp" accept="image/*,application/pdf"
+                                    class="file-input file-input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 font-medium text-slate-600 file:bg-slate-900 file:text-white file:border-none file:h-full file:px-4" />
+
+                                @if ($group->file_ktp)
+                                    <a href="{{ asset('File/SPP/KTP/' . $group->file_ktp) }}" target="_blank"
+                                        class="btn h-14 w-14 btn-square bg-slate-900 text-white border-none rounded-2xl hover:bg-indigo-600 flex items-center justify-center shadow-lg"
+                                        title="Lihat KTP Ketua Saat Ini">
+                                        <i class="fa-solid fa-image text-base"></i>
+                                    </a>
+                                @endif
+                            </div>
                         </div>
 
                         {{-- Alamat Kelompok --}}
@@ -146,8 +177,9 @@
 
                                     <div class="md:col-span-1 text-center">
                                         <button type="button" onclick="removeMemberEditRow(this)"
-                                            class="btn btn-sm btn-square rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border-none"><i
-                                                class="fa-solid fa-trash text-xs"></i></button>
+                                            class="btn btn-sm btn-square rounded-xl bg-red-50 text-red-600 hover:bg-red-100 border-none">
+                                            <i class="fa-solid fa-trash text-xs"></i>
+                                        </button>
                                     </div>
                                 </div>
                             @endforeach

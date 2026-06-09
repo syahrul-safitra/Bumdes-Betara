@@ -2,12 +2,12 @@
 
 @section('content')
     <div class="hero min-h-[85vh] relative overflow-hidden"
-        style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('{{ asset('Img/compres_bg.jpg') }}'); 
-            background-size: cover; 
-            background-position: center; 
-            background-attachment: fixed;">
+        style="background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{{ asset('Img/bg.png') }}'); 
+        background-size: cover; 
+        background-position: center; 
+        background-attachment: fixed;">
 
-        <div class="hero-content text-center text-white z-10 p-6">
+        {{-- <div class="hero-content text-center text-white z-10 p-6">
             <div class="max-w-3xl">
                 <h1 class="mb-6 text-6xl md:text-7xl font-extrabold tracking-tight">
                     BUMDES <br /> <span class="text-emerald-400">Bersama Betara</span>
@@ -16,7 +16,7 @@
                     Mengelola potensi desa untuk kemandirian ekonomi Desa Betara.
                 </p>
             </div>
-        </div>
+        </div> --}}
     </div>
     <div class="absolute bottom-0 left-0 w-full overflow-hidden z-20 leading-[0]">
         <svg class="relative block w-full h-[60px]" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"

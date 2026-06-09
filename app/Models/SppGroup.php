@@ -10,7 +10,7 @@ class SppGroup extends Model
     use HasFactory;
 
     protected $table = 'spp_groups';
-    protected $fillable = ['nama_kelompok', 'nama_ketua', 'no_hp_ketua', 'alamat_kelompok', 'status'];
+    protected $fillable = ['nama_kelompok', 'nama_ketua', 'no_hp_ketua', 'alamat_kelompok', 'status', 'nik_ketua', 'file_ktp'];
 
     // Relasi: Satu kelompok memiliki banyak anggota
     public function members()

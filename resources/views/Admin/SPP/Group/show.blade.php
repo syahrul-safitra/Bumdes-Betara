@@ -24,7 +24,8 @@
                 </div>
                 <div class="space-y-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">Kelompok {{ $group->nama_kelompok }}
+                        <h1 class="text-2xl font-black text-slate-800 tracking-tight">
+                            Kelompok {{ $group->nama_kelompok }}
                         </h1>
                         @if ($group->status == 'aktif')
                             <span
@@ -34,10 +35,38 @@
                                 class="badge border-none bg-slate-100 text-slate-400 font-bold uppercase text-[9px] px-2.5 py-2 rounded-lg">Non-Aktif</span>
                         @endif
                     </div>
-                    <p class="text-sm font-medium text-slate-600">Ketua Kelompok (PIC): <span
-                            class="font-bold text-slate-800">{{ $group->nama_ketua }}</span></p>
-                    <p class="text-xs text-indigo-600 font-bold flex items-center gap-1"><i
-                            class="fa-solid fa-phone text-xs"></i> {{ $group->no_hp_ketua }}</p>
+
+                    {{-- Nama Ketua Kelompok --}}
+                    <p class="text-sm font-medium text-slate-600">
+                        Ketua Kelompok (PIC): <span class="font-bold text-slate-800">{{ $group->nama_ketua }}</span>
+                    </p>
+
+                    {{-- NIK Ketua Kelompok (Tambahan Baru) --}}
+                    <p class="text-xs font-medium text-slate-500">
+                        NIK Ketua: <span
+                            class="font-mono font-bold text-slate-700 tracking-wider">{{ $group->nik_ketua ?? '-' }}</span>
+                    </p>
+
+                    {{-- Kontak & Tautan Berkas KTP (Tambahan Baru) --}}
+                    <div class="flex flex-wrap items-center gap-4 pt-1">
+                        <p class="text-xs text-indigo-600 font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-phone text-xs"></i> {{ $group->no_hp_ketua }}
+                        </p>
+
+                        @if ($group->file_ktp)
+                            <a href="{{ asset('File/SPP/KTP/' . $group->file_ktp) }}" target="_blank"
+                                class="text-xs text-emerald-600 font-bold flex items-center gap-1.5 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-xl transition-all">
+                                <i class="fa-solid fa-id-card text-xs"></i> Lihat Berkas KTP
+                            </a>
+                        @else
+                            <span
+                                class="text-xs text-slate-400 italic flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-xl">
+                                <i class="fa-solid fa-id-card-clip text-xs text-slate-300"></i> KTP Belum Diupload
+                            </span>
+                        @endif
+                    </div>
+
+                    {{-- Alamat Domisili Kelompok --}}
                     <div class="text-xs text-slate-400 pt-2 flex items-start gap-1 max-w-xl">
                         <i class="fa-solid fa-location-dot text-slate-300 mt-0.5"></i>
                         <span>{{ $group->alamat_kelompok }}</span>
@@ -50,17 +79,21 @@
                 class="grid grid-cols-2 gap-4 border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-8 min-w-[240px]">
                 <div>
                     <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total Anggota</p>
-                    <p class="text-xl font-black text-slate-800 mt-0.5">{{ $group->members->count() }} <span
-                            class="text-xs text-slate-400 font-normal">Orang</span></p>
+                    <p class="text-xl font-black text-slate-800 mt-0.5">
+
+                        {{ $group->members->count() + 1 }}
+                        <span class="text-xs text-slate-400 font-normal">Orang</span>
+                    </p>
                 </div>
                 <div>
                     <p class="text-[10px] font-black uppercase text-slate-400 tracking-wider">Total Pinjaman</p>
-                    <p class="text-xl font-black text-slate-800 mt-0.5">{{ $group->loans->count() }} <span
-                            class="text-xs text-slate-400 font-normal">Kontrak</span></p>
+                    <p class="text-xl font-black text-slate-800 mt-0.5">
+                        {{ $group->loans->count() }}
+                        <span class="text-xs text-slate-400 font-normal">Kontrak</span>
+                    </p>
                 </div>
             </div>
         </div>
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
             {{-- SISI KIRI (2 COLUMNS): MANIFEST DATA ANGGOTA & BERKAS KTP --}}

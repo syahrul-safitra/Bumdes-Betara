@@ -5,7 +5,7 @@
 
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <a href="/vehicle" class="btn btn-ghost btn-circle bg-white shadow-sm">
+                <a href="{{ url('/vehicle') }}" class="btn btn-ghost btn-circle bg-white shadow-sm">
                     <i class="fa-solid fa-arrow-left text-slate-600"></i>
                 </a>
                 <div>
@@ -120,7 +120,8 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-4 border-t border-slate-50 pt-6">
-                    <button type="button" class="btn btn-ghost rounded-2xl px-8 font-bold text-slate-500">Batal</button>
+                    <a href="{{ url('/vehicle') }}"
+                        class="btn btn-ghost rounded-2xl px-8 font-bold text-slate-500">Batal</a>
                     <button type="submit"
                         class="btn rounded-2xl border-none bg-emerald-600 px-10 font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
                         <i class="fa-solid fa-car mr-2"></i> Simpan Armada

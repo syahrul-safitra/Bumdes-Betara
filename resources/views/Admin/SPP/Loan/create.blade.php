@@ -50,7 +50,7 @@
                             @foreach ($groups as $group)
                                 <option value="{{ $group->id }}" {{ old('group_id') == $group->id ? 'selected' : '' }}>
                                     Kelompok {{ $group->nama_kelompok }} (Ketua: {{ $group->nama_ketua }} - Anggota:
-                                    {{ $group->members->count() }} Orang)
+                                    {{ $group->members->count() + 1 }} Orang)
                                 </option>
                             @endforeach
                         </select>

@@ -14,6 +14,8 @@ return new class extends Migration
             $table->string('nama_kelompok');
             $table->string('nama_ketua');
             $table->string('no_hp_ketua', 15);
+            $table->string('nik_ketua', 16);
+            $table->string('file_ktp');
             $table->text('alamat_kelompok');
             $table->enum('status', ['aktif', 'non_aktif'])->default('aktif');
             $table->timestamps();

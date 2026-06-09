@@ -15,7 +15,7 @@ class Customer extends Authenticatable
         'nama', 
         'tipe',
         'email',
-        'alamat',
+        // 'alamat',
         'no_telepon', 
         'file_identitas', 
         'password'

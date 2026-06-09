@@ -103,7 +103,8 @@ Route::post('/rental', [RentalController::class, 'store'])->middleware('isCustom
 Route::post('/register-customer', [CustomerController::class, 'store']);
 
 Route::get('/detail-rental/{rental}', [RentalController::class, 'detail'])->middleware('isCustomer');
-Route::post('/upload-pembayaran/{rental}', [RentalController::class, 'uploadPembayaran'])->middleware('isCustomer');
+// Route::post('/upload-pembayaran/{rental}', [RentalController::class, 'uploadPembayaran'])->middleware('isCustomer');
+Route::post('/upload-identitas/{rental}', [RentalController::class, 'uploadIdentitas'])->middleware('isCustomer');
 
 
 Route::get('/riwayat-sewa', [RentalController::class, 'riwayat'])->middleware('isCustomer');
