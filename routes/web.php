@@ -136,7 +136,7 @@ Route::get('/dokumentasi-desa', function () {
     }
     
     return view('Customer.dokumentasi', [
-        'dokumentasis' => Dokumentasi::orderBy('tanggal')->paginate(6)
+        'dokumentasis' => Dokumentasi::orderBy('tanggal', 'desc')->paginate(6)
     ]);
 });
 
