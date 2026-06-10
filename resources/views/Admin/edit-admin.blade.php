@@ -52,6 +52,14 @@
                             <h2 class="text-xs font-black uppercase tracking-[0.2em] text-emerald-600">Keamanan & Identitas
                             </h2>
 
+                            {{-- Nama --}}
+                            <div class="flex w-full flex-col">
+                                <label class="mb-2 ml-1 text-sm font-bold text-slate-600">No Telepon</label>
+                                <input type="text" name="no_telepon" value="{{ old('name', $admin->no_telepon) }}"
+                                    class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 px-5 focus:border-emerald-500 focus:outline-none focus:ring-0" />
+                            </div>
+
+
                             {{-- Password --}}
                             <div class="flex w-full flex-col">
                                 <div class="mb-2 flex items-center justify-between px-1">

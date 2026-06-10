@@ -34,6 +34,8 @@ return new class extends Migration
             $table->string('file_identitas')->nullable();
             $table->string('alamat')->nullable();
 
+            $table->boolean('sewa_driver');
+
             $table->timestamps();
         });
     }

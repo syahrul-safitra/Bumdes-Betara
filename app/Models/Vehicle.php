@@ -16,6 +16,7 @@ class Vehicle extends Model
         'warna',
         'harga_perhari',
         'denda_perhari',
+        'sewa_driver',
         'gambar',
     ];
 }

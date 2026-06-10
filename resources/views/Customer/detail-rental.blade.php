@@ -28,7 +28,7 @@
                                 {{ strtoupper(str_replace('_', ' ', $rental->status_pembayaran)) }}
                             </span>
 
-                            {{-- Status Rental (Tambahan Baru) --}}
+                            {{-- Status Rental --}}
                             @php
                                 $statusColor = [
                                     'belum_diambil' => 'bg-slate-700 text-slate-300',
@@ -48,12 +48,6 @@
                                 {{ str_replace('_', ' ', $rental->status_rental) }}
                             </span>
                         </div>
-                        {{-- <div class="text-right">
-                            <span
-                                class="badge badge-lg {{ $rental->status_pembayaran == "pending" ? "bg-amber-400 text-amber-900" : "bg-emerald-500 text-white" }} rounded-xl border-none px-6 py-4 font-bold">
-                                {{ strtoupper(str_replace("_", " ", $rental->status_pembayaran)) }}
-                            </span>
-                        </div> --}}
                     </div>
 
                     <div class="space-y-4 p-8 md:p-10">
@@ -77,6 +71,23 @@
                                     class="font-black italic text-emerald-600 underline decoration-2 underline-offset-4">{{ $rental->vehicle->merek }}</span>
                             </div>
 
+                            {{-- INFORMASI OPSI METODE DRIVER --}}
+                            <div class="flex items-center justify-between border-b border-dashed border-slate-100 py-3">
+                                <span class="font-medium uppercase italic tracking-tight text-slate-500">Metode
+                                    Penggunaan</span>
+                                @if ($rental->sewa_driver == 1)
+                                    <span
+                                        class="badge badge-sm border-none bg-indigo-50 text-indigo-600 font-bold px-3 py-2.5 rounded-lg">
+                                        <i class="fa-solid fa-user-tie mr-1"></i> Dengan Driver BUMDes
+                                    </span>
+                                @else
+                                    <span
+                                        class="badge badge-sm border-none bg-slate-100 text-slate-600 font-bold px-3 py-2.5 rounded-lg">
+                                        <i class="fa-solid fa-key mr-1"></i> Lepas Kunci (Sewa Mobil Saja)
+                                    </span>
+                                @endif
+                            </div>
+
                             <div class="grid grid-cols-2 gap-4 py-2">
                                 <div class="rounded-2xl bg-slate-50 p-4">
                                     <span class="block text-[10px] font-bold uppercase text-slate-400">Tanggal Pinjam</span>
@@ -92,23 +103,40 @@
                             </div>
 
                             <div class="grid grid-cols-2 gap-x-8 gap-y-4 pt-4">
-                                <!-- Sewa per Hari -->
                                 <div>
-                                    <label
-                                        class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sewa/Hari</label>
+                                    <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sewa
+                                        Mobil/Hari</label>
                                     <p class="font-bold italic text-slate-700">
                                         Rp {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }}
                                     </p>
                                 </div>
 
-                                <!-- Lama Sewa -->
                                 <div>
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lama
                                         Sewa</label>
                                     <p class="font-bold italic text-slate-700">{{ $selisihHari }} Hari</p>
                                 </div>
 
-                                <!-- Denda per Hari -->
+                                {{-- DINAMIS: TARIF DRIVER DI TAMPILKAN JIKA DIGUNAKAN --}}
+                                @if ($rental->sewa_driver == 1)
+                                    <div>
+                                        <label class="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Sewa
+                                            Driver/Hari</label>
+                                        <p class="font-bold italic text-indigo-600">
+                                            Rp {{ number_format($rental->vehicle->sewa_driver, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="text-[10px] font-bold uppercase tracking-widest text-indigo-400">Subtotal
+                                            Driver</label>
+                                        <p class="font-bold italic text-indigo-600">
+                                            Rp
+                                            {{ number_format($rental->vehicle->sewa_driver * $selisihHari, 0, ',', '.') }}
+                                        </p>
+                                    </div>
+                                @endif
+
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Denda/Hari</label>
@@ -117,7 +145,6 @@
                                     </p>
                                 </div>
 
-                                <!-- Tanggal Dikembalikan (Penempatan Baru agar sejajar dengan Keterlambatan) -->
                                 <div>
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Tanggal
                                         Dikembalikan</label>
@@ -127,7 +154,6 @@
                                     </p>
                                 </div>
 
-                                <!-- Keterlambatan -->
                                 <div>
                                     <label
                                         class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Keterlambatan</label>
@@ -136,10 +162,8 @@
                                     </p>
                                 </div>
 
-                                <!-- Kosongkan satu grid atau bisa diisi info lain jika perlu agar Total Denda tetap di bawah -->
                                 <div></div>
 
-                                <!-- Total Denda -->
                                 <div class="col-span-2 mt-2 border-t border-dashed border-slate-100 pt-4">
                                     <label class="text-[10px] font-bold uppercase tracking-widest text-red-400">Total Biaya
                                         Denda</label>
@@ -172,14 +196,10 @@
                             <div class="relative z-10 flex items-center justify-between">
                                 <div>
                                     <p class="text-[10px] font-black uppercase italic tracking-[0.2em] opacity-80">Total
-                                        Rental</p>
+                                        Tagihan Rental</p>
                                     <h3 class="mt-1 text-3xl font-black italic leading-none tracking-tighter">Rp
-                                        {{ number_format($totalHarga, 0, ',', '.') }}</h3>
+                                        {{ number_format($rental->total_sewa, 0, ',', '.') }}</h3>
                                 </div>
-                                {{-- <a href="{{ url('struk/' . $rental->id) }}"
-                                        class="btn rounded-2xl border-none bg-white/20 text-xs font-black uppercase italic text-white shadow-lg backdrop-blur-md transition-all hover:bg-white hover:text-emerald-700">
-                                        <i class="fa-solid fa-print mr-2"></i> Print
-                                    </a> --}}
                             </div>
                         </div>
                     </div>
@@ -202,7 +222,8 @@
                         Sistem rental saat ini hanya mendukung pembayaran tunai langsung di kantor.
                     </p>
 
-                    <div class="mb-8 group rounded-3xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5">
+                    {{-- INFO METODE UTAMA --}}
+                    <div class="mb-4 group rounded-3xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5">
                         <div class="mb-1 flex items-center justify-center gap-2">
                             <i class="fa-solid fa-money-bill-wave text-xs text-emerald-600"></i>
                             <p class="text-[10px] font-black uppercase italic tracking-widest text-emerald-600">
@@ -214,13 +235,50 @@
                         </p>
                     </div>
 
+                    {{-- TAMBAHAN BARU: CARD WHATSAPP KONFIRMASI ADMIN --}}
+                    @php
+                        // Membersihkan karakter non-angka pada nomor hp jika ada (misal spasi atau strip)
+                        $cleanPhone = preg_replace('/[^0-09-9]/', '', $noTeleponAdmin);
+
+                        // Mengubah awalan 08 menjadi format internasional 628
+                        if (substr($cleanPhone, 0, 2) === '08') {
+                            $cleanPhone = '628' . substr($cleanPhone, 2);
+                        }
+
+                        // Pesan otomatis saat klik link WA
+                        $textWA = rawurlencode(
+                            'Halo Admin Buberta Rent, saya ingin mengonfirmasi pesanan rental dengan nomor Invoice: #-' .
+                                $rental->id .
+                                '. Saya akan segera melakukan konfirmasi berkas identitas.',
+                        );
+                    @endphp
+
+                    <div
+                        class="mb-6 rounded-3xl border border-green-100 bg-green-50/50 p-5 text-left flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-green-500 text-white shadow-md shadow-green-200">
+                                <i class="fa-brands fa-whatsapp text-xl"></i>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-black uppercase tracking-wider text-green-600">Butuh
+                                    Bantuan?</span>
+                                <span class="block text-xs font-bold text-slate-700 mt-0.5 leading-tight">Hubungi Admin
+                                    BUMDes via WhatsApp</span>
+                            </div>
+                        </div>
+                        <a href="https://wa.me/{{ $cleanPhone }}?text={{ $textWA }}" target="_blank"
+                            class="btn btn-sm min-h-[38px] h-[38px] rounded-xl border-none bg-green-600 font-bold text-[11px] text-white transition-all hover:bg-green-700 shadow-md shadow-green-100 active:scale-95 px-4 shrink-0">
+                            Chat <i class="fa-solid fa-arrow-up-right-from-square ml-1 text-[9px] text-green-300"></i>
+                        </a>
+                    </div>
+
                     <hr class="border-slate-100 mb-6">
 
-                    {{-- Arahkan action form ini ke route update/store identitas rental Anda --}}
+                    {{-- FORM ACTION UNTUK UPLOAD BERKAS --}}
                     <form action="{{ url('upload-identitas/' . $rental->id) }}" method="POST"
                         enctype="multipart/form-data" class="space-y-6 text-left">
                         @csrf
-                        {{-- @method('PUT') Gunakan PUT/PATCH jika sifatnya mengupdate data rental yang sudah ada --}}
 
                         {{-- Input File Identitas --}}
                         <div class="form-control w-full">
@@ -236,7 +294,7 @@
                             </span>
                         </div>
 
-                        {{-- Tambahan Input Alamat sesuai Instruksi Dosen Pembimbing --}}
+                        {{-- Input Alamat --}}
                         <div class="form-control w-full">
                             <label
                                 class="mb-2 ml-1 text-xs font-black uppercase italic tracking-widest text-slate-500 block">

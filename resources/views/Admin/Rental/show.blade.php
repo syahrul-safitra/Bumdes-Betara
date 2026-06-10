@@ -70,9 +70,24 @@
                                     <span
                                         class="font-bold text-slate-800">{{ $rental->alamat ? $rental->alamat : 'Belum di isi' }}</span>
                                 </div>
-                                <div class="flex justify-between">
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
                                     <span class="text-slate-500">Unit Kendaraan</span>
                                     <span class="font-bold text-emerald-700">{{ $rental->vehicle->merek }}</span>
+                                </div>
+                                {{-- TAMBAHAN INFORMASI METODE DRIVER DI SISI ADMIN --}}
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-500">Layanan Sopir</span>
+                                    @if ($rental->sewa_driver == 1)
+                                        <span
+                                            class="badge badge-xs border-none bg-indigo-100 text-indigo-700 font-bold px-2 py-2 rounded-md">
+                                            <i class="fa-solid fa-user-tie mr-1"></i> Pakai Driver
+                                        </span>
+                                    @else
+                                        <span
+                                            class="badge badge-xs border-none bg-slate-200 text-slate-700 font-bold px-2 py-2 rounded-md">
+                                            <i class="fa-solid fa-key mr-1"></i> Lepas Kunci
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                         </section>
@@ -117,22 +132,42 @@
                             <div class="mb-6 flex items-center justify-between">
                                 <h3 class="text-xs font-black uppercase tracking-widest text-emerald-400">Billing Summary
                                 </h3>
-                                <span
-                                    class="badge badge-sm border-none bg-emerald-500 font-bold text-white">{{ $selisihHari }}
-                                    Hari</span>
+                                <span class="badge badge-sm border-none bg-emerald-500 font-bold text-white">
+                                    {{ $selisihHari }} Hari
+                                </span>
                             </div>
 
                             <div class="space-y-4">
-                                <div class="flex justify-between text-slate-400">
-                                    <span>Harga Sewa ({{ $selisihHari }}x)</span>
-                                    <span>Rp {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }}</span>
+                                {{-- 1. Biaya Sewa Mobil --}}
+                                <div class="flex justify-between text-slate-400 text-xs">
+                                    <span>Sewa Mobil ({{ $selisihHari }} Hari x Rp
+                                        {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }})</span>
+                                    <span>Rp
+                                        {{ number_format($selisihHari * $rental->vehicle->harga_perhari, 0, ',', '.') }}</span>
                                 </div>
 
-                                <div class="flex justify-between text-orange-400">
+                                {{-- 2. Biaya Sewa Driver (Dinamis jika dipilih) --}}
+                                @if ($rental->sewa_driver == 1)
+                                    <div class="flex justify-between text-indigo-400 text-xs">
+                                        <span>Sewa Driver ({{ $selisihHari }} Hari x Rp
+                                            {{ number_format($rental->vehicle->sewa_driver, 0, ',', '.') }})</span>
+                                        <span>+ Rp
+                                            {{ number_format($selisihHari * $rental->vehicle->sewa_driver, 0, ',', '.') }}</span>
+                                    </div>
+                                @endif
+
+                                {{-- SUB TOTAL SEWA SEBELUM DENDA --}}
+                                <div class="flex justify-between border-t border-b border-slate-800 py-2.5 my-2 text-sm">
+                                    <span class="font-medium text-slate-300">Total Sewa Pokok</span>
+                                    <span class="font-bold text-slate-200">Rp
+                                        {{ number_format($rental->total_sewa, 0, ',', '.') }}</span>
+                                </div>
+
+                                {{-- 3. Biaya Penalti / Denda Keterlambatan --}}
+                                <div class="flex justify-between text-orange-400 text-xs">
                                     <div class="flex flex-col">
-                                        <span>Denda Keterlambatan</span>
-                                        {{-- Keterangan Telat Hari --}}
-                                        @if ($totalTelat * -1 > 0)
+                                        <span>Denda Keterlambatan Armada</span>
+                                        @if ($totalTelat > 0)
                                             <span
                                                 class="text-[10px] font-bold uppercase italic tracking-tighter text-orange-300">
                                                 (Terlambat {{ $totalTelat }} Hari)
@@ -141,14 +176,18 @@
                                     </div>
                                     <span>+ Rp {{ number_format($totalDenda, 0, ',', '.') }}</span>
                                 </div>
-                                {{-- <div class="flex justify-between text-orange-400">
-                                    <span>Denda Keterlambatan</span>
-                                    <span>+ Rp {{ number_format($totalDenda, 0, ",", ".") }}</span>
-                                </div> --}}
-                                <div class="mt-6 flex items-center justify-between border-t border-slate-800 pt-6">
-                                    <span class="text-lg font-bold text-emerald-400">Grand Total</span>
-                                    <span class="text-3xl font-black">Rp
-                                        {{ number_format($totalHarga + $totalDenda, 0, ',', '.') }}</span>
+
+                                {{-- GRAND TOTAL AKHIR (TOTAL SEWA + TOTAL DENDA) --}}
+                                <div class="mt-6 flex items-center justify-between border-t-2 border-emerald-500/30 pt-4">
+                                    <div class="flex flex-col">
+                                        <span class="text-base font-bold text-emerald-400">Grand Total</span>
+                                        <span
+                                            class="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">(Sewa
+                                            Pokok + Denda)</span>
+                                    </div>
+                                    <span class="text-3xl font-black text-white">
+                                        Rp {{ number_format($rental->total_sewa + $totalDenda, 0, ',', '.') }}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -196,10 +235,6 @@
                                 Lihat File Identitas
                             </a>
                         @endif
-                        {{-- <a href="{{ url("struk/" . $rental->id) }}"
-                            class="btn rounded-2xl border-none bg-emerald-600 px-10 font-bold text-white shadow-lg shadow-emerald-200 hover:bg-emerald-700">
-                            <i class="fa-solid fa-print mr-2"></i> Cetak Struk
-                        </a> --}}
                     </div>
                 </div>
 
@@ -215,7 +250,8 @@
             <h3 class="mb-6 text-2xl font-black text-slate-800">Update <span class="text-emerald-600">Progres</span></h3>
 
             {{-- Tambahkan id="formUpdateStatus" untuk dideteksi oleh JavaScript --}}
-            <form id="formUpdateStatus" action="{{ url('set-status/' . $rental->id) }}" method="POST" class="space-y-3">
+            <form id="formUpdateStatus" action="{{ url('set-status/' . $rental->id) }}" method="POST"
+                class="space-y-3">
                 @csrf
                 @foreach (['belum_diambil', 'sedang_dipinjam', 'telah_dikembalikan'] as $status)
                     <label

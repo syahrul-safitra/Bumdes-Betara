@@ -38,6 +38,7 @@
                             <th>Unit</th>
                             <th>Informasi</th>
                             <th>Harga & Denda</th>
+                            <th>Harga Sewa Driver</th>
                             <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
@@ -70,9 +71,26 @@
                                 </td>
 
                                 <td class="px-6 py-4 text-sm">
-                                    {{-- Konten Harga --}}
+                                    {{-- Konten Harga Sewa --}}
                                     <div class="font-black text-slate-800 italic">
-                                        Rp {{ number_format($item->harga_perhari, 0, ',', '.') }}
+                                        Rp {{ number_format($item->harga_perhari, 0, ',', '.') }}<span
+                                            class="text-[10px] font-normal text-slate-400 not-italic">/hari</span>
+                                    </div>
+
+                                    {{-- Info Tambahan: Denda Perhari --}}
+                                    <div class="mt-1 flex items-center gap-1">
+                                        <span
+                                            class="badge badge-xs border-none bg-red-50 text-red-600 font-bold text-[9px] px-1.5 py-2 rounded-md">
+                                            Denda: Rp {{ number_format($item->denda_perhari, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm">
+                                    {{-- Konten Harga Sewa --}}
+                                    <div class="font-black text-slate-800 italic">
+                                        Rp {{ number_format($item->sewa_driver, 0, ',', '.') }}<span
+                                            class="text-[10px] font-normal text-slate-400 not-italic">/hari</span>
                                     </div>
                                 </td>
 

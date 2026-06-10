@@ -25,7 +25,7 @@ class AdminController extends Controller
         $validated = $request->validate([
             'name' => 'required|max:100',
             'password' => 'nullable|max:15|min:5',
-
+            'no_telepon' => 'nullable|max:15',
             'email' => [
                 'required',
                 'email',

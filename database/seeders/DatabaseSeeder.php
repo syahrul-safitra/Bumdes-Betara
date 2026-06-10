@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Admin Bumdes',
             'email' => 'admin@gmail.com',
             'is_admin' => '1',
+            'no_telepon' => '082387120434',
             'password' => 'password'
         ]);
         

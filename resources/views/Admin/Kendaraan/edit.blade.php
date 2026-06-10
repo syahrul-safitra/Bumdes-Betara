@@ -96,6 +96,22 @@
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    {{-- Jasa Driver / Hari (Tambahan Baru) --}}
+                    <div class="form-control w-full">
+                        <label class="label mb-2">
+                            <span class="label-text font-bold text-slate-700">Harga Jasa Driver / Hari</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">Rp</span>
+                            <input type="number" name="sewa_driver"
+                                value="{{ old('sewa_driver', $vehicle->sewa_driver) }}" placeholder="100000"
+                                class="input input-bordered w-full pl-12 rounded-2xl @error('sewa_driver') border-red-500 @else border-slate-200 @enderror bg-slate-50 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
+                        </div>
+                        @error('sewa_driver')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 <div class="form-control w-full">
