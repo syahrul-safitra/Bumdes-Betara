@@ -68,6 +68,27 @@ class DatabaseSeeder extends Seeder
             'kontent' => "<div><strong>Mekar Jaya</strong> – Dalam upaya memperkuat perekonomian desa dan menciptakan sumber pendapatan yang berkelanjutan, BUMDes Bersama Betara terus mengembangkan berbagai unit usaha produktif. Salah satu unit usaha yang saat ini menjadi andalan adalah <strong>B3 Farm</strong>, yang bergerak di bidang peternakan ayam petelur.</div><div>B3 Farm didirikan sebagai bentuk komitmen BUMDes Bersama Betara dalam mendukung ketahanan pangan sekaligus membuka peluang usaha yang mampu memberikan manfaat ekonomi bagi masyarakat. Melalui usaha peternakan ayam petelur, B3 Farm berfokus pada produksi telur berkualitas untuk memenuhi kebutuhan masyarakat di Desa Mekar Jaya dan wilayah sekitarnya.</div><div>Dengan pengelolaan yang baik serta penerapan standar pemeliharaan yang tepat, B3 Farm berupaya menghasilkan produk yang sehat, aman, dan berkualitas. Selain menjadi sumber pendapatan bagi BUMDes, keberadaan unit usaha ini juga diharapkan dapat menciptakan lapangan pekerjaan serta meningkatkan keterlibatan masyarakat dalam kegiatan ekonomi produktif di desa.</div><div>Direktur BUMDes Bersama Betara menyampaikan bahwa pengembangan B3 Farm merupakan langkah strategis dalam diversifikasi usaha desa. Menurutnya, sektor peternakan memiliki prospek yang menjanjikan karena kebutuhan masyarakat terhadap telur sebagai sumber protein terus meningkat dari waktu ke waktu.</div><div>Ke depan, B3 Farm diharapkan mampu meningkatkan kapasitas produksi dan memperluas jangkauan pemasaran sehingga dapat memberikan kontribusi yang lebih besar terhadap pertumbuhan ekonomi desa. Melalui inovasi dan pengelolaan yang berkelanjutan, BUMDes Bersama Betara berkomitmen untuk terus menghadirkan unit-unit usaha yang produktif, mandiri, dan bermanfaat bagi kesejahteraan masyarakat.</div><div>Dengan semangat kemandirian dan gotong royong, B3 Farm menjadi salah satu wujud nyata peran BUMDes Bersama Betara dalam membangun desa yang maju, produktif, dan berdaya saing.</div>",
         ]);
 
+        \App\Models\Vehicle::create([
+            'no_plat' => 'BH 8123 EE',
+            'merek' => 'DC Hilux',
+            'warna' => 'Putih',
+            'tahun' => '2019',
+            'harga_perhari' => '1200000',
+            'denda_perhari' => '1300000',
+            'sewa_driver' => '450000',
+            'gambar' => 'dc_hilux.jpeg'
+        ]);
+
+        \App\Models\Vehicle::create([
+            'no_plat' => 'BH 7732 EE',
+            'merek' => 'DC Triton',
+            'warna' => 'Putih',
+            'tahun' => '2019',
+            'harga_perhari' => '1100000',
+            'denda_perhari' => '1200000',
+            'sewa_driver' => '450000',
+            'gambar' => 'dc_triton.jpeg'
+        ]);
 
     }
 }

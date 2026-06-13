@@ -238,7 +238,8 @@
                     {{-- TAMBAHAN BARU: CARD WHATSAPP KONFIRMASI ADMIN --}}
                     @php
                         // Membersihkan karakter non-angka pada nomor hp jika ada (misal spasi atau strip)
-                        $cleanPhone = preg_replace('/[^0-09-9]/', '', $noTeleponAdmin);
+                        // $cleanPhone = preg_replace('/[^0-09-9]/', '', $noTeleponAdmin->no_telepon);
+                        $cleanPhone = $noTeleponAdmin->no_telepon;
 
                         // Mengubah awalan 08 menjadi format internasional 628
                         if (substr($cleanPhone, 0, 2) === '08') {
@@ -247,8 +248,8 @@
 
                         // Pesan otomatis saat klik link WA
                         $textWA = rawurlencode(
-                            'Halo Admin Buberta Rent, saya ingin mengonfirmasi pesanan rental dengan nomor Invoice: #-' .
-                                $rental->id .
+                            'Halo Admin Buberta Rent, saya ingin mengonfirmasi pesanan atas nama ' .
+                                $rental->customer->nama .
                                 '. Saya akan segera melakukan konfirmasi berkas identitas.',
                         );
                     @endphp
