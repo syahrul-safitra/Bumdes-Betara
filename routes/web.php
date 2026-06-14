@@ -112,7 +112,7 @@ Route::get('/rental-kendaraan', function () {
     return view('Customer.rental', [
         'vehicles' => Vehicle::latest()->get(),
     ]);
-})->middleware('isCustomer');
+});     
 // ======================================= Guest ==============================================
 
 Route::get('/', function () {

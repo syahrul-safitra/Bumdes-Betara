@@ -110,13 +110,13 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @php
                     $layanan = [
-                        ['title' => 'BUBERTA FINANCE', 'desc' => 'Pengkreditan barang dan elektronik.'],
                         ['title' => 'LED BUBERTA', 'desc' => 'Simpan Pinjam Kelompok Perempuan.'],
                         ['title' => 'BUBERTA RENT', 'desc' => 'Jasa Rental Sewa Kendaraan.'],
-                        ['title' => 'TOKO GUBERTA', 'desc' => 'Tata Boga & Pengadaian Barang.'],
-                        ['title' => 'GADA MASETARA BERKAH', 'desc' => 'Pelayanan Jasa Godin.'],
-                        ['title' => 'SERVICE ELECTRONIC', 'desc' => 'Jasa perbaikan alat elektronik.'],
-                        ['title' => 'UNIT AYAM PETELUR', 'desc' => 'Produksi telur lokal desa.'],
+                        // ['title' => 'BUBERTA FINANCE', 'desc' => 'Pengkreditan barang dan elektronik.'],
+                        // ['title' => 'TOKO GUBERTA', 'desc' => 'Tata Boga & Pengadaian Barang.'],
+                        // ['title' => 'GADA MASETARA BERKAH', 'desc' => 'Pelayanan Jasa Godin.'],
+                        // ['title' => 'SERVICE ELECTRONIC', 'desc' => 'Jasa perbaikan alat elektronik.'],
+                        // ['title' => 'UNIT AYAM PETELUR', 'desc' => 'Produksi telur lokal desa.'],
                     ];
                 @endphp
 

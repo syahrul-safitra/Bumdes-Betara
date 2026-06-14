@@ -16,9 +16,17 @@
                     <button onclick="panduan_modal.showModal()"
                         class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
                         <i class="fa-solid fa-circle-info text-sm text-emerald-500"></i>
-                        <span>Cara Booking</span>
+                        <span>Cara Rental</span>
                     </button>
                 </li>
+                <li>
+                    <button onclick="panduan_spp_modal.showModal()"
+                        class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
+                        <i class="fa-solid fa-circle-nodes text-sm text-emerald-500"></i>
+                        <span>Cara SPP</span>
+                    </button>
+                </li>
+
                 <li><a href="/rental-kendaraan" class="py-3">Rental</a></li>
             </ul>
         </div>
@@ -51,7 +59,15 @@
                 <button onclick="panduan_modal.showModal()"
                     class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
                     <i class="fa-solid fa-circle-info text-sm text-emerald-500"></i>
-                    <span>Cara Booking</span>
+                    <span>Cara Rental</span>
+                </button>
+            </li>
+
+            <li>
+                <button onclick="panduan_spp_modal.showModal()"
+                    class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
+                    <i class="fa-solid fa-circle-nodes text-sm text-emerald-500"></i>
+                    <span>Cara SPP</span>
                 </button>
             </li>
         </ul>
@@ -241,6 +257,141 @@
     </div>
 
     <form method="dialog" class="modal-backdrop">
+        <button>close</button>
+    </form>
+</dialog>
+
+
+<!-- Modal Panduan Tata Cara Simpan Pinjam (SPP) -->
+<dialog id="panduan_spp_modal" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box max-w-2xl rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-2xl">
+
+        <!-- Header Modal -->
+        <div class="mb-6 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div
+                    class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-600 shadow-inner">
+                    <i class="fa-solid fa-book-open text-xl"></i>
+                </div>
+                <div class="text-left">
+                    <h3 class="text-lg font-black uppercase italic tracking-tight text-slate-800">
+                        Panduan Alur Pengajuan SPP
+                    </h3>
+                    <p class="text-[11px] font-medium text-slate-400 italic">Sistem Informasi Simpan Pinjam Kelompok
+                        BUMDes Betara</p>
+                </div>
+            </div>
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-slate-400 focus:outline-none">✕</button>
+            </form>
+        </div>
+
+        <!-- Body / Konten Langkah -->
+        <div class="rounded-3xl border border-slate-100 bg-slate-50/70 p-5 md:p-6 text-left">
+            <ol class="space-y-6 list-none p-0 m-0">
+
+                <!-- Langkah 1 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">1</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Verifikasi Domisili &
+                        Kelompok</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Calon peminjam wajib terdaftar secara sah sebagai warga Desa Betara dan mengajukan pinjaman
+                        melalui sistem kelompok (tanggung renteng).
+                    </p>
+                </li>
+
+                <!-- Langkah 2 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">2</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Validasi Dokumen
+                        Utama</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Peminjam mempersiapkan Dokumen Kartu Tanda Penduduk (KTP) asli dan salinannya sebagai syarat
+                        administrasi tunggal.
+                    </p>
+                </li>
+
+                <!-- Langkah 3 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">3</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pengisian Form &
+                        Dokumen Kredit</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Mengisi formulir pengajuan pinjaman, menentukan batas plafon dana, serta memilih tenor (durasi)
+                        angsuran yang disediakan sistem.
+                    </p>
+                </li>
+
+                <!-- Langkah 4 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">4</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Keputusan &
+                        Persetujuan (Approval)</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Ketua BUMDes memberikan keputusan akhir berupa persetujuan penuh, penyesuaian nominal plafon,
+                        atau penolakan pengajuan berdasarkan data dokumen.
+                    </p>
+                </li>
+
+                <!-- Langkah 5 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">5</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pencairan Dana Tahap
+                        Awal</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Peminjam menandatangani akad kredit, kemudian menerima pencairan dana stimulus awal sebesar
+                        <span class="font-bold text-slate-800">Rp 2.000.000</span> (secara tunai atau transfer).
+                    </p>
+                </li>
+
+                <!-- Langkah 6 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">6</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pencairan Saldo Sisa
+                        Kredit</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Setelah peminjam menyelesaikan pembayaran angsuran pertama secara tertib, sisa saldo plafon
+                        pinjaman akan dicairkan seluruhnya.
+                    </p>
+                </li>
+
+                <!-- Langkah 7 -->
+                <li class="relative pl-12">
+                    <span
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-red-500 text-sm font-black text-white shadow-md shadow-red-100">7</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-red-600 mb-0.5">Sanksi Keterlambatan
+                        Angsuran</h5>
+                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
+                        Anggota yang terlambat membayar angsuran bulanan melewati batas tanggal jatuh tempo akan
+                        dikenakan denda akumulatif sebesar <span class="font-bold text-red-600">Rp 5.000 / hari</span>.
+                    </p>
+                </li>
+
+            </ol>
+        </div>
+
+        <!-- Footer Modal Button Close -->
+        <div class="modal-action mt-6 justify-end">
+            <form method="dialog">
+                <button
+                    class="btn min-h-[46px] h-[46px] rounded-2xl border-none bg-slate-900 px-6 font-black text-xs uppercase italic tracking-wider text-white shadow-lg shadow-slate-100 transition-all active:scale-95">
+                    Saya Mengerti
+                </button>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Lapisan backdrop klik di luar modal untuk menutup -->
+    <form method="dialog" class="modal-backdrop bg-slate-900/40 backdrop-blur-xs">
         <button>close</button>
     </form>
 </dialog>
