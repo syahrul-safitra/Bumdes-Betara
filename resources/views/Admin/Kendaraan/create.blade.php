@@ -85,6 +85,22 @@
                         @enderror
                     </div>
 
+                    {{-- TAMBAHAN BARU: Harga Sewa / Bulan (Revisi Poin 2) --}}
+                    <div class="form-control w-full">
+                        <label class="label mb-2">
+                            <span class="label-text font-bold text-slate-700">Harga Sewa / Bulan (Paket)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">Rp</span>
+                            <input type="number" name="harga_perbulan" value="{{ old('harga_perbulan') }}"
+                                placeholder="6000000"
+                                class="input input-bordered w-full pl-12 rounded-2xl @error('harga_perbulan') border-red-500 @else border-slate-200 @enderror bg-slate-50 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
+                        </div>
+                        @error('harga_perbulan')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
                     {{-- Denda / Perhari --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
@@ -101,7 +117,7 @@
                         @enderror
                     </div>
 
-                    {{-- Jasa Driver / Hari (Tambahan Baru) --}}
+                    {{-- Jasa Driver / Hari --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Harga Jasa Driver / Hari</span>
@@ -113,6 +129,23 @@
                                 class="input input-bordered w-full pl-12 rounded-2xl @error('sewa_driver') border-red-500 @else border-slate-200 @enderror bg-slate-50 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
                         </div>
                         @error('sewa_driver')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- TAMBAHAN BARU: Status Ketersediaan Kendaraan (Revisi Poin 4) --}}
+                    <div class="form-control w-full">
+                        <label class="label mb-2">
+                            <span class="label-text font-bold text-slate-700">Status Ketersediaan</span>
+                        </label>
+                        <select name="is_ready"
+                            class="select select-bordered w-full rounded-2xl @error('is_ready') border-red-500 @else border-slate-200 @enderror bg-slate-50 font-bold text-slate-700 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-50/50">
+                            <option value="1" {{ old('is_ready', '1') == '1' ? 'selected' : '' }}>Ready
+                                (Tampilkan di Rental)</option>
+                            <option value="0" {{ old('is_ready') == '0' ? 'selected' : '' }}>
+                                Maintenance / Perbaikan (Sembunyikan)</option>
+                        </select>
+                        @error('is_ready')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>

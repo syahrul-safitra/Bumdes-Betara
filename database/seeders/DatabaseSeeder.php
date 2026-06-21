@@ -75,6 +75,7 @@ class DatabaseSeeder extends Seeder
             'tahun' => '2019',
             'harga_perhari' => '1200000',
             'denda_perhari' => '1300000',
+            'harga_perbulan' => '2300000',
             'sewa_driver' => '450000',
             'gambar' => 'dc_hilux.jpeg'
         ]);
@@ -86,6 +87,7 @@ class DatabaseSeeder extends Seeder
             'tahun' => '2019',
             'harga_perhari' => '1100000',
             'denda_perhari' => '1200000',
+            'harga_perbulan' => '2200000',
             'sewa_driver' => '450000',
             'gambar' => 'dc_triton.jpeg'
         ]);

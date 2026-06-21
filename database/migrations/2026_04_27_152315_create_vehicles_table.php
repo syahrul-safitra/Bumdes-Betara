@@ -23,6 +23,8 @@ return new class extends Migration
             $table->integer('harga_perhari')->unsigned();
             $table->integer('denda_perhari')->unsigned();
             $table->string('gambar');
+            $table->integer('harga_perbulan')->unsigned();
+            $table->boolean('is_ready')->default("1");
             $table->integer('sewa_driver');
 
             $table->timestamps();

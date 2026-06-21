@@ -5,47 +5,95 @@
         <div class="mx-auto max-w-4xl">
             <div class="mb-10 text-center">
                 <h1 class="text-3xl font-black text-slate-800">Konfirmasi Penyewaan</h1>
-                <p class="mt-2 text-slate-500">Lengkapi detail peminjaman untuk armada <span
+                <p class="mt-2 text-slate-500">Lengkapi detail peminjaman harian untuk armada <span
                         class="font-bold text-emerald-600">{{ $car->merek }}</span></p>
             </div>
 
             <div class="overflow-hidden rounded-[3rem] border border-slate-100 bg-white shadow-xl">
                 <div class="grid grid-cols-1 lg:grid-cols-12">
 
+                    {{-- SIDEBAR DETAIL ARMADA & TANGGAL TERBOOKING --}}
                     <div class="bg-slate-900 p-8 text-white lg:col-span-4">
-                        <div class="sticky top-8">
-                            <img src="{{ asset('File/' . $car->gambar) }}" alt="{{ $car->merek }}"
-                                class="mb-6 h-40 w-full rounded-3xl object-cover shadow-lg">
-                            <h2 class="mb-1 text-xl font-bold">{{ $car->merek }}</h2>
-                            <p class="mb-6 text-sm font-medium uppercase tracking-wider text-emerald-400">
-                                {{ $car->type }}</p>
+                        <div class="sticky top-8 space-y-6">
+                            {{-- Detail Informasi Mobil --}}
+                            <div>
+                                <img src="{{ asset('File/' . $car->gambar) }}" alt="{{ $car->merek }}"
+                                    class="mb-6 h-40 w-full rounded-3xl object-cover shadow-lg">
+                                <h2 class="mb-1 text-xl font-bold">{{ $car->merek }}</h2>
+                                <p class="mb-6 text-sm font-medium uppercase tracking-wider text-emerald-400">
+                                    {{ $car->type }}</p>
 
-                            <div class="space-y-4 border-t border-slate-800 pt-6">
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-slate-400">Harga /Hari</span>
-                                    <span class="font-bold text-emerald-500">Rp
-                                        {{ number_format($car->harga_perhari, 0, ',', '.') }}</span>
+                                <div class="space-y-4 border-t border-slate-800 pt-6">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-400">Harga /Hari</span>
+                                        <span class="font-bold text-emerald-500">Rp
+                                            {{ number_format($car->harga_perhari, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-400">Denda /Hari</span>
+                                        <span class="font-bold text-red-400">Rp
+                                            {{ number_format($car->denda_perhari, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-400">Sewa Driver /Hari</span>
+                                        <span class="font-bold text-yellow-400">Rp
+                                            {{ number_format($car->sewa_driver, 0, ',', '.') }}</span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-slate-400">Denda /Hari</span>
-                                    <span class="font-bold text-red-400">Rp
-                                        {{ number_format($car->denda_perhari, 0, ',', '.') }}</span>
+                            </div>
+
+                            {{-- REVISI POIN 1: DAFTAR TANGGAL YANG SUDAH DIBOOKING BULAN INI --}}
+                            <div class="border-t border-slate-800 pt-6">
+                                <div class="mb-3 flex items-center gap-2 text-amber-400">
+                                    <i class="fa-solid fa-calendar-alt text-sm"></i>
+                                    <h4 class="text-xs font-black uppercase tracking-wider">Jadwal Sewa Bulan Ini</h4>
                                 </div>
-                                <div class="flex justify-between text-sm">
-                                    <span class="text-slate-400">Sewa Driver /Hari</span>
-                                    <span class="font-bold text-yellow-400">Rp
-                                        {{ number_format($car->sewa_driver, 0, ',', '.') }}</span>
+
+                                <div class="space-y-2.5">
+                                    @forelse($bookingBulanIni as $booked)
+                                        <div
+                                            class="flex flex-col gap-1 rounded-2xl bg-slate-800/50 p-3 border border-slate-800">
+                                            <div class="flex items-center justify-between">
+                                                <span
+                                                    class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Unit
+                                                    Terkunci</span>
+                                                <span
+                                                    class="badge badge-xs border-none bg-amber-500/20 text-amber-400 font-bold px-2 py-1 text-[9px] rounded">Reserved</span>
+                                            </div>
+                                            <span class="text-xs font-bold text-slate-200">
+                                                {{ \Carbon\Carbon::parse($booked->tanggal_peminjaman)->translatedFormat('d M') }}
+                                                s/d
+                                                {{ \Carbon\Carbon::parse($booked->tanggal_pengembalian)->translatedFormat('d M Y') }}
+                                            </span>
+                                        </div>
+                                    @empty
+                                        <div
+                                            class="rounded-2xl bg-emerald-950/30 border border-emerald-900/50 p-4 text-center">
+                                            <i class="fa-solid fa-circle-check text-emerald-500 text-sm mb-1 block"></i>
+                                            <p class="text-[11px] font-medium text-emerald-400">Armada siap pakai. Belum ada
+                                                jadwal booking bulan ini.</p>
+                                        </div>
+                                    @endforelse
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    {{-- FORM INPUT UTAMA (MODUL HARIAN) --}}
                     <div class="p-8 md:p-12 lg:col-span-8">
                         <form action="{{ url('rental') }}" method="POST" class="space-y-6" id="rentalForm">
                             @csrf
 
                             <input type="hidden" name="customer_id" value="{{ auth()->guard('customer')->user()->id }}">
                             <input type="hidden" name="vehicle_id" value="{{ $car->id }}">
+                            <input type="hidden" name="tipe_sewa" value="harian"> {{-- Flag penanda jenis sewa ke backend --}}
+
+                            <div class="mb-2">
+                                <span
+                                    class="badge bg-emerald-100 text-emerald-700 font-black uppercase italic tracking-wider px-3 py-2 rounded-xl text-[10px]">
+                                    Mode Sewa: Harian berkala
+                                </span>
+                            </div>
 
                             @if ($errors->has('tanggal_peminjaman'))
                                 <div
@@ -54,54 +102,6 @@
                                     <span>{{ $errors->first('tanggal_peminjaman') }}</span>
                                 </div>
                             @endif
-
-                            {{-- BARIS BARU: INFORMASI BIAYA & TARIF --}}
-                            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                {{-- Harga Sewa Perhari --}}
-                                <div class="form-control">
-                                    <label class="label ml-1 text-xs font-bold uppercase text-slate-500">Harga Sewa
-                                        Perhari</label>
-                                    <div class="relative">
-                                        <div
-                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                            <span class="text-sm font-bold">Rp</span>
-                                        </div>
-                                        <input type="text" value="{{ number_format($car->harga_perhari, 0, ',', '.') }}"
-                                            readonly
-                                            class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 pl-11 font-bold text-slate-700">
-                                    </div>
-                                </div>
-
-                                {{-- Denda Perhari --}}
-                                <div class="form-control">
-                                    <label class="label ml-1 text-xs font-bold uppercase text-slate-500">Denda
-                                        Perhari</label>
-                                    <div class="relative">
-                                        <div
-                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                            <span class="text-sm font-bold">Rp</span>
-                                        </div>
-                                        <input type="text" value="{{ number_format($car->denda_perhari, 0, ',', '.') }}"
-                                            readonly
-                                            class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 pl-11 font-bold text-red-600">
-                                    </div>
-                                </div>
-
-                                {{-- Harga Sewa Driver Perhari (Tambahan Info Baru) --}}
-                                <div class="form-control">
-                                    <label class="label ml-1 text-xs font-bold uppercase text-slate-500">Tarif Driver
-                                        Perhari</label>
-                                    <div class="relative">
-                                        <div
-                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
-                                            <span class="text-sm font-bold">Rp</span>
-                                        </div>
-                                        <input type="text" value="{{ number_format($car->sewa_driver, 0, ',', '.') }}"
-                                            readonly
-                                            class="input input-bordered w-full rounded-2xl border-slate-200 bg-slate-50 pl-11 font-bold text-indigo-600">
-                                    </div>
-                                </div>
-                            </div>
 
                             {{-- BARIS TANGGAL RENTAL --}}
                             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -122,7 +122,7 @@
                                 </div>
                             </div>
 
-                            {{-- METODE PENGGUNAAN ARMADA (GARANSI 100% SIMETRIS SINKRON) --}}
+                            {{-- METODE PENGGUNAAN ARMADA --}}
                             <div class="form-control w-full">
                                 <label class="mb-2 ml-1 text-xs font-bold uppercase text-slate-600">Metode Penggunaan
                                     Armada</label>
@@ -148,7 +148,6 @@
                                                         armada sendiri</span>
                                                 </div>
                                             </div>
-                                            {{-- Lingkaran Radio Kustom DaisyUI --}}
                                             <div
                                                 class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 peer-checked:border-emerald-600 bg-white">
                                                 <div class="h-2.5 w-2.5 rounded-full bg-transparent transition-all"></div>
@@ -177,7 +176,6 @@
                                                         Hari</span>
                                                 </div>
                                             </div>
-                                            {{-- Lingkaran Radio Kustom DaisyUI --}}
                                             <div
                                                 class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-slate-300 peer-checked:border-emerald-600 bg-white">
                                                 <div class="h-2.5 w-2.5 rounded-full bg-transparent transition-all"></div>
@@ -191,11 +189,47 @@
                                 @enderror
                             </div>
 
-                            {{-- CSS Tambahan Khusus untuk menghidupkan indikator Dot Hijau di dalam lingkaran saat aktif --}}
+                            {{-- REVISI POIN 3: PILIHAN METODE PEMBAYARAN UANG MUKA (DP) --}}
+                            <div class="form-control w-full">
+                                <label class="label ml-1 text-xs font-bold uppercase text-slate-500">Metode Pembayaran Uang
+                                    Muka (DP)</label>
+                                <select name="is_dp" id="metode_pembayaran" onchange="toggleInfoTransferForm()"
+                                    class="select select-bordered h-14 w-full rounded-2xl border-slate-200 bg-slate-50 font-bold text-slate-700 focus:border-emerald-500 focus:outline-none">
+                                    <option value="0" {{ old('is_dp') == 0 ? 'selected' : '' }}>
+                                        Bayar Tunai / Cash (Langsung di Kantor)</option>
+                                    <option value="1" {{ old('is_dp') == 1 ? 'selected' : '' }}>
+                                        Transfer Bank (Uang
+                                        Muka / DP Online)</option>
+                                </select>
+                            </div>
+
+                            {{-- BOX REKENING INFORMASI TF --}}
+                            <div id="info_transfer_box"
+                                class="hidden rounded-[2rem] border border-indigo-100 bg-indigo-50/40 p-6 transition-all duration-300">
+                                <div class="flex items-start gap-3">
+                                    <div
+                                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-600 text-white shadow-md">
+                                        <i class="fa-solid fa-building-columns text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="block text-[10px] font-black uppercase tracking-wider text-indigo-600">Rekening
+                                            Resmi BUMDes Betara</span>
+                                        <span class="block text-base font-black text-slate-800 mt-0.5">Bank Jambi:
+                                            789-0123-456-7 (Bumdes Betara)</span>
+                                        <span class="block text-xs text-slate-500 mt-1 leading-normal">
+                                            * Silakan lakukan transfer DP awal minimal <strong
+                                                class="text-indigo-600">20%</strong> dari total harga ke rekening di atas.
+                                            Berkas bukti transfer dapat diunggah
+                                            bersamaan dengan identitas KTP sesaat setelah form ini disimpan.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
                             <style>
                                 .peer:checked~label div .h-2\.5 {
                                     background-color: #10b981 !important;
-                                    /* Warna emerald-500 */
                                 }
 
                                 .peer:checked~label {
@@ -214,7 +248,7 @@
                                         <ul class="ml-4 list-disc space-y-1">
                                             <li>Pengambilan armada lepas kunci wajib menunjukkan KTP asli.</li>
                                             <li>Keterlambatan pengembalian dikenakan denda per hari sesuai kebijakan.</li>
-                                            <li>Bahan bakar dikembangkan sesuai kondisi awal serah terima.</li>
+                                            <li>Bahan bakar dikembalikan sesuai kondisi awal serah terima.</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -283,6 +317,27 @@
     </div>
 
     <script>
+        function toggleInfoTransferForm() {
+            const metode = document.getElementById('metode_pembayaran').value;
+            const infoBox = document.getElementById('info_transfer_box');
+
+            if (metode === 'transfer') {
+                infoBox.classList.remove('hidden');
+            } else {
+                infoBox.classList.add('hidden');
+            }
+        }
+
+        function submitMainForm() {
+            document.getElementById('rentalForm').submit();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            toggleInfoTransferForm();
+        });
+    </script>
+
+    {{-- <script>
         function submitMainForm() {
             // Ambil elemen form berdasarkan ID
             const form = document.getElementById('rentalForm');
@@ -294,5 +349,5 @@
                 console.error("Form dengan ID 'rentalForm' tidak ditemukan.");
             }
         }
-    </script>
+    </script> --}}
 @endsection

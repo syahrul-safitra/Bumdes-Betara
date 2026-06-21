@@ -20,6 +20,10 @@ class Rental extends Model
         'total_denda',
         'alamat',
         'sewa_driver',
+        'is_dp',
+        'is_sewa_perbulan',
+        'bukti_dp',
+        'berapa_bulan',
         'customer_id',
         'vehicle_id',
         'file_identitas'

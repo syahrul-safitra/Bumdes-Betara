@@ -173,18 +173,41 @@
                                 </div>
                             </div>
 
-                            <div
-                                class="mt-6 flex items-center justify-between rounded-3xl bg-slate-900 px-6 py-4 shadow-xl shadow-slate-200">
-                                <span class="text-xs font-black uppercase italic tracking-widest text-white">Identitas
-                                    Penyewa</span>
-                                @if (!empty($rental->file_identitas))
-                                    <a href="{{ asset('File/' . $rental->file_identitas) }}" target="_blank"
-                                        class="btn btn-sm rounded-xl border-none bg-emerald-500 text-[10px] font-black uppercase italic text-white transition-all hover:bg-emerald-600">
-                                        <i class="fa-solid fa-image mr-1"></i> Lihat
-                                    </a>
-                                @else
-                                    <span class="text-[10px] font-black uppercase italic tracking-widest text-red-400">Belum
-                                        Unggah</span>
+                            <div class="space-y-3 mt-6">
+                                {{-- BARIS PREVIEW IDENTITAS --}}
+                                <div
+                                    class="flex items-center justify-between rounded-3xl bg-slate-900 px-6 py-4 shadow-xl shadow-slate-200">
+                                    <span class="text-xs font-black uppercase italic tracking-widest text-white">Identitas
+                                        Penyewa</span>
+                                    @if (!empty($rental->file_identitas))
+                                        <a href="{{ asset('File/' . $rental->file_identitas) }}" target="_blank"
+                                            class="btn btn-sm rounded-xl border-none bg-emerald-500 text-[10px] font-black uppercase italic text-white transition-all hover:bg-emerald-600">
+                                            <i class="fa-solid fa-image mr-1"></i> Lihat
+                                        </a>
+                                    @else
+                                        <span
+                                            class="text-[10px] font-black uppercase italic tracking-widest text-red-400">Belum
+                                            Unggah</span>
+                                    @endif
+                                </div>
+
+                                {{-- TAMBAHAN BARU: BARIS PREVIEW BUKTI DP (Hanya muncul jika is_dp true) --}}
+                                @if ($rental->is_dp == 1)
+                                    <div
+                                        class="flex items-center justify-between rounded-3xl bg-slate-900 px-6 py-4 shadow-xl shadow-slate-200 animate-fadeIn">
+                                        <span class="text-xs font-black uppercase italic tracking-widest text-white">Bukti
+                                            Transfer DP</span>
+                                        @if (!empty($rental->bukti_dp))
+                                            <a href="{{ asset('File/' . $rental->bukti_dp) }}" target="_blank"
+                                                class="btn btn-sm rounded-xl border-none bg-indigo-500 text-[10px] font-black uppercase italic text-white transition-all hover:bg-indigo-600">
+                                                <i class="fa-solid fa-receipt mr-1"></i> Lihat
+                                            </a>
+                                        @else
+                                            <span
+                                                class="text-[10px] font-black uppercase italic tracking-widest text-amber-400">Belum
+                                                Unggah</span>
+                                        @endif
+                                    </div>
                                 @endif
                             </div>
                         </div>
@@ -218,39 +241,73 @@
                     <h3 class="mb-2 text-xl font-black uppercase italic tracking-tight text-slate-800">
                         Identitas & Pembayaran
                     </h3>
-                    <p class="mb-6 text-sm italic text-slate-500">
-                        Sistem rental saat ini hanya mendukung pembayaran tunai langsung di kantor.
-                    </p>
 
-                    {{-- INFO METODE UTAMA --}}
-                    <div class="mb-4 group rounded-3xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5">
-                        <div class="mb-1 flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-money-bill-wave text-xs text-emerald-600"></i>
-                            <p class="text-[10px] font-black uppercase italic tracking-widest text-emerald-600">
-                                Metode: Pembayaran Tunai (Cash)
+                    {{-- KONDISI 1: JIKA RENTAL MENGGUNAKAN DP TRANSFER (is_dp == 1) --}}
+                    @if ($rental->is_dp == 1)
+                        <p class="mb-6 text-sm italic text-slate-500">
+                            Pesanan ini memerlukan pembayaran uang muka (DP) sebesar 20% melalui transfer bank.
+                        </p>
+
+                        {{-- CARD NOMINAL DP DAN REKENING --}}
+                        <div class="mb-4 text-left rounded-3xl border border-indigo-100 bg-indigo-50/50 p-5 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-money-bill-transfer text-xs text-indigo-600"></i>
+                                <p class="text-[10px] font-black uppercase italic tracking-widest text-indigo-600">
+                                    Metode: Transfer Bank (DP 20%)
+                                </p>
+                            </div>
+
+                            <div class="border-t border-indigo-100/70 pt-2 flex justify-between items-center">
+                                <span class="text-xs font-medium text-slate-500">Nominal Transfer (DP):</span>
+                                <span class="text-base font-black text-indigo-600">
+                                    Rp {{ number_format($rental->total_sewa * 0.2, 0, ',', '.') }}
+                                </span>
+                            </div>
+
+                            <div
+                                class="rounded-2xl bg-white border border-indigo-100 p-3.5 text-xs text-slate-700 space-y-1">
+                                <span class="block text-[10px] font-black uppercase tracking-wider text-slate-400">Rekening
+                                    Resmi BUMDes Betara</span>
+                                <span class="block font-black text-slate-800 text-sm">Bank Jambi: 789-0123-456-7</span>
+                                <span class="block text-[11px] text-slate-400 leading-tight">A.N. BUMDesa Bersama
+                                    Betara</span>
+                            </div>
+                        </div>
+
+                        {{-- KONDISI 2: JIKA RENTAL TUNAI TANPA DP (is_dp == 0) --}}
+                    @else
+                        <p class="mb-6 text-sm italic text-slate-500">
+                            Sistem rental saat ini hanya mendukung pembayaran tunai langsung di kantor.
+                        </p>
+
+                        {{-- INFO METODE UTAMA TUNAI --}}
+                        <div class="mb-4 group rounded-3xl border-2 border-dashed border-emerald-200 bg-emerald-50/50 p-5">
+                            <div class="mb-1 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-money-bill-wave text-xs text-emerald-600"></i>
+                                <p class="text-[10px] font-black uppercase italic tracking-widest text-emerald-600">
+                                    Metode: Pembayaran Tunai (Cash)
+                                </p>
+                            </div>
+                            <p class="text-xs font-bold italic tracking-tight text-slate-700 leading-relaxed">
+                                Silakan lakukan pelunasan di kantor Buberta Rent saat pengambilan armada fisik.
                             </p>
                         </div>
-                        <p class="text-xs font-bold italic tracking-tight text-slate-700 leading-relaxed">
-                            Silakan lakukan pelunasan di kantor Buberta Rent saat pengambilan armada fisik.
-                        </p>
-                    </div>
+                    @endif
 
-                    {{-- TAMBAHAN BARU: CARD WHATSAPP KONFIRMASI ADMIN --}}
+                    {{-- CARD WHATSAPP KONFIRMASI ADMIN --}}
                     @php
-                        // Membersihkan karakter non-angka pada nomor hp jika ada (misal spasi atau strip)
-                        // $cleanPhone = preg_replace('/[^0-09-9]/', '', $noTeleponAdmin->no_telepon);
                         $cleanPhone = $noTeleponAdmin->no_telepon;
 
-                        // Mengubah awalan 08 menjadi format internasional 628
                         if (substr($cleanPhone, 0, 2) === '08') {
                             $cleanPhone = '628' . substr($cleanPhone, 2);
                         }
 
-                        // Pesan otomatis saat klik link WA
                         $textWA = rawurlencode(
                             'Halo Admin Buberta Rent, saya ingin mengonfirmasi pesanan atas nama ' .
                                 $rental->customer->nama .
-                                '. Saya akan segera melakukan konfirmasi berkas identitas.',
+                                ($rental->is_dp == 1
+                                    ? '. Saya akan segera mengunggah bukti transfer DP.'
+                                    : '. Saya akan segera melakukan konfirmasi berkas identitas.'),
                         );
                     @endphp
 
@@ -295,6 +352,22 @@
                             </span>
                         </div>
 
+                        {{-- REVISI TAMBAHAN: INPUT BUKTI TRANSFER JIKA IS_DP ADALAH TRUE --}}
+                        @if ($rental->is_dp == 1)
+                            <div class="form-control w-full">
+                                <label
+                                    class="mb-2 ml-1 text-xs font-black uppercase italic tracking-widest text-indigo-600 block">
+                                    Upload Bukti Transfer DP (20%)
+                                </label>
+                                <input type="file" name="bukti_dp" accept="image/*" required
+                                    class="file-input file-input-bordered file-input-primary h-14 w-full rounded-2xl border-indigo-200 bg-indigo-50/30 font-bold text-slate-600 file:bg-indigo-600 file:text-white file:border-none file:h-full file:px-4 focus:border-indigo-500 focus:outline-none" />
+                                <span class="text-[10px] text-slate-400 mt-2 ml-1 block leading-normal">
+                                    * Wajib mengunggah foto struk/screenshot mutasi transfer bank yang valid berukuran
+                                    maksimal 2MB.
+                                </span>
+                            </div>
+                        @endif
+
                         {{-- Input Alamat --}}
                         <div class="form-control w-full">
                             <label
@@ -318,7 +391,6 @@
 
                 </div>
             </div>
-
         </div>
     </div>
 @endsection

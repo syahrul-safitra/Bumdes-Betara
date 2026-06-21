@@ -23,6 +23,7 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    {{-- Nomor Plat --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Nomor Plat</span>
@@ -34,6 +35,7 @@
                         @enderror
                     </div>
 
+                    {{-- Merek/Tipe --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Merek/Tipe</span>
@@ -45,6 +47,7 @@
                         @enderror
                     </div>
 
+                    {{-- Warna --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Warna</span>
@@ -56,6 +59,7 @@
                         @enderror
                     </div>
 
+                    {{-- Tahun --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Tahun</span>
@@ -67,6 +71,7 @@
                         @enderror
                     </div>
 
+                    {{-- Harga Sewa / Hari --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Harga Sewa / Hari</span>
@@ -82,6 +87,23 @@
                         @enderror
                     </div>
 
+                    {{-- TAMBAHAN BARU: Harga Sewa / Bulan (Revisi) --}}
+                    <div class="form-control w-full">
+                        <label class="label mb-2">
+                            <span class="label-text font-bold text-slate-700">Harga Sewa / Bulan (Paket)</span>
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-slate-400">Rp</span>
+                            <input type="number" name="harga_perbulan"
+                                value="{{ old('harga_perbulan', $vehicle->harga_perbulan) }}"
+                                class="input input-bordered w-full pl-12 rounded-2xl @error('harga_perbulan') border-red-500 @else border-slate-200 @enderror bg-slate-50 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-50" />
+                        </div>
+                        @error('harga_perbulan')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Denda / Perhari --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Denda / Perhari</span>
@@ -97,7 +119,7 @@
                         @enderror
                     </div>
 
-                    {{-- Jasa Driver / Hari (Tambahan Baru) --}}
+                    {{-- Harga Jasa Driver / Hari --}}
                     <div class="form-control w-full">
                         <label class="label mb-2">
                             <span class="label-text font-bold text-slate-700">Harga Jasa Driver / Hari</span>
@@ -112,8 +134,26 @@
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
+
+                    {{-- TAMBAHAN BARU: Status Ketersediaan Kendaraan (Revisi) --}}
+                    <div class="form-control w-full">
+                        <label class="label mb-2">
+                            <span class="label-text font-bold text-slate-700">Status Ketersediaan</span>
+                        </label>
+                        <select name="is_ready"
+                            class="select select-bordered w-full rounded-2xl @error('is_ready') border-red-500 @else border-slate-200 @enderror bg-slate-50 font-bold text-slate-700 focus:border-emerald-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-emerald-50/50">
+                            <option value="1" {{ old('is_ready', $vehicle->is_ready) == '1' ? 'selected' : '' }}>Ready
+                                (Tampilkan di Rental)</option>
+                            <option value="0" {{ old('is_ready', $vehicle->is_ready) == '0' ? 'selected' : '' }}>
+                                Maintenance / Perbaikan (Sembunyikan)</option>
+                        </select>
+                        @error('is_ready')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
+                {{-- Foto Kendaraan --}}
                 <div class="form-control w-full">
                     <label class="label mb-2">
                         <span class="label-text font-bold text-slate-700">Foto Kendaraan</span>
@@ -141,6 +181,7 @@
                     @enderror
                 </div>
 
+                {{-- Footer Tombol Aksi --}}
                 <div class="flex items-center justify-end gap-4 border-t border-slate-50 pt-6">
                     <a href="{{ url('/vehicle') }}"
                         class="btn btn-ghost rounded-2xl px-8 font-bold text-slate-500">Batal</a>

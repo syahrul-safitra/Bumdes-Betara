@@ -39,6 +39,8 @@ class VehicleController extends Controller
             'warna' => 'required|string|max:50',
             'harga_perhari' => 'required|numeric|min:0',
             'denda_perhari' => 'required|numeric|min:0',
+            'harga_perbulan' => 'required|numeric|min:0',
+            'is_ready' => 'required',
             'sewa_driver'    => 'required|numeric|min:0',
             'gambar' => 'required|image|mimes:jpeg,png,jpg|max:2048'
         ]);
@@ -86,6 +88,8 @@ class VehicleController extends Controller
             'warna' => 'required|string|max:50',
             'harga_perhari' => 'required|numeric|min:0',
             'denda_perhari' => 'required|numeric|min:0',
+            'harga_perbulan' => 'required|numeric|min:0',
+            'is_ready' => 'required',
             'sewa_driver'    => 'required|numeric|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048' // Diubah jadi nullable
         ]);

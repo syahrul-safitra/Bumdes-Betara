@@ -74,6 +74,33 @@
                                     <span class="text-slate-500">Unit Kendaraan</span>
                                     <span class="font-bold text-emerald-700">{{ $rental->vehicle->merek }}</span>
                                 </div>
+
+                                {{-- DINAMIS: JENIS PAKET RENTAL --}}
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
+                                    <span class="text-slate-500">Jenis Paket</span>
+                                    @if ($rental->is_sewa_perbulan == 1)
+                                        <span
+                                            class="badge badge-xs border-none bg-indigo-100 text-indigo-700 font-bold px-2.5 py-2 rounded-md">
+                                            <i class="fa-solid fa-calendar-days mr-1"></i> Paket Bulanan
+                                        </span>
+                                    @else
+                                        <span
+                                            class="badge badge-xs border-none bg-emerald-100 text-emerald-700 font-bold px-2.5 py-2 rounded-md">
+                                            <i class="fa-solid fa-calendar-day mr-1"></i> Paket Harian
+                                        </span>
+                                    @endif
+                                </div>
+
+                                {{-- REVISI ADMIN: METODE PEMBAYARAN AWAL --}}
+                                <div class="flex justify-between border-b border-slate-200/50 pb-2">
+                                    <span class="text-slate-500">Skema Bayar</span>
+                                    @if ($rental->is_dp == 1)
+                                        <span class="font-bold text-indigo-600">Transfer DP (20%)</span>
+                                    @else
+                                        <span class="font-bold text-emerald-600">Tunai / Cash Penuh</span>
+                                    @endif
+                                </div>
+
                                 {{-- TAMBAHAN INFORMASI METODE DRIVER DI SISI ADMIN --}}
                                 <div class="flex justify-between items-center">
                                     <span class="text-slate-500">Layanan Sopir</span>
@@ -132,22 +159,36 @@
                             <div class="mb-6 flex items-center justify-between">
                                 <h3 class="text-xs font-black uppercase tracking-widest text-emerald-400">Billing Summary
                                 </h3>
-                                <span class="badge badge-sm border-none bg-emerald-500 font-bold text-white">
-                                    {{ $selisihHari }} Hari
-                                </span>
+                                {{-- Badge Durasi Dinamis (Bulan / Hari) --}}
+                                @if ($rental->is_sewa_perbulan == 1)
+                                    <span class="badge badge-sm border-none bg-indigo-500 font-bold text-white">
+                                        {{ $rental->berapa_bulan }} Bulan
+                                    </span>
+                                @else
+                                    <span class="badge badge-sm border-none bg-emerald-500 font-bold text-white">
+                                        {{ $selisihHari }} Hari
+                                    </span>
+                                @endif
                             </div>
 
                             <div class="space-y-4">
-                                {{-- 1. Biaya Sewa Mobil --}}
+                                {{-- 1. Biaya Sewa Mobil (Kondisional Bulanan vs Harian) --}}
                                 <div class="flex justify-between text-slate-400 text-xs">
-                                    <span>Sewa Mobil ({{ $selisihHari }} Hari x Rp
-                                        {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }})</span>
-                                    <span>Rp
-                                        {{ number_format($selisihHari * $rental->vehicle->harga_perhari, 0, ',', '.') }}</span>
+                                    @if ($rental->is_sewa_perbulan == 1)
+                                        <span>Sewa Paket Mobil ({{ $rental->berapa_bulan }} Bulan x Rp
+                                            {{ number_format($rental->vehicle->harga_perbulan, 0, ',', '.') }})</span>
+                                        <span>Rp
+                                            {{ number_format($rental->berapa_bulan * $rental->vehicle->harga_perbulan, 0, ',', '.') }}</span>
+                                    @else
+                                        <span>Sewa Mobil ({{ $selisihHari }} Hari x Rp
+                                            {{ number_format($rental->vehicle->harga_perhari, 0, ',', '.') }})</span>
+                                        <span>Rp
+                                            {{ number_format($selisihHari * $rental->vehicle->harga_perhari, 0, ',', '.') }}</span>
+                                    @endif
                                 </div>
 
-                                {{-- 2. Biaya Sewa Driver (Dinamis jika dipilih) --}}
-                                @if ($rental->sewa_driver == 1)
+                                {{-- 2. Biaya Sewa Driver (Hanya muncul jika harian dan memilih driver) --}}
+                                @if ($rental->is_sewa_perbulan == 0 && $rental->sewa_driver == 1)
                                     <div class="flex justify-between text-indigo-400 text-xs">
                                         <span>Sewa Driver ({{ $selisihHari }} Hari x Rp
                                             {{ number_format($rental->vehicle->sewa_driver, 0, ',', '.') }})</span>
@@ -177,18 +218,45 @@
                                     <span>+ Rp {{ number_format($totalDenda, 0, ',', '.') }}</span>
                                 </div>
 
-                                {{-- GRAND TOTAL AKHIR (TOTAL SEWA + TOTAL DENDA) --}}
-                                <div class="mt-6 flex items-center justify-between border-t-2 border-emerald-500/30 pt-4">
-                                    <div class="flex flex-col">
-                                        <span class="text-base font-bold text-emerald-400">Grand Total</span>
-                                        <span
-                                            class="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">(Sewa
-                                            Pokok + Denda)</span>
+                                {{-- REVISI ADMIN: RINCIAN POTONGAN DP JIKA IS_DP TRUE --}}
+                                @if ($rental->is_dp == 1)
+                                    @php
+                                        $nominalDP = $rental->total_sewa * 0.2;
+                                        $grandTotal = $rental->total_sewa + $totalDenda;
+                                        $sisaPelunasan = $grandTotal - $nominalDP;
+                                    @endphp
+                                    <div
+                                        class="flex justify-between text-indigo-400 text-xs border-t border-dashed border-slate-800 pt-3">
+                                        <span>Uang Muka Terbayar (DP 20%)</span>
+                                        <span>- Rp {{ number_format($nominalDP, 0, ',', '.') }}</span>
                                     </div>
-                                    <span class="text-3xl font-black text-white">
-                                        Rp {{ number_format($rental->total_sewa + $totalDenda, 0, ',', '.') }}
-                                    </span>
-                                </div>
+                                    <div
+                                        class="mt-4 flex items-center justify-between border-t-2 border-indigo-500/30 pt-4">
+                                        <div class="flex flex-col">
+                                            <span class="text-base font-bold text-indigo-400">Sisa Pelunasan (Cash)</span>
+                                            <span
+                                                class="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">(Grand
+                                                Total - DP)</span>
+                                        </div>
+                                        <span class="text-2xl font-black text-white">
+                                            Rp {{ number_format($sisaPelunasan, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                @else
+                                    {{-- GRAND TOTAL AKHIR STANDAR (JIKA CASH TANPA DP) --}}
+                                    <div
+                                        class="mt-6 flex items-center justify-between border-t-2 border-emerald-500/30 pt-4">
+                                        <div class="flex flex-col">
+                                            <span class="text-base font-bold text-emerald-400">Grand Total</span>
+                                            <span
+                                                class="text-[9px] text-slate-500 uppercase tracking-wider font-semibold mt-0.5">(Sewa
+                                                Pokok + Denda)</span>
+                                        </div>
+                                        <span class="text-3xl font-black text-white">
+                                            Rp {{ number_format($rental->total_sewa + $totalDenda, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+                                @endif
                             </div>
                         </div>
 
@@ -228,12 +296,27 @@
                         </div>
                     </div>
 
+                    {{-- REVISI ADMIN: GRUP TOMBOL UNTUK PREVIEW FILE BERKAS IDENTITAS DAN DP --}}
                     <div class="flex w-full flex-col gap-3 lg:w-auto lg:flex-row">
                         @if (!empty($rental->file_identitas))
                             <a href="{{ asset('File/' . $rental->file_identitas) }}" target="_blank"
                                 class="btn rounded-2xl border-slate-200 bg-white px-6 font-bold text-slate-600 shadow-sm hover:bg-slate-50">
-                                Lihat File Identitas
+                                <i class="fa-solid fa-address-card mr-1 text-slate-400"></i> Lihat File Identitas
                             </a>
+                        @endif
+
+                        @if ($rental->is_dp == 1)
+                            @if (!empty($rental->bukti_dp))
+                                <a href="{{ asset('File/' . $rental->bukti_dp) }}" target="_blank"
+                                    class="btn rounded-2xl border-indigo-200 bg-indigo-50 px-6 font-bold text-indigo-700 shadow-sm hover:bg-indigo-100">
+                                    <i class="fa-solid fa-receipt mr-1 text-indigo-500"></i> Lihat Bukti DP
+                                </a>
+                            @else
+                                <button type="button" disabled
+                                    class="btn rounded-2xl border-slate-200 bg-slate-100 px-6 font-bold text-slate-400 cursor-not-allowed">
+                                    <i class="fa-solid fa-circle-xmark mr-1 text-slate-400"></i> Bukti DP Belum Diunggah
+                                </button>
+                            @endif
                         @endif
                     </div>
                 </div>
@@ -353,7 +436,15 @@
                 {{-- Opsi Telah Dibayar --}}
                 <label
                     class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200 hover:bg-emerald-50">
-                    <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">Telah Dibayar</span>
+                    <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">DP Diterima</span>
+                    <input type="radio" name="status_pembayaran" value="dp_diterima" class="radio radio-emerald"
+                        @checked($rental->status_pembayaran == 'dp_diterima') />
+                </label>
+
+                <label
+                    class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200 hover:bg-emerald-50">
+                    <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">Telah Dibayar
+                        (Lunas)</span>
                     <input type="radio" name="status_pembayaran" value="telah_dibayar" class="radio radio-emerald"
                         @checked($rental->status_pembayaran == 'telah_dibayar') />
                 </label>

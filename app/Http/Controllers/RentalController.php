@@ -49,8 +49,18 @@ class RentalController extends Controller
      */
     public function create(Vehicle $vehicle)
     {
+
+            // return Rental::where('vehicle_id', $vehicle->id)
+            //         // ->whereIn('status_rental', ['belum_diambil', 'sedang'])
+            //         ->whereMonth('tanggal_peminjaman', now()->month)
+            //         ->get(['tanggal_peminjaman', 'tanggal_pengembalian']);
+
         return view('Customer.create-rental', [
-            'car' => $vehicle,
+            'car' => $vehicle, 
+            'bookingBulanIni' => Rental::where('vehicle_id', $vehicle->id)
+                // ->whereIn('status_rental', ['approved', 'active'])
+                ->whereMonth('tanggal_peminjaman', now()->month)
+                ->get(['tanggal_peminjaman', 'tanggal_pengembalian'])
         ]);
     }
 
@@ -110,10 +120,12 @@ class RentalController extends Controller
 
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'customer_id'          => 'required',
             'vehicle_id'           => 'required|exists:vehicles,id',
             'sewa_driver'          => 'required|in:0,1', // Validasi input radio driver (0 atau 1)
+            'is_dp'          => 'required|in:0,1', // Validasi input radio driver (0 atau 1)
             'tanggal_peminjaman'   => 'required|date|after_or_equal:today',
             'tanggal_pengembalian' => 'required|date|after_or_equal:tanggal_peminjaman', // Memastikan tgl kembali tidak mendahului tgl pinjam
         ]);
@@ -313,7 +325,13 @@ class RentalController extends Controller
 
         }
 
-        $selisihHari = $tanggalAwal->diffInDays($tanggalAkhir) + 1;
+        // Jika sewa bulanan, bypass fungsi diffInDays agar tidak merusak hitungan flat 30 hari
+        if ($rental->is_sewa_perbulan == 1) {
+            $selisihHari = $rental->berapa_bulan * 30; 
+        } else {
+            // Tetap gunakan rumus lama jika transaksi adalah sewa harian biasa
+            $selisihHari = $tanggalAwal->diffInDays($tanggalAkhir) + 1;
+        }
 
         return view('Customer.detail-rental', [
             'rental' => $rental->load('customer', 'vehicle'),
@@ -351,28 +369,82 @@ class RentalController extends Controller
     public function uploadIdentitas(Rental $rental, Request $request)
     {
 
-        $validated = $request->validate([
-            'file_identitas' => 'max:2100',
+        // $validated = $request->validate([
+        //     'file_identitas' => 'max:2100',
+        //     'alamat' => 'required|max:100',
+        // ]);
+
+        // if ($request->file('file_identitas')) {
+        //     // hapus file lama :
+        //     File::delete('File/'.$rental->file_identitas);
+
+        //     $file = $request->file('file_identitas');
+
+        //     $renameFile = time().'-'.$file->getClientOriginalName();
+
+        //     $validated['file_identitas'] = $renameFile;
+
+        //     $file->move('File', $renameFile);
+        // }
+        
+        // $rental->update($validated);
+
+
+        // return back()->with('success', 'Berhasil mengupload file identitas');
+
+        // Pastikan variabel $rental sudah tersedia sebelum baris ini (misal dari Route Binding atau query find)
+        
+        // 1. Definisikan rule validasi dasar
+        $rules = [
+            'file_identitas' => 'nullable|file|max:2100', // tambahkan type file agar aman
             'alamat' => 'required|max:100',
-        ]);
+        ];
 
+        // 2. Tambahkan validasi bersyarat jika sewa memerlukan DP
+        if ($rental->is_dp == 1) {
+            // Jika belum pernah upload bukti_dp, maka wajib (required). Jika sudah ada, boleh nullable (opsional saat update data lain)
+            $rules['bukti_dp'] = $rental->bukti_dp ? 'nullable|file|mimes:jpeg,png,jpg,pdf|max:2100' : 'required|file|mimes:jpeg,png,jpg,pdf|max:2100';
+        }
+
+        $validated = $request->validate($rules);
+
+        // 3. Proses upload File Identitas
         if ($request->file('file_identitas')) {
-            // hapus file lama :
-            File::delete('File/'.$rental->file_identitas);
+            // Hapus file identitas lama jika ada
+            if ($rental->file_identitas) {
+                File::delete('File/' . $rental->file_identitas);
+            }
 
-            $file = $request->file('file_identitas');
+            $fileIdentitas = $request->file('file_identitas');
+            $renameIdentitas = time() . '-identitas-' . $fileIdentitas->getClientOriginalName();
+            
+            $validated['file_identitas'] = $renameIdentitas;
+            $fileIdentitas->move('File', $renameIdentitas);
+        }
 
-            $renameFile = time().'-'.$file->getClientOriginalName();
+        // 4. Proses upload Bukti Transfer DP (Menggunakan kolom bukti_dp)
+        if ($request->file('bukti_dp')) {
+            // Hapus file bukti DP lama jika ada sebelumnya
+            if ($rental->bukti_dp) {
+                File::delete('File/' . $rental->bukti_dp);
+            }
 
-            $validated['file_identitas'] = $renameFile;
-
-            $file->move('File', $renameFile);
+            $fileDp = $request->file('bukti_dp');
+            $renameDp = time() . '-dp-' . $fileDp->getClientOriginalName();
+            
+            $validated['bukti_dp'] = $renameDp;
+            $fileDp->move('File', $renameDp);
         }
         
+        // 5. Update data ke database
         $rental->update($validated);
 
+        // 6. Buat pesan kembalian yang dinamis
+        $message = $rental->is_dp == 1 
+            ? 'Berhasil mengunggah data identitas dan bukti transfer DP.' 
+            : 'Berhasil mengunggah file identitas.';
 
-        return back()->with('success', 'Berhasil mengupload file identitas');
+        return back()->with('success', $message);
     }
 
     public function setPembayaran(Request $request, Rental $rental)
@@ -467,5 +539,81 @@ class RentalController extends Controller
             'customer' => $customer->load('rental.vehicle')
         ]);
 
+    }
+
+    public function createPerbulan(Vehicle $vehicle) {
+        return view('Customer.craete-rental-bulanan', [
+            'vehicle' => $vehicle
+        ]);
+    }
+
+    public function storeBulanan(Request $request)
+    {
+        // 1. Validasi input dari form bulanan
+        $validated = $request->validate([
+            'vehicle_id'         => 'required|exists:vehicles,id',
+            'is_dp'              => 'required|in:0,1', 
+            'berapa_bulan'       => 'required|integer|min:1|max:12',
+            'tanggal_peminjaman' => 'required|date|after_or_equal:today',
+            'customer_id' => 'required'
+        ]);
+
+        // Ambil Auth Customer ID (Asumsi menggunakan auth user/customer yang sedang login)
+        // Jika Anda melempar customer_id via form, ganti menjadi: $request->customer_id
+        // $validated['customer_id'] = auth()->id() ?? $request->customer_id; 
+
+        // Paksa nilai aturan bulanan: Lepas Kunci & Set Flag Bulanan
+        $validated['sewa_driver']       = 0; 
+        $validated['is_sewa_perbulan']  = 1;
+
+        // 2. Ambil data kendaraan untuk kalkulasi harga paket bulanan
+        $vehicle = Vehicle::findOrFail($validated['vehicle_id']);
+
+        // 3. Hitung tanggal_pengembalian secara otomatis menggunakan Carbon (addMonths)
+        $tanggalAwal = Carbon::parse($validated['tanggal_peminjaman']);
+        
+        // Gandakan objek Carbon agar tanggalAwal tidak ikut berubah saat ditambah bulan
+        // Menggunakan copy() agar tanggal asli tidak berubah, lalu tambahkan (berapa_bulan * 30) hari
+        $tanggalAkhir = $tanggalAwal->copy()->addDays((int)$validated['berapa_bulan'] * 30); 
+        
+        // Masukkan hasil kalkulasi tanggal ke array validated
+        $validated['tanggal_pengembalian'] = $tanggalAkhir->format('Y-m-d');
+
+        $tanggal_peminjaman = $validated['tanggal_peminjaman'];
+        $tanggal_pengembalian = $validated['tanggal_pengembalian'];
+
+        // 4. Cek bentrok jadwal (Memakai logika aman milik Anda)
+        $conflictResult = Rental::where('vehicle_id', $validated['vehicle_id'])
+            ->where(function ($query) use ($tanggal_peminjaman, $tanggal_pengembalian) {
+                $query->where(function ($q) use ($tanggal_peminjaman, $tanggal_pengembalian) {
+                    $q->whereBetween('tanggal_peminjaman', [$tanggal_peminjaman, $tanggal_pengembalian])
+                    ->orWhereBetween('tanggal_pengembalian', [$tanggal_peminjaman, $tanggal_pengembalian]);
+                })
+                ->orWhere(function ($q) use ($tanggal_peminjaman, $tanggal_pengembalian) {
+                    $q->where('tanggal_peminjaman', '<', $tanggal_peminjaman)
+                    ->where('tanggal_pengembalian', '>', $tanggal_pengembalian);
+                });
+            })->exists();
+
+        if ($conflictResult) {
+            return back()
+                ->withInput()
+                ->withErrors([
+                    'tanggal_peminjaman' => 'Maaf, mobil sudah dipesan/dikontrak pada rentang bulan tersebut. Silakan pilih tanggal lain.', 
+                ]);
+        }
+
+        // 5. Logika Kalkulasi Total Harga Bulanan
+        // Rumus: Berapa Bulan x Harga Per Bulan Mobil
+        $totalHarga = (int)$validated['berapa_bulan'] * $vehicle->harga_perbulan;
+
+        // Masukkan hasil kalkulasi total sewa ke array validated
+        $validated['total_sewa'] = $totalHarga;
+
+        // 6. Eksekusi penyimpanan data transaksi bulanan
+        $getDataRental = Rental::create($validated);
+
+        // 7. Redirect ke halaman detail pembayaran/invoice yang sama
+        return redirect('/detail-rental/' . $getDataRental->id)->with('success', 'Berhasil booking paket bulanan, silahkan melakukan pembayaran');
     }
 }

@@ -37,12 +37,29 @@
                             </div> --}}
                         </div>
                         <div class="p-6">
-                            <div class="mb-2 flex items-start justify-between gap-2">
+                            <div class="mb-2 flex items-start justify-between gap-4">
+                                {{-- Merek / Tipe Mobil --}}
                                 <h3 class="text-lg font-extrabold leading-tight text-slate-800">{{ $unit->merek }}</h3>
-                                <div class="text-right">
-                                    <div class="text-lg font-black text-emerald-600">
-                                        Rp {{ number_format($unit->harga_perhari, 0, ',', '.') }}</div>
-                                    <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">/ Hari</div>
+
+                                {{-- Rincian Tarif (Hari & Bulan) --}}
+                                <div class="text-right shrink-0">
+                                    {{-- Info Harga Harian --}}
+                                    <div class="text-lg font-black text-emerald-600 leading-none">
+                                        Rp {{ number_format($unit->harga_perhari, 0, ',', '.') }}
+                                    </div>
+                                    <div
+                                        class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5 mb-2 block">
+                                        / Hari
+                                    </div>
+
+                                    {{-- Info Harga Bulanan --}}
+                                    <div
+                                        class="text-sm font-extrabold text-indigo-600 leading-none border-t border-slate-100 pt-1.5">
+                                        Rp {{ number_format($unit->harga_perbulan, 0, ',', '.') }}
+                                    </div>
+                                    <div class="text-[9px] font-bold uppercase tracking-widest text-slate-400 mt-0.5 block">
+                                        / Bulan
+                                    </div>
                                 </div>
                             </div>
 
@@ -59,15 +76,18 @@
 
                             <hr class="my-4 border-slate-100">
 
-                            <div class="flex gap-2">
+                            <div class="flex gap-3 mt-4">
+                                {{-- Tombol Sewa Harian --}}
                                 <a href="{{ url('/create-rental/' . $unit->id) }}"
-                                    class="btn flex-1 rounded-2xl border-none bg-emerald-600 font-bold text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700">
-                                    Sewa Sekarang
+                                    class="btn flex-1 rounded-2xl border-none bg-emerald-600 font-bold text-white shadow-lg shadow-emerald-100 hover:bg-emerald-700 transition-all text-xs">
+                                    <i class="fa-solid fa-calendar-day mr-1"></i> Harian
                                 </a>
-                                {{-- <button
-                                    class="btn btn-square rounded-2xl border-none bg-slate-50 text-slate-400 hover:bg-slate-100">
-                                    <i class="fa-solid fa-circle-info text-lg"></i>
-                                </button> --}}
+
+                                {{-- Tombol Sewa Bulanan --}}
+                                <a href="{{ url('/create-rental-bulanan/' . $unit->id) }}"
+                                    class="btn flex-1 rounded-2xl border-none bg-indigo-600 font-bold text-white shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all text-xs">
+                                    <i class="fa-solid fa-calendar-days mr-1"></i> Bulanan
+                                </a>
                             </div>
                         </div>
                     </div>

@@ -97,8 +97,10 @@ Route::get('/registrasi', function () {
 });
 
 Route::get('/create-rental/{vehicle}', [RentalController::class, 'create'])->middleware('isCustomer');
+Route::get('/create-rental-bulanan/{vehicle}', [RentalController::class, 'createPerbulan'])->middleware('isCustomer');
 
 Route::post('/rental', [RentalController::class, 'store'])->middleware('isCustomer');
+Route::post('/rental-bulanan', [RentalController::class, 'storeBulanan'])->middleware('isCustomer');
 
 Route::post('/register-customer', [CustomerController::class, 'store']);
 
@@ -110,7 +112,7 @@ Route::post('/upload-identitas/{rental}', [RentalController::class, 'uploadIdent
 Route::get('/riwayat-sewa', [RentalController::class, 'riwayat'])->middleware('isCustomer');
 Route::get('/rental-kendaraan', function () {
     return view('Customer.rental', [
-        'vehicles' => Vehicle::latest()->get(),
+        'vehicles' => Vehicle::where('is_ready', 1)->get(),
     ]);
 });     
 // ======================================= Guest ==============================================
