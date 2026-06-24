@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 use illuminate\Support\Facades\Auth;
 
-
-class isAdmin
+class isSpp
 {
     /**
      * Handle an incoming request.
@@ -18,6 +17,7 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
+
         if (!Auth::guard('admin')->check() && !Auth::guard('customer')->check() && !Auth::guard('spp')->check()) {
             return redirect('/login');
         }
@@ -26,9 +26,10 @@ class isAdmin
             return redirect('/');
         }
 
-        if (Auth::guard('spp')->check()) {
-            return redirect('/spp-dashboard');
+        if (Auth::guard('admin')->check()) {
+            return redirect('/dashboard');
         }
+
 
         return $next($request);
     }

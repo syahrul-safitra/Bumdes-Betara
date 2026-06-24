@@ -11,7 +11,7 @@
                 class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow-xl bg-base-100 rounded-2xl w-64 border border-base-100 font-medium">
                 <li><a href="/" class="py-3">Beranda</a></li>
                 <li><a href="/profil" class="py-3">Profil</a></li>
-                <li><a href="/dokumentasi-desa" class="py-3">Berita</a></li>
+                {{-- <li><a href="/dokumentasi-desa" class="py-3">Berita</a></li> --}}
                 <li>
                     <button onclick="panduan_modal.showModal()"
                         class="hover:text-emerald-600 rounded-xl transition-all flex items-center gap-1.5 focus:bg-transparent active:bg-transparent">
@@ -50,7 +50,7 @@
         <ul class="menu menu-horizontal px-1 font-bold text-slate-500 gap-2 items-center">
             <li><a href="/" class="hover:text-emerald-600 rounded-xl transition-all">Beranda</a></li>
             <li><a href="/profil" class="hover:text-emerald-600 rounded-xl transition-all">Profil</a></li>
-            <li><a href="/dokumentasi-desa" class="hover:text-emerald-600 rounded-xl transition-all">Berita</a>
+            {{-- <li><a href="/dokumentasi-desa" class="hover:text-emerald-600 rounded-xl transition-all">Berita</a> --}}
             </li>
             <li><a href="/rental-kendaraan" class="hover:text-emerald-600 rounded-xl transition-all">Rental</a></li>
 
@@ -129,16 +129,17 @@
     </div>
 </div>
 
-<dialog id="panduan_modal" class="modal modal-bottom sm:modal-middle">
+<dialog id="panduan_modal" class="modal modal-bottom sm:modal-middle backdrop-blur-sm">
     <div class="modal-box rounded-[2.5rem] bg-white p-8 max-w-xl border border-slate-100 shadow-2xl">
 
+        {{-- Header Modal --}}
         <div class="flex items-start justify-between mb-6">
             <div>
                 <h3 class="text-xl font-black text-slate-800 tracking-tight flex items-center gap-2">
                     <span class="p-2 bg-emerald-50 text-emerald-600 rounded-xl"><i class="fa-solid fa-route"></i></span>
                     Panduan & Tata Cara Sewa
                 </h3>
-                <p class="text-xs text-slate-400 mt-1 uppercase font-black tracking-widest">Buberta Rent Armada</p>
+                <p class="text-xs text-slate-400 mt-1 uppercase font-black tracking-widest">BUBERTA RENT</p>
             </div>
             <form method="dialog">
                 <button class="btn btn-sm btn-circle btn-ghost text-slate-400 hover:bg-slate-100">
@@ -147,13 +148,16 @@
             </form>
         </div>
 
+        {{-- Alur & Prosedur Transaksi --}}
         <div class="space-y-6">
 
+            {{-- Tahap 1: Registrasi --}}
             <div class="flex gap-4 relative">
                 <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
                 <div
                     class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
-                    1</div>
+                    1
+                </div>
                 <div class="space-y-1 pt-1">
                     <h4 class="font-black text-slate-800 text-sm">Registrasi Akun Sesuai Tipe</h4>
                     <p class="text-xs text-slate-500 leading-relaxed">
@@ -172,22 +176,44 @@
                 </div>
             </div>
 
+            {{-- Tahap 2: Skema Pilihan Paket Sewa (Harian vs Bulanan) --}}
             <div class="flex gap-4 relative">
                 <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
                 <div
                     class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
-                    2</div>
-                <div class="space-y-1 pt-1">
-                    <h4 class="font-black text-slate-800 text-sm">Pilih Armada & Tentukan Tanggal</h4>
+                    2
+                </div>
+                <div class="space-y-2 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Pilih Armada & Ketentuan Durasi</h4>
                     <p class="text-xs text-slate-500 leading-relaxed">
-                        Masuk ke katalog kendaraan, pilih unit mobil yang tersedia, lalu tentukan <span
-                            class="font-bold text-slate-700">Tanggal Peminjaman</span> serta <span
-                            class="font-bold text-slate-700">Tanggal Pengembalian</span>.
+                        Pilih unit mobil pada katalog, lalu tentukan tipe kontrak sewa yang Anda butuhkan:
                     </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
+                        {{-- Aturan Sewa Harian --}}
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
+                            <span class="text-[10px] uppercase font-black text-emerald-600 block mb-0.5"><i
+                                    class="fa-solid fa-calendar-day"></i> Kontrak Harian</span>
+                            <p class="text-[11px] font-medium text-slate-600 leading-relaxed">
+                                Keterlambatan pengembalian armada dihitung <strong class="text-slate-800">per
+                                    hari</strong> berdasarkan nominal tarif denda tetap yang telah disepakati bersama.
+                            </p>
+                        </div>
+                        {{-- Aturan Sewa Bulanan --}}
+                        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60">
+                            <span class="text-[10px] uppercase font-black text-indigo-600 block mb-0.5"><i
+                                    class="fa-solid fa-calendar-days"></i> Kontrak Bulanan</span>
+                            <p class="text-[11px] font-medium text-slate-600 leading-relaxed">
+                                Penyewa dapat melakukan <strong class="text-slate-800">DP minimal 20%</strong> di awal
+                                kontrak. Klausul mutlak: segala bentuk kerusakan unit ditanggung sepenuhnya oleh
+                                penyewa.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Tahap 3: Konfirmasi & Pembayaran (Terupdate) -->
+            {{-- Tahap 3: Syarat Dokumen & Validasi Berkas --}}
             <div class="flex gap-4 relative">
                 <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
                 <div
@@ -195,39 +221,39 @@
                     3
                 </div>
                 <div class="space-y-2 pt-1">
-                    <h4 class="font-black text-slate-800 text-sm">Upload Identitas & Pembayaran Tunai</h4>
+                    <h4 class="font-black text-slate-800 text-sm">Upload Identitas & Pembayaran</h4>
                     <p class="text-xs text-slate-500 leading-relaxed">
-                        Customer wajib mengunggah berkas identitas (<span class="font-bold text-slate-700">KTP /
-                            NPWP</span>) beserta <span class="font-bold text-slate-700">alamat lengkap domisili</span>
-                        saat melakukan rental. Pembayaran dilakukan secara tunai hingga status berubah menjadi
-                        <span
-                            class="badge badge-xs border-none bg-emerald-500 text-white font-black uppercase text-[9px] px-1.5 py-1">LUNAS</span>.
+                        Penyewa wajib mengunggah berkas identitas (<span class="font-bold text-slate-700">KTP /
+                            NPWP</span>) beserta <span class="font-bold text-slate-700">alamat lengkap domisili</span>.
+                        Pembayaran tunai divalidasi oleh petugas hingga status berubah menjadi <span
+                            class="badge badge-xs border-none bg-emerald-500 text-white font-black uppercase text-[9px] px-1.5 py-1">Lunas</span>
+                        / DP Terverifikasi.
                     </p>
 
-                    {{-- Keterangan Metode Pembayaran Resmi --}}
                     <div class="flex flex-wrap gap-2 pt-1">
                         <span
                             class="badge badge-sm border-none bg-emerald-50 text-emerald-700 font-bold text-[10px] py-2 px-3">
-                            <i class="fa-solid fa-money-bill-wave mr-1.5 text-emerald-600"></i> Hanya Pembayaran Tunai
-                            (Cash)
+                            <i class="fa-solid fa-money-bill-wave mr-1.5 text-emerald-600"></i> Pembayaran Tunai (Cash)
                         </span>
                         <span
                             class="badge badge-sm border-none bg-indigo-50 text-indigo-700 font-bold text-[10px] py-2 px-3">
-                            <i class="fa-solid fa-file-invoice mr-1.5 text-indigo-600"></i> Wajib Berkas & Alamat
+                            <i class="fa-solid fa-file-invoice mr-1.5 text-indigo-600"></i> Wajib Berkas Valid
                         </span>
                     </div>
                 </div>
             </div>
 
+            {{-- Tahap 4: Serah Terima Kendaraan --}}
             <div class="flex gap-4">
                 <div
                     class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
-                    4</div>
+                    4
+                </div>
                 <div class="space-y-2 pt-1">
                     <h4 class="font-black text-slate-800 text-sm">Pengambilan Unit Armada</h4>
                     <p class="text-xs text-slate-500 leading-relaxed">
-                        Datang ke lokasi kantor BUMDes/Buberta Rent untuk serah terima unit dengan membawa dokumen asli
-                        saat status operasional Anda:
+                        Silakan datang ke pool kantor BUMDES untuk serah terima unit dengan memperlihatkan
+                        dokumen penunjang asli:
                     </p>
                     <div class="bg-slate-50 border border-slate-100 rounded-2xl p-3 space-y-2">
                         <div class="flex items-center gap-2 text-[11px]">
@@ -238,7 +264,7 @@
                         <div class="flex items-center gap-2 text-[11px]">
                             <i class="fa-solid fa-file-contract text-indigo-500 w-4"></i>
                             <span class="text-slate-600"><strong class="text-slate-800">Perusahaan:</strong> Membawa
-                                Surat Kuasa asli/Surat Tugas dari PT terkait.</span>
+                                NPWP atau surat resmi dari PT terkait.</span>
                         </div>
                     </div>
                 </div>
@@ -246,6 +272,7 @@
 
         </div>
 
+        {{-- Footer Aksi --}}
         <div class="modal-action mt-8 flex justify-end">
             <form method="dialog">
                 <button
@@ -263,7 +290,7 @@
 
 
 <!-- Modal Panduan Tata Cara Simpan Pinjam (SPP) -->
-<dialog id="panduan_spp_modal" class="modal modal-bottom sm:modal-middle">
+<dialog id="panduan_spp_modal" class="modal modal-bottom sm:modal-middle backdrop-blur-sm">
     <div class="modal-box max-w-2xl rounded-[2rem] border border-slate-100 bg-white p-6 md:p-8 shadow-2xl">
 
         <!-- Header Modal -->
@@ -275,9 +302,9 @@
                 </div>
                 <div class="text-left">
                     <h3 class="text-lg font-black uppercase italic tracking-tight text-slate-800">
-                        Panduan Alur Pengajuan SPP
+                        Panduan Prosedur & Aturan SPP
                     </h3>
-                    <p class="text-[11px] font-medium text-slate-400 italic">Sistem Informasi Simpan Pinjam Kelompok
+                    <p class="text-[11px] font-medium text-slate-400 italic">Sistem Informasi Simpan Pinjam Perempuan
                         BUMDes Betara</p>
                 </div>
             </div>
@@ -287,7 +314,22 @@
             </form>
         </div>
 
-        <!-- Body / Konten Langkah -->
+        <!-- Persyaratan Utama Kelompok -->
+        <div class="mb-5 p-4 bg-amber-50/60 border border-amber-200/70 rounded-2xl text-left">
+            <h4 class="text-xs font-black uppercase tracking-wider text-amber-800 flex items-center gap-1.5 mb-1.5">
+                <i class="fa-solid fa-circle-exclamation text-amber-600"></i> Syarat Kelayakan Kelompok
+            </h4>
+            <ul class="text-[11px] font-medium text-slate-600 list-disc list-inside space-y-1">
+                <li>Anggota kelompok wajib khusus <strong class="text-slate-800">perempuan</strong> domisili Desa
+                    Betara (tanggung renteng).</li>
+                <li>Ketua wajib mengunggah <strong class="text-slate-800">Foto KTP</strong> pengurus serta seluruh
+                    daftar anggota.</li>
+                <li>Akun kelompok harus melalui <strong class="text-slate-800">Validasi & Persetujuan Lapangan</strong>
+                    oleh Admin BUMDes.</li>
+            </ul>
+        </div>
+
+        <!-- Body / Konten Langkah Alur -->
         <div class="rounded-3xl border border-slate-100 bg-slate-50/70 p-5 md:p-6 text-left">
             <ol class="space-y-6 list-none p-0 m-0">
 
@@ -295,11 +337,12 @@
                 <li class="relative pl-12">
                     <span
                         class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">1</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Verifikasi Domisili &
-                        Kelompok</h5>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pengajuan Modal Usaha
+                    </h5>
                     <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Calon peminjam wajib terdaftar secara sah sebagai warga Desa Betara dan mengajukan pinjaman
-                        melalui sistem kelompok (tanggung renteng).
+                        Ketua kelompok mengisi formulir pengajuan pinjaman pada sistem, menentukan batas nominal <span
+                            class="font-bold text-slate-800">Plafon Kontrak</span>, menentukan tenor bulanan, serta
+                        menyertakan rincian rencana usaha.
                     </p>
                 </li>
 
@@ -307,11 +350,12 @@
                 <li class="relative pl-12">
                     <span
                         class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">2</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Validasi Dokumen
-                        Utama</h5>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Verifikasi Kelayakan
+                        & Jasa Program</h5>
                     <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Peminjam mempersiapkan Dokumen Kartu Tanda Penduduk (KTP) asli dan salinannya sebagai syarat
-                        administrasi tunggal.
+                        Admin memeriksa rekam jejak pengajuan. Jika disetujui, sistem otomatis menerbitkan
+                        kartu angsuran resmi berkala dengan kalkulasi suku bunga program sebesar <span
+                            class="font-bold text-indigo-600">0.5% per bulan</span>.
                     </p>
                 </li>
 
@@ -319,59 +363,27 @@
                 <li class="relative pl-12">
                     <span
                         class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">3</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pengisian Form &
-                        Dokumen Kredit</h5>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Mekanisme Pencairan
+                        Bertahap</h5>
                     <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Mengisi formulir pengajuan pinjaman, menentukan batas plafon dana, serta memilih tenor (durasi)
-                        angsuran yang disediakan sistem.
+                        Dana dicairkan melalui dua fase utama: <span class="font-bold text-slate-800">Cair Awal sebesar
+                            Rp 2.000.000</span> sebagai modal awal stimulus, kemudian sisa saldo plafon kontrak penuh
+                        (<span class="font-bold text-indigo-600">Cair Penuh</span>) akan dibuka gemboknya setelah
+                        pemantauan berkas dinyatakan produktif.
                     </p>
                 </li>
 
                 <!-- Langkah 4 -->
                 <li class="relative pl-12">
                     <span
-                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">4</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Keputusan &
-                        Persetujuan (Approval)</h5>
+                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-red-500 text-sm font-black text-white shadow-md shadow-red-100">4</span>
+                    <h5 class="text-sm font-black uppercase tracking-tight text-red-600 mb-0.5">Ketentuan Setoran &
+                        Sanksi Denda</h5>
                     <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Ketua BUMDes memberikan keputusan akhir berupa persetujuan penuh, penyesuaian nominal plafon,
-                        atau penolakan pengajuan berdasarkan data dokumen.
-                    </p>
-                </li>
-
-                <!-- Langkah 5 -->
-                <li class="relative pl-12">
-                    <span
-                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">5</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pencairan Dana Tahap
-                        Awal</h5>
-                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Peminjam menandatangani akad kredit, kemudian menerima pencairan dana stimulus awal sebesar
-                        <span class="font-bold text-slate-800">Rp 2.000.000</span> (secara tunai atau transfer).
-                    </p>
-                </li>
-
-                <!-- Langkah 6 -->
-                <li class="relative pl-12">
-                    <span
-                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-600 text-sm font-black text-white shadow-md shadow-indigo-100">6</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-slate-800 mb-0.5">Pencairan Saldo Sisa
-                        Kredit</h5>
-                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Setelah peminjam menyelesaikan pembayaran angsuran pertama secara tertib, sisa saldo plafon
-                        pinjaman akan dicairkan seluruhnya.
-                    </p>
-                </li>
-
-                <!-- Langkah 7 -->
-                <li class="relative pl-12">
-                    <span
-                        class="absolute left-0 top-0 flex h-8 w-8 items-center justify-center rounded-xl bg-red-500 text-sm font-black text-white shadow-md shadow-red-100">7</span>
-                    <h5 class="text-sm font-black uppercase tracking-tight text-red-600 mb-0.5">Sanksi Keterlambatan
-                        Angsuran</h5>
-                    <p class="text-xs font-medium leading-relaxed text-slate-600 m-0">
-                        Anggota yang terlambat membayar angsuran bulanan melewati batas tanggal jatuh tempo akan
-                        dikenakan denda akumulatif sebesar <span class="font-bold text-red-600">Rp 5.000 / hari</span>.
+                        Pembayaran cicilan dilakukan tunai kepada petugas. Kelompok yang terlambat menyetor melewati
+                        batas tanggal jatuh tempo akan dikenakan denda kumulatif otomatis dari sistem sebesar <span
+                            class="font-bold text-red-600">Rp 5.000 / hari</span> hingga angsuran bulan bersangkutan
+                        dilunasi.
                     </p>
                 </li>
 
@@ -391,7 +403,7 @@
     </div>
 
     <!-- Lapisan backdrop klik di luar modal untuk menutup -->
-    <form method="dialog" class="modal-backdrop bg-slate-900/40 backdrop-blur-xs">
+    <form method="dialog" class="modal-backdrop bg-slate-900/40 backdrop-blur-sm">
         <button>close</button>
     </form>
 </dialog>

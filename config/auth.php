@@ -49,6 +49,11 @@ return [
         'admin' => [
             'driver' => 'session', 
             'provider' => 'admin'
+        ],
+
+        'spp' => [
+            'driver' => 'session', 
+            'provider' => 'spp'
         ]
     ],
 
@@ -88,6 +93,11 @@ return [
         'admin' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class
+        ],
+
+        'spp' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\SppGroup::class
         ]
     ],
 

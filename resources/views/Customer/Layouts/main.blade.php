@@ -165,7 +165,7 @@
                         const alurHalaman = [
                             '/',
                             '/profil',
-                            '/dokumentasi-desa'
+                            // '/dokumentasi-desa'
                         ];
 
                         let currentIndex = alurHalaman.indexOf(currentPath);

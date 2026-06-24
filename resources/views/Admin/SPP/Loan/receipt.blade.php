@@ -51,7 +51,7 @@
 
         .kop-text h2 {
             margin: 0;
-            font-size: 16px;
+            font-size: 14px;
             text-transform: uppercase;
             color: #000;
             letter-spacing: 1px;
@@ -59,7 +59,7 @@
 
         .kop-text h1 {
             margin: 2px 0;
-            font-size: 20px;
+            font-size: 18px;
             color: #15803d;
             /* Emerald green accent */
         }
@@ -85,9 +85,10 @@
 
         .report-title h3 {
             margin: 0;
-            font-size: 14px;
+            font-size: 13px;
             text-decoration: underline;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Metadata Transaksi */
@@ -136,8 +137,19 @@
             font-weight: bold;
         }
 
+        /* Terbilang Box */
+        .terbilang-box {
+            margin-top: 10px;
+            padding: 6px 10px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            font-style: italic;
+            font-size: 9px;
+            color: #1e293b;
+        }
+
         .footer-summary {
-            margin-top: 25px;
+            margin-top: 35px;
             width: 100%;
         }
 
@@ -175,8 +187,8 @@
     <table class="meta-box">
         <tr>
             <td width="55%">
-                {{-- No. Kuitansi: <span
-                    class="font-bold">KW/SPP/{{ date('Ymd', strtotime($installment->tanggal_bayar)) }}/{{ $installment->id }}</span><br> --}}
+                No. Kuitansi: <span
+                    class="font-bold">KW/SPP/{{ date('Ymd', strtotime($installment->tanggal_bayar)) }}/{{ $installment->id }}</span><br>
                 Nama Kelompok: <span class="font-bold">Kelompok {{ $installment->loan->group->nama_kelompok }}</span>
             </td>
             <td class="text-right">
@@ -203,13 +215,14 @@
             </tr>
             <tr>
                 <td class="text-center">2</td>
-                <td>Jasa Bunga Bulanan Program SPP</td>
+                <td>Jasa Bunga Bulanan Program SPP (0.5%)</td>
                 <td class="text-right">{{ number_format($installment->jumlah_bunga, 0, ',', '.') }}</td>
             </tr>
             <tr>
                 <td class="text-center">3</td>
                 <td>Denda Keterlambatan Finansial</td>
-                <td class="text-right" style="@if ($installment->denda_kumulatif > 0) color: red; font-weight: bold; @endif">
+                <td class="text-right"
+                    style="@if ($installment->denda_kumulatif > 0) color: #b91c1c; font-weight: bold; @endif">
                     {{ number_format($installment->denda_kumulatif, 0, ',', '.') }}
                 </td>
             </tr>
@@ -217,13 +230,22 @@
         <tfoot>
             <tr style="background-color: #15803d; color: white;">
                 <td colspan="2" class="text-right font-bold" style="padding: 8px;">TOTAL DANA DITERIMA :</td>
-                <td class="text-right font-bold" style="font-size: 11px;">
+                <td class="text-right font-bold" style="font-size: 11px; padding: 8px;">
+                    {{-- Perbaikan: Kalkulasi langsung dari 3 komponen --}}
                     Rp
                     {{ number_format($installment->jumlah_pokok + $installment->jumlah_bunga + $installment->denda_kumulatif, 0, ',', '.') }}
                 </td>
             </tr>
         </tfoot>
     </table>
+
+    {{-- Penambahan Blok Terbilang Huruf Kapital untuk Keabsahan Nota Finansial --}}
+    <div class="terbilang-box">
+        {{-- Perbaikan: Sesuaikan parameter fungsi terbilang --}}
+        <strong>Terbilang:</strong>
+        "{{ ucwords(terbilang_pdf($installment->jumlah_pokok + $installment->jumlah_bunga + $installment->denda_kumulatif)) }}
+        Rupiah"
+    </div>
 
     <table class="footer-summary">
         <tr>
@@ -243,3 +265,50 @@
 </body>
 
 </html>
+
+{{-- PHP Helper Fungsi Terbilang Khusus di Dalam Dokumen DomPDF --}}
+{{-- PHP Helper Fungsi Terbilang yang Sudah Disempurnakan Jarak Spasinya --}}
+@php
+    function terbilang_pdf($angka)
+    {
+        $angka = abs($angka);
+        $baca = [
+            '',
+            'satu',
+            'dua',
+            'tiga',
+            'empat',
+            'lima',
+            'enam',
+            'tujuh',
+            'delapan',
+            'sembilan',
+            'sepuluh',
+            'sebelas',
+        ];
+        $terbilang = '';
+
+        if ($angka < 12) {
+            $terbilang = ' ' . $baca[$angka];
+        } elseif ($angka < 20) {
+            $terbilang = terbilang_pdf($angka - 10) . ' belas';
+        } elseif ($angka < 100) {
+            $terbilang = terbilang_pdf($angka / 10) . ' puluh ' . terbilang_pdf($angka % 10);
+        } elseif ($angka < 200) {
+            $terbilang = ' seratus ' . terbilang_pdf($angka - 100);
+        } elseif ($angka < 1000) {
+            $terbilang = terbilang_pdf($angka / 100) . ' ratus ' . terbilang_pdf($angka % 100);
+        } elseif ($angka < 2000) {
+            $terbilang = ' seribu ' . terbilang_pdf($angka - 1000);
+        } elseif ($angka < 1000000) {
+            $table_ribu = terbilang_pdf($angka / 1000);
+            $terbilang = $table_ribu . ' ribu ' . terbilang_pdf($angka % 1000);
+        } elseif ($angka < 1000000000) {
+            $table_juta = terbilang_pdf($angka / 1000000);
+            $terbilang = $table_juta . ' juta ' . terbilang_pdf($angka % 1000000);
+        }
+
+        // preg_replace digunakan untuk merapikan jika ada spasi ganda yang tidak sengaja terbentuk
+        return preg_replace('/\s+/', ' ', trim($terbilang));
+    }
+@endphp

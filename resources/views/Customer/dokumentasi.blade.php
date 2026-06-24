@@ -15,12 +15,6 @@
                         kegiatan BUMDES Bersama Betara secara transparan.</p>
                 </div>
 
-                {{-- <div class="flex gap-2 overflow-x-auto pb-2">
-                    <button class="btn btn-sm btn-primary rounded-full">Semua</button>
-                    <button class="btn btn-sm btn-ghost rounded-full border border-base-300">Kegiatan</button>
-                    <button class="btn btn-sm btn-ghost rounded-full border border-base-300">Peresmian</button>
-                    <button class="btn btn-sm btn-ghost rounded-full border border-base-300">Rapat Desa</button>
-                </div> --}}
             </div>
         </div>
     </section>
@@ -28,58 +22,6 @@
     <div class="container mx-auto px-4 md:px-10 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
-            {{-- @php
-                $berita = [
-                    [
-                        'judul' => 'Peresmian Unit Usaha Buberta Rent Tahun 2023',
-                        'tgl' => '15 Nov 2023',
-                        'kategori' => 'Unit Usaha',
-                        'img' => 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=800',
-                        'excerpt' =>
-                            'BUMDes Bersama Betara resmi meluncurkan layanan rental kendaraan untuk memudahkan mobilitas warga desa...',
-                    ],
-                    [
-                        'judul' => 'Rapat Kerja Tahunan: Transformasi UPK ke BUMDes',
-                        'tgl' => '10 Jan 2024',
-                        'kategori' => 'Musyawarah',
-                        'img' => 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800',
-                        'excerpt' =>
-                            'Pembahasan mengenai penguatan regulasi sesuai UU Desa No 6 Tahun 2014 dan peningkatan PAD desa.',
-                    ],
-                    [
-                        'judul' => 'Pelatihan Tata Boga untuk Unit Usaha Toko Guberta',
-                        'tgl' => '05 Feb 2024',
-                        'kategori' => 'Pelatihan',
-                        'img' => 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=800',
-                        'excerpt' =>
-                            'Meningkatkan skill SDM lokal dalam mengelola unit usaha Tata Boga dan penyediaan konsumsi rapat.',
-                    ],
-                    [
-                        'judul' => 'Penyaluran Modal Simpan Pinjam Kelompok Perempuan',
-                        'tgl' => '20 Mar 2024',
-                        'kategori' => 'Sosial',
-                        'img' => 'https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?q=80&w=800',
-                        'excerpt' =>
-                            'Unit LED BUBERTA kembali menyalurkan bantuan modal usaha untuk kelompok perempuan di wilayah Betara.',
-                    ],
-                    [
-                        'judul' => 'Kunjungan Studi Banding dari BUMDes Luar Daerah',
-                        'tgl' => '12 Apr 2024',
-                        'kategori' => 'Kunjungan',
-                        'img' => 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=800',
-                        'excerpt' =>
-                            'Sharing session mengenai keberhasilan pengelolaan aset eks-PNPM menjadi unit usaha mandiri.',
-                    ],
-                    [
-                        'judul' => 'Pemeliharaan Rutin Unit Armada Rental Kendaraan',
-                        'tgl' => '01 Mei 2024',
-                        'kategori' => 'Layanan',
-                        'img' => 'https://images.unsplash.com/photo-1487754169491-0f4ff6451ef5?q=80&w=800',
-                        'excerpt' =>
-                            'Memastikan semua kendaraan dalam kondisi prima demi kenyamanan pelanggan BUBERTA RENT.',
-                    ],
-                ];
-            @endphp --}}
 
             @foreach ($dokumentasis as $post)
                 <article

@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class SppGroup extends Model
+class SppGroup extends Authenticatable
 {
     use HasFactory;
 
     protected $table = 'spp_groups';
-    protected $fillable = ['nama_kelompok', 'nama_ketua', 'no_hp_ketua', 'alamat_kelompok', 'status', 'nik_ketua', 'file_ktp'];
+    protected $fillable = ['nama_kelompok', 'nama_ketua', 'no_hp_ketua', 'alamat_kelompok', 'status', 'nik_ketua', 'file_ktp', 'email', 'password', 'status_validasi', 'alasan_ditolak'];
 
     // Relasi: Satu kelompok memiliki banyak anggota
     public function members()

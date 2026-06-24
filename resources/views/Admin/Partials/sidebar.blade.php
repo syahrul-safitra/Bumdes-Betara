@@ -84,7 +84,7 @@
 
                 {{-- Menu 1: Data Kelompok & Anggota --}}
                 <li>
-                    <a href="{{ url('/spp-group') }}"
+                    <a href="{{ url('/spp-group-admin') }}"
                         class="rounded-2xl p-4 font-bold transition-all flex items-center {{ Request::is('spp-group*') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-900/20' : 'hover:bg-slate-800 hover:text-white' }}">
                         <i
                             class="fa-solid fa-people-roof w-6 {{ Request::is('spp-group*') ? 'text-white' : 'text-indigo-400' }}"></i>

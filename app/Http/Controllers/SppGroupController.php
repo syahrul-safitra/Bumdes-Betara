@@ -6,7 +6,11 @@ use App\Models\SppGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\SppMember;
+use App\Models\User;
 use Illuminate\Support\Str;
+
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class SppGroupController extends Controller
 {
@@ -335,5 +339,269 @@ class SppGroupController extends Controller
             DB::rollBack();
             return redirect()->back()->withInput()->withErrors(['error_sistem' => 'Gagal mengubah data: ' . $e->getMessage()]);
         }
+    }
+
+    // =========================================================================================================================
+    // ============ REVISI =====================================================================================================
+
+    public function storeRegistrasiSpp(Request $request)
+    {
+        // 1. Validasi Input Data Esensial Ketua
+        $validated = $request->validate([
+            'nama_ketua'   => 'required|string|max:255',
+            'nik_ketua'    => 'required|string|size:16|unique:spp_groups,nik_ketua',
+            'email'        => 'required|string|email|max:255|unique:spp_groups,email',
+            'no_hp_ketua'  => 'required|string|max:15',
+            'password'     => 'required|string|min:6',
+        ], [
+            'nik_ketua.unique' => 'NIK ini sudah terdaftar dalam sistem SPP.',
+            'email.unique'     => 'Alamat email ini sudah digunakan.',
+            'password.min'     => 'Kata sandi minimal harus terdiri dari 6 karakter.',
+        ]);
+
+        // 2. Simpan Akun Dasar ke Tabel `spp_groups`
+        $group = SppGroup::create([
+            'nama_ketua'       => $validated['nama_ketua'],
+            'nik_ketua'        => $validated['nik_ketua'],
+            'email'            => $validated['email'],
+            'no_hp_ketua'      => $validated['no_hp_ketua'],
+            'password'         => Hash::make($validated['password']),
+            
+            // Mengisi kolom profil kelompok dengan data default/placeholder terlebih dahulu
+            'nama_kelompok'    => 'Kelompok ' . $validated['nama_ketua'], // placeholder nama awal
+            'alamat_kelompok'  => '-', // Diisi nanti saat onboarding
+            'file_ktp'         => '-', // Diisi nanti saat onboarding
+            
+            // Status awal wajib diperiksa berkasnya oleh admin
+            'status_validasi'  => 'pending',
+            'status'           => 'non_aktif',
+        ]);
+
+        // 3. Otomatis Login Menggunakan Guard Khusus SPP Group
+        // Catatan: Pastikan nama guard 'group' ini sudah didaftarkan di config/auth.php
+        Auth::guard('spp')->login($group);
+
+        // 4. Redirect ke Dashboard Onboarding Ketua Kelompok
+        return redirect('spp-dashboard')->with('success', 'Akun ketua berhasil dibuat! Silakan lengkapi profil kelompok dan data anggota Anda.');
+    }
+
+    public function sppDashboard() {
+
+        return view('SPPMember.dashboard', [
+            'spp' => Auth::guard('spp')->user(),
+            'no_telepon' => User::select('no_telepon')->where('id', 1)->get()
+        ]);
+    }
+
+    public function sppGroupRev() {
+        $spp = Auth::guard('spp')->user();
+
+        return view('SPPMember.group', [
+            'spp' => $spp->load('members'),
+        ]);
+    }
+
+    public function sppGroupRevUpdate(Request $request, SppGroup $group) {
+
+        // 1. Validasi Inputan
+        $request->validate([
+            'nama_ketua' => 'required|string|max:255',
+            'nik_ketua' => 'required|string|size:16|unique:spp_groups,nik_ketua,' . $group->id,
+            'email' => 'required|email|max:255|unique:spp_groups,email,' . $group->id,
+            'no_hp_ketua' => 'required|string|max:15',
+            'nama_kelompok' => 'required|string|max:255',
+            'alamat_kelompok' => 'required|string',
+            'password' => 'nullable|string|min:8',
+            'file_ktp' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048', // Maksimal 2MB
+        ], [
+            'nik_ketua.unique' => 'NIK Ketua sudah terdaftar di kelompok lain.',
+            'email.unique' => 'Email ini sudah digunakan.',
+            'file_ktp.mimes' => 'Berkas harus format JPG, PNG, atau PDF.',
+            'file_ktp.max' => 'Ukuran berkas maksimal adalah 2 Megabytes.',
+        ]);
+
+
+        // 2. Map data yang akan diupdate
+        $data = [
+            'nama_ketua' => $request->nama_ketua,
+            'nik_ketua' => $request->nik_ketua,
+            'email' => $request->email,
+            'no_hp_ketua' => $request->no_hp_ketua,
+            'nama_kelompok' => $request->nama_kelompok,
+            'alamat_kelompok' => $request->alamat_kelompok,
+        ];
+
+        // 3. Logika Mengubah Password (Hanya jika diisi)
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        // 4. Logika Upload Berkas Kolektif / KTP Ketua
+        if ($request->hasFile('file_ktp')) {
+            // Hapus file lama jika ada dan bukan strip (-)
+            if ($group->file_ktp && $group->file_ktp != '-' && file_exists(public_path('File/SPP/KTP/' . $group->file_ktp))) {
+                unlink(public_path('File/SPP/KTP/' . $group->file_ktp));
+            }
+
+            $file = $request->file('file_ktp');
+            // Membuat nama file unik: ktp_kelompok_nama_timestamp.ekstensi
+            $filename = 'ktp_kelompok_' . strtolower(str_replace(' ', '_', $request->nama_kelompok)) . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            // Simpan manual menggunakan metode move ke direktori public/File
+            $file->move(public_path('File/SPP/KTP/'), $filename);
+            $data['file_ktp'] = $filename;
+        }
+
+        // 5. Eksekusi Update ke Database
+        $group->update($data);
+
+        return redirect()->back()->with('success', 'Profil kelompok dan akun login berhasil diperbarui!');
+    }
+
+    public function sppGroupMember(Request $request) {
+        $request->validate([
+            'nama_anggota'   => 'required|string|max:255',
+            'nik'    => 'required|string|size:16|unique:spp_members,nik',
+            'file_ktp'       => 'required|image|mimes:jpg,jpeg,png|max:2048', // Wajib gambar, maks 2MB,
+            'group_id' => 'required'
+        ], [
+            'nik.unique'   => 'NIK Anggota ini sudah terdaftar dalam sistem SPP.',
+            'nik.size'     => 'NIK Anggota harus tepat berukuran 16 digit.',
+            'file_ktp.required'    => 'Foto KTP anggota wajib diunggah.',
+            'file_ktp.image'       => 'Berkas KTP harus berupa gambar (JPG/PNG).',
+            'file_ktp.max'         => 'Ukuran foto KTP maksimal adalah 2 Megabytes.',
+        ]);
+
+        // 2. Logika Unggah Foto KTP Anggota (Menggunakan metode manual move)
+        $filename = null;
+        if ($request->hasFile('file_ktp')) {
+            $file = $request->file('file_ktp');
+            
+            // Format nama berkas: ktp_anggota_nik_timestamp.ekstensi
+            $filename = 'ktp_anggota_' . $request->nik . '_' . time() . '.' . $file->getClientOriginalExtension();
+            
+            // Pindahkan langsung ke public/File/KtpAnggota
+            $file->move(public_path('File/SPP/KTP'), $filename);
+        }
+
+        // 3. Simpan Informasi Anggota ke Database
+        SppMember::create([
+            'group_id'       => $request->group_id, // Otomatis terikat dengan ketua kelompok yang sedang login
+            'nama_anggota'   => $request->nama_anggota,
+            'nik'    => $request->nik,
+            'file_ktp'       => $filename,
+        ]);
+
+        return redirect()->back()->with('success', 'Anggota kelompok baru berhasil ditambahkan!');
+    }
+
+    public function sppGroupMemberUpdate(Request $request, SppMember $member) {
+        // 1. Validasi Data
+        $request->validate([
+            'nama_anggota'   => 'required|string|max:255',
+            'nik'    => 'required|string|size:16|unique:spp_members,nik,' . $member->id,
+            'file_ktp'       => 'nullable|image|mimes:jpg,jpeg,png|max:2048', // Nullable karena boleh tidak ganti foto
+        ], [
+            'nik_anggota.unique'   => 'NIK Anggota ini sudah terdaftar dalam sistem SPP.',
+            'file_ktp.image'       => 'Berkas KTP harus berupa gambar (JPG/PNG).',
+            'file_ktp.max'         => 'Ukuran foto KTP maksimal adalah 2 Megabytes.',
+        ]);
+
+        // Jika validasi gagal, kita kirimkan flash session penanda bahwa yang error adalah modal edit
+        if($errors = json_decode(session()->get('errors'))){
+            return redirect()->back()->withInput()->with('error_modal', 'edit');
+        }
+
+        // 2. Siapkan Array Data
+        $data = [
+            'nama_anggota'  => $request->nama_anggota,
+            'nik'   => $request->nik,
+        ];
+
+        // 3. Jika Ketua Mengunggah Foto KTP Baru
+        if ($request->hasFile('file_ktp')) {
+            // Hapus KTP lama jika fisiknya ada
+            if ($member->file_ktp && file_exists(public_path('File/SPP/KTP/' . $member->file_ktp))) {
+                unlink(public_path('File/SPP/KTP/' . $member->file_ktp));
+            }
+
+            $file = $request->file('file_ktp');
+            $filename = 'ktp_anggota_' . $request->nik_anggota . '_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('File/SPP/KTP/'), $filename);
+            
+            $data['file_ktp'] = $filename;
+        }
+
+        // 4. Update Database
+        $member->update($data);
+
+        return redirect()->back()->with('success', 'Data informasi anggota berhasil diperbarui!');
+    }
+
+    public function sppGroupMemberDelete(SppMember $member) {
+        if ($member->file_ktp && file_exists(public_path('File/SPP/KTP/' . $member->file_ktp))) {
+            unlink(public_path('File/SPP/KTP/' . $member->file_ktp));
+        }
+
+        // Hapus data dari record tabel database
+        $member->delete();
+
+        return redirect()->back()->with('success', 'Data anggota kelompok berhasil dihapus secara permanen.');
+    }
+
+    public function allGroup(Request $request) {
+
+        $status = $request->query('status', 'pending');
+
+        // 2. Ambil semua data kelompok untuk kebutuhan hitung total statistik di atas halaman
+        $allGroups = SppGroup::withCount('members')->get();
+
+        // 3. Filter data kelompok spesifik yang akan ditampilkan pada tabel utama sesuai tab aktif
+        $filteredGroups = SppGroup::where('status_validasi', $status)
+            ->withCount('members') // Mengambil total jumlah anggota (akan menghasilkan atribut members_count)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('Admin.SPP.Rev.Group.index', [
+            'groups'         => $allGroups,
+            'filteredGroups' => $filteredGroups
+        ]);
+    }
+
+    public function showGroup(SppGroup $group) {
+
+        return view('Admin.SPP.Rev.Group.show', [
+            'group' => $group
+        ]);
+    }
+
+    public function approve(SppGroup $group) {
+    
+    $group->update([
+        'status_validasi' => 'valid',
+        'alasan_ditolak'  => null
+    ]);
+
+    // Kembali ke halaman tabel utama dengan filter 'valid' agar admin bisa melihat hasilnya
+    return redirect('/spp-group-admin?status=valid')->with('success', 'Kelompok ' . $group->nama_kelompok . ' berhasil disetujui dan telah aktif!');
+    }
+
+    public function reject(Request $request, SppGroup $group) {
+    
+
+        $request->validate([
+            'alasan_ditolak' => 'required|string|max:500'
+        ], [
+            'alasan_ditolak.required' => 'Anda wajib memberikan alasan penolakan berkas.'
+        ]);
+
+
+        // Perbarui status menjadi ditolak dan simpan alasannya
+        $group->update([
+            'status_validasi' => 'ditolak',
+            'alasan_ditolak'  => $request->alasan_ditolak
+        ]);
+
+        return redirect('/spp-group-admin?status=valid')->with('success', 'Kelompok ' . $group->nama_kelompok . ' telah ditolak dengan alasan yang dikirim!');
     }
 }

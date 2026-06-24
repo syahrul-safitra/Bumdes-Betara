@@ -109,13 +109,44 @@
                 </button>
             </form>
 
-            <div class="mt-10 text-center">
-                <p class="text-sm text-slate-500">
-                    Belum punya akun? <br>
-                    <a href="{{ url('/registrasi') }}"
-                        class="font-extrabold text-emerald-600 transition-colors hover:text-emerald-700">Daftar
-                        sebagai Pelanggan Baru</a>
-                </p>
+            <div class="mt-10 text-center space-y-6">
+                {{-- Blok Pendaftaran Akun Baru --}}
+                <div class="space-y-2">
+                    <p class="text-sm text-slate-500">
+                        Belum punya akun?
+                    </p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-xs">
+                        {{-- Link Registrasi Pelanggan Rental (Emerald) --}}
+                        <a href="{{ url('/registrasi') }}"
+                            class="font-extrabold text-emerald-600 transition-colors hover:text-emerald-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-car-side text-[10px]"></i> Daftar Pelanggan Rental
+                        </a>
+
+                        <span class="hidden sm:inline text-slate-300">|</span>
+
+                        {{-- Link Registrasi Ketua Kelompok SPP (Indigo) --}}
+                        <a href="{{ url('/registrasi-spp') }}"
+                            class="font-extrabold text-indigo-600 transition-colors hover:text-indigo-700 flex items-center gap-1.5">
+                            <i class="fa-solid fa-users-line text-[10px]"></i> Daftar Ketua Kelompok SPP
+                        </a>
+                    </div>
+                </div>
+
+                {{-- Garis Pembatas Halus --}}
+                <div class="relative flex py-2 items-center justify-center">
+                    <div class="w-1/2 border-t border-slate-100"></div>
+                </div>
+
+                {{-- Blok Pindah Portal Login Khusus (Indigo) --}}
+                <div class="space-y-2">
+                    <p class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Portal Khusus</p>
+                    <div class="flex justify-center">
+                        <a href="{{ url('/login-spp') }}"
+                            class="btn btn-sm bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-100/70 hover:border-indigo-200 font-black rounded-xl px-5 text-xs normal-case gap-2 shadow-sm transition-all active:scale-95">
+                            <i class="fa-solid fa-users-rectangle text-sm"></i> Login Khusus Kelompok SPP
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="mt-8 border-t border-slate-100 pt-6 text-center">

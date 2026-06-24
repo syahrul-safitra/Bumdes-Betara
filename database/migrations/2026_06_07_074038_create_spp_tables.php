@@ -8,16 +8,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // 1. TABEL KELOMPOK (spp_groups)
+        // 1. TABEL KELOMPOK (spp_groups) - Bertindak sebagai Tabel Akun Login Ketua
         Schema::create('spp_groups', function (Blueprint $table) {
             $table->id();
+            // Kredensial untuk Login Multi-Auth Ketua Kelompok
+            $table->string('email')->unique();
+            $table->string('password');
+            
+            // Profil Kelompok & Identitas Ketua
             $table->string('nama_kelompok');
             $table->string('nama_ketua');
             $table->string('no_hp_ketua', 15);
             $table->string('nik_ketua', 16);
-            $table->string('file_ktp');
+            $table->string('file_ktp'); // Digunakan sebagai file berkas utama kelompok
             $table->text('alamat_kelompok');
+            
+            // Validasi Akun oleh Admin (Fitur Revisi Baru)
+            $table->enum('status_validasi', ['pending', 'valid', 'ditolak'])->default('pending');
+            $table->text('alasan_ditolak')->nullable(); 
+
             $table->enum('status', ['aktif', 'non_aktif'])->default('aktif');
+            // $table->rememberToken();
             $table->timestamps();
         });
 
@@ -35,12 +46,23 @@ return new class extends Migration
         Schema::create('spp_loans', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_id')->constrained('spp_groups')->onDelete('cascade');
-            $table->string('no_kontrak')->unique();
-            $table->decimal('plafon_disetujui', 12, 2);
+            $table->string('no_kontrak')->unique()->nullable(); // Nullable dulu karena saat diajukan belum ada no_kontrak resmi
+            
+            // Data Nominal Pengajuan & Hasil Persetujuan Admin
+            $table->decimal('nominal_pengajuan', 12, 2); // Inputan awal dari ketua kelompok
+            $table->decimal('plafon_disetujui', 12, 2)->nullable(); // Diisi admin saat disetujui
             $table->decimal('total_dicairkan', 12, 2)->default(0);
-            $table->float('bunga_persen')->default(0.5);
+            $table->decimal('bunga_persen', 5, 2)->default(0.50); // Maksimal 999.99%, sangat aman untuk 0.5%
             $table->integer('tenor_bulan');
-            $table->enum('status_loan', ['review', 'berjalan', 'macet', 'lunas'])->default('review');
+            $table->text('keperluan')->nullable();
+
+            // Status Fleksibel Sesuai Workflow Baru
+            $table->enum('status_loan', ['review', 'disetujui', 'ditolak', 'berjalan', 'macet', 'lunas'])->default('review');
+            $table->text('alasan_penolakan_loan')->nullable(); // Alasan jika pinjaman ditolak admin
+
+            $table->enum('status_pencairan', ['belum_cair', 'cair_awal', 'cair_penuh'])->default('belum_cair');
+            $table->string('file_dokumen_perjanjian')->nullable();
+            
             $table->timestamps();
         });
 

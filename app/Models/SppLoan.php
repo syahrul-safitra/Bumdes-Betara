@@ -10,7 +10,7 @@ class SppLoan extends Model
     use HasFactory;
 
     protected $table = 'spp_loans';
-    protected $fillable = ['group_id', 'no_kontrak', 'plafon_disetujui', 'total_dicairkan', 'bunga_persen', 'tenor_bulan', 'status_loan'];
+    protected $fillable = ['group_id', 'no_kontrak', 'plafon_disetujui', 'total_dicairkan', 'bunga_persen', 'tenor_bulan', 'status_loan', 'keperluan', 'status_loan', 'alasan_penolakan_loan', 'status_pencairan', 'file_dokumen_perjanjian', 'nominal_pengajuan'];
 
     public function group()
     {

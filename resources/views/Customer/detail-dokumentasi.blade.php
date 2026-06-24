@@ -54,7 +54,7 @@
 
             {{-- Tombol Kembali --}}
             <div class="mt-12 pt-8 border-t border-slate-100">
-                <a href="{{ url('/dokumentasi-desa') }}"
+                <a href="{{ url('/') }}"
                     class="inline-flex items-center gap-2 text-slate-500 hover:text-emerald-600 font-semibold transition-colors group">
                     <i class="fa-solid fa-arrow-left transition-transform group-hover:-translate-x-1"></i>
                     Kembali ke Halaman Sebelumnya

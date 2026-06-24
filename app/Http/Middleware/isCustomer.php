@@ -17,13 +17,18 @@ class isCustomer
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::guard('admin')->check() && !Auth::guard('customer')->check()) {
+        if (!Auth::guard('admin')->check() && !Auth::guard('customer')->check() && !Auth::guard('spp')->check()) {
             return redirect('/login');
         }
 
         if (Auth::guard('admin')->check()) {
             return redirect('/dashboard');
         }
+
+        if (Auth::guard('spp')->check()) {
+            return redirect('/spp-dashboard');
+        }
+
 
         return $next($request);
     }

@@ -11,20 +11,210 @@ use App\Models\SppInstallment;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
+use illuminate\Support\Facades\Auth;
+
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class SppLoanController extends Controller
 {
     
-    public function index() {
+    public function index(Request $request) {
 
-        $loans = SppLoan::with('group')->latest()->get();
+        $status = $request->get('status', 'review');
 
-        return view('Admin.SPP.Loan.index', [
-            'loans' => $loans
+        $loans = SppLoan::with('group')
+            ->where('status_loan', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('Admin.SPP.Loan.index2', [
+            'loans' => $loans,
+            'status' => $status 
         ]);
 
     }
+
+    public function approve(Request $request, SppLoan $loan)
+    {
+
+        $request->validate([
+            'no_kontrak' => 'required|string|unique:spp_loans,no_kontrak',
+            'file_dokumen_perjanjian' => 'required|mimes:pdf|max:5120', 
+        ], [
+            'no_kontrak.required' => 'Nomor kontrak resmi wajib diisi.',
+            'no_kontrak.unique' => 'Nomor kontrak sudah digunakan oleh kelompok lain.',
+            'file_dokumen_perjanjian.required' => 'Berkas PDF jaminan/perjanjian wajib diunggah.',
+            'file_dokumen_perjanjian.mimes' => 'Format dokumen harus berupa berkas PDF.'
+        ]);
+
+        $loan = SppLoan::findOrFail($loan->id);
+        $plafon = $loan->nominal_pengajuan;
+        $tenor = $loan->tenor_bulan;
+
+        // DB Transaction mengunci integritas 3 tabel sekaligus (loans, disbursements, installments)
+        DB::beginTransaction();
+
+        try {
+            // 1. Pindahkan berkas PDF ke folder /public/File/ menggunakan metode move
+            if ($request->hasFile('file_dokumen_perjanjian')) {
+                $file = $request->file('file_dokumen_perjanjian');
+                $filename = 'SPK_' . time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
+                $file->move(public_path('File/SPP/Berkas'), $filename);
+            }
+
+            // 2. Update data induk pinjaman
+            $loan->update([
+                'no_kontrak' => $request->no_kontrak,
+                'plafon_disetujui' => $plafon,
+                'total_dicairkan' => 2000000.00, // Nominal dana awal mutlak 2 Juta
+                'file_dokumen_perjanjian' => $filename,
+                'status_loan' => 'disetujui', // Berubah jadi disetujui (siap melangkah ke angsuran 1)
+                'status_pencairan' => 'cair_awal'
+            ]);
+
+            // 3. Catat transaksi pencairan tahap 1 ke tabel spp_disbursements
+            SppDisbursement::create([
+                'loan_id' => $loan->id,
+                'tahap_ke' => 1,
+                'jumlah_cair' => 2000000.00,
+                'tanggal_cair' => Carbon::now()->toDateString(),
+                'bukti_pencairan' => null 
+            ]);
+
+            // 4. LOGIKA OTOMATISASI: Generate jadwal angsuran bulanan (spp_installments)
+            $pokokPerBulan = round($plafon / $tenor);
+            $jasaPerBulan = round($plafon * 0.005); // Bunga flat 0.5% dari total pinjaman
+            
+            $tanggalAcuan = Carbon::now(); // Jatuh tempo dihitung dari tanggal persetujuan hari ini
+
+            for ($i = 1; $i <= $tenor; $i++) {
+                // Tanggal jatuh tempo bertambah 1 bulan untuk setiap baris angsuran
+                $jatuhTempo = $tanggalAcuan->copy()->addMonths($i)->toDateString();
+
+                SppInstallment::create([
+                    'loan_id' => $loan->id,
+                    'angsuran_ke' => $i,
+                    'jumlah_pokok' => $pokokPerBulan,
+                    'jumlah_bunga' => $jasaPerBulan,
+                    'tanggal_jatuh_tempo' => $jatuhTempo,
+                    'tanggal_bayar' => null,
+                    'denda_kumulatif' => 0,
+                    'status_bayar' => 'belum_bayar'
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Pinjaman disetujui! Dana awal Rp 2.000.000 dicairkan & ' . $tenor . ' bulan jadwal angsuran otomatis terbentuk.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal memproses persetujuan: ' . $e->getMessage());
+        }
+    }
+
+    public function reject(Request $request, SppLoan $loan)
+    {
+
+        $request->validate([
+            'alasan_penolakan_loan' => 'required|string|max:500'
+        ], [
+            'alasan_penolakan_loan.required' => 'Anda wajib menyertakan alasan penolakan pinjaman.'
+        ]);
+
+        $loan = SppLoan::findOrFail($loan->id);
+
+        $loan->update([
+            'status_loan' => 'ditolak',
+            'alasan_penolakan_loan' => $request->alasan_penolakan_loan
+        ]);
+
+        return redirect()->back()->with('success', 'Pengajuan pinjaman kelompok berhasil ditolak.');
+    }
+
+    public function disburseTahap2(Request $request, SppLoan $loan)
+    {
+
+        // PROTEKSI 1: Pastikan status loan sudah 'berjalan' (Angsuran 1 harus sudah lunas)
+        if ($loan->status_loan !== 'berjalan') {
+            return redirect()->back()->with('error', 'Gagal. Gembok Pencairan Tahap 2 masih terkunci hingga kelompok menyelesaikan pembayaran Angsuran Bulan Ke-1.');
+        }
+
+        // PROTEKSI 2: Mencegah double klik / pencairan berulang
+        if ($loan->status_pencairan === 'cair_semua') {
+            return redirect()->back()->with('error', 'Sisa dana modal untuk kelompok ini sudah dicairkan sebelumnya.');
+        }
+
+        // Hitung selisih sisa dana (Total Plafon - Rp 2.000.000 dana awal)
+        $sisaDana = $loan->plafon_disetujui - 2000000.00;
+
+        // Gunakan DB Transaction demi keamanan mutasi kas database
+        DB::beginTransaction();
+
+        try {
+            // 1. Mutasikan data plafon yang dicairkan pada tabel induk spp_loans
+            $loan->update([
+                'total_dicairkan' => $loan->plafon_disetujui, // Set langsung penuh seharga plafon asli
+                'status_pencairan' => 'cair_penuh'            // Set status tanda pencairan selesai
+            ]);
+
+            // 2. Bukukan riwayat mutasi keluar baru di tabel spp_disbursements sebagai Tahap Ke-2
+            SppDisbursement::create([
+                'loan_id' => $loan->id,
+                'tahap_ke' => 2,
+                'jumlah_cair' => $sisaDana,
+                'tanggal_cair' => Carbon::now()->toDateString(),
+                'bukti_pencairan' => null // Kelak bisa di-update jika ingin fitur upload struk kwitansi bank
+            ]);
+
+            DB::commit();
+            
+            return redirect()->back()->with('success', 'Sisa dana modal kelompok sebesar Rp ' . number_format($sisaDana, 0, ',', '.') . ' berhasil dicairkan! Pembukuan Tahap 2 selesai dilakukan.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Gagal mengeksekusi pencairan tahap 2: ' . $e->getMessage());
+        }
+    }
+
+    public function sppLoanAll()
+    {
+        // Ambil data user/kelompok yang sedang login
+        $user = Auth::guard('spp')->user(); 
+
+        // Ambil semua riwayat pinjaman milik kelompok ini (dari yang terbaru)
+        // Asumsi: Di tabel spp_loans terdapat kolom group_id yang berelasi dengan user/group yang login
+        $loans = SppLoan::where('group_id', $user->group_id ?? $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('SPPMember.loanAll', compact('loans'));
+    }
+
+    public function showLoan(SppLoan $loan)
+    {
+
+        $user = Auth::guard('spp')->user();
+        $groupId = $user->group_id ?? $user->id;
+
+        // Tarik data pinjaman dan pastikan pinjaman ini memang milik kelompok yang login (Proteksi Keamanan)
+        $loan = SppLoan::where('id', $loan->id)
+            ->where('group_id', $groupId)
+            ->firstOrFail();
+        
+        // Tarik semua daftar angsuran bulanannya
+        $installments = SppInstallment::where('loan_id', $loan->id)
+            ->orderBy('angsuran_ke', 'asc')
+            ->get();
+
+        return view('SPPMember.installments', compact('loan', 'installments'));
+    }
+
+
+
+
+
+
+
     
     public function create() {
 
@@ -57,12 +247,20 @@ class SppLoanController extends Controller
     }
 
     public function show(SppLoan $loan) {
+
+
+        // Tarik semua daftar angsuran, urutkan dari bulan ke-1 sampai akhir
+        $installments = SppInstallment::where('loan_id', $loan->id)
+            ->orderBy('angsuran_ke', 'asc')
+            ->get();
+
+        return view('Admin.SPP.Loan.show2', compact('loan', 'installments'));
       
-        return view('Admin.SPP.Loan.show', [
-            'loan' => $loan->load(['group', 'installments' => function($constraints) {
-                $constraints->orderBy('angsuran_ke', 'asc');
-            }])
-        ]);
+        // return view('Admin.SPP.Loan.show', [
+        //     'loan' => $loan->load(['group', 'installments' => function($constraints) {
+        //         $constraints->orderBy('angsuran_ke', 'asc');
+        //     }])
+        // ]);
 
     }
 
@@ -208,34 +406,60 @@ class SppLoanController extends Controller
         }
 
         try {
-            $hariIni = Carbon::now()->startOfDay();
-            $jatuhTempo = Carbon::parse($installment->tanggal_jatuh_tempo)->startOfDay();
             $denda = 0;
+            $tanggalJatuhTempo = Carbon::parse($installment->tanggal_jatuh_tempo);
+            $hariIni = Carbon::now();
 
-            // Hitung denda jika hari ini melewati tanggal jatuh tempo
-            if ($hariIni->gt($jatuhTempo)) {
-                $hariTerlambat = $hariIni->diffInDays($jatuhTempo);
-                $denda = $hariTerlambat * 5000;
+            // Jika telat melewati hari jatuh tempo
+            if ($installment->status_bayar === 'belum_bayar' && $hariIni->gt($tanggalJatuhTempo)) {
+                $selisihHari = $tanggalJatuhTempo->diffInDays($hariIni);
+                $denda = $selisihHari * 5000; // Sesuai tarif Rp 5.000/hari
             }
 
-            // Update data angsuran menjadi Lunas
+            // Tambahkan variabel denda ke total yang dibayar
+            $totalTagihan = $installment->jumlah_pokok + $installment->jumlah_bunga + $denda;
+
             $installment->update([
-                'status_bayar' => 'lunas',
-                'tanggal_bayar' => Carbon::now(),
-                'denda_kumulatif' => $denda
+                'tanggal_bayar' => $hariIni->toDateString(),
+                'denda_kumulatif' => $denda, // Menyimpan total denda yang dibayar ke database
+                'total_dibayar' => $totalTagihan,
+                'status_bayar' => 'lunas'
             ]);
 
-            // Opsional: Cek apakah ini angsuran terakhir, jika ya, otomatis lunaskan SppLoan induknya
+            // Ambil data relasi induk SppLoan
             $loan = $installment->loan;
+
+            // =========================================================================
+            // PENCATATAN TRIGGERS STATUS INDUK (LOAN)
+            // =========================================================================
+            
+            $pesanTambahan = '';
+
+            // TRIGGER 1: Jika yang dibayar adalah ANGSURAN PERTAMA (Bulan Ke-1)
+            // Ubah status_loan menjadi 'berjalan' untuk membuka gembok Pencairan Tahap 2
+            if ($installment->angsuran_ke == 1) {
+                $loan->update([
+                    'status_loan' => 'berjalan'
+                ]);
+                $pesanTambahan = ' Gembok pencairan sisa dana (Tahap 2) kini telah terbuka!';
+            }
+
+            // TRIGGER 2: Cek apakah seluruh angsuran sudah lunas semua
             $sisaAngsuran = SppInstallment::where('loan_id', $loan->id)
                                         ->where('status_bayar', 'belum_bayar')
                                         ->count();
             
             if ($sisaAngsuran == 0) {
-                $loan->update(['status_loan' => 'lunas']);
+                $loan->update([
+                    'status_loan' => 'lunas'
+                ]);
+                $pesanTambahan = ' Selamat! Seluruh angsuran telah terpenuhi, pinjaman kelompok resmi LUNAS TOTAL.';
             }
 
-            return redirect()->back()->with('success', 'Angsuran ke-' . $installment->angsuran_ke . ' berhasil dibayar! ' . ($denda > 0 ? 'Denda keterlambatan Rp' . number_format($denda, 0, ',', '.') . ' telah dibukukan.' : ''));
+            // Susun teks notifikasi akhir yang dinamis
+            $notifDenda = $denda > 0 ? ' Denda keterlambatan Rp ' . number_format($denda, 0, ',', '.') . ' telah dibukukan.' : '';
+            
+            return redirect()->back()->with('success', 'Angsuran ke-' . $installment->angsuran_ke . ' berhasil dibayar!' . $notifDenda . $pesanTambahan);
 
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal memproses pembayaran: ' . $e->getMessage());
@@ -259,6 +483,58 @@ class SppLoanController extends Controller
 
         return $pdf->stream('Kuitansi_Ags_' . $installment->angsuran_ke . '_' . $installment->loan->group->nama_kelompok . '.pdf');
     }
+
+
+    public function printLoanReport($id)
+    {
+        // 1. Tarik data pinjaman beserta seluruh angsurannya
+        $loan = SppLoan::with(['group', 'installments' => function($query) {
+            $query->orderBy('angsuran_ke', 'asc');
+        }])->findOrFail($id);
+
+        // 2. Tarik nama admin pembuku dinamis
+        $nama_admin = auth()->user()->name ?? User::find(1)->name ?? 'Petugas BUMDes';
+
+        // 3. Inisialisasi variabel akumulator untuk total di bagian footer
+        $totalPokok = 0;
+        $totalBunga = 0;
+        $totalDenda = 0;
+        $totalSetoran = 0;
+
+        // 4. Lakukan looping untuk menghitung akumulasi total secara aman & denda real-time
+        foreach ($loan->installments as $ins) {
+            $totalPokok += $ins->jumlah_pokok;
+            $totalBunga += $ins->jumlah_bunga;
+
+            if ($ins->status_bayar == 'lunas') {
+                // Jika lunas, ambil nilai denda baku dari database
+                $totalDenda += $ins->denda_kumulatif;
+                $totalSetoran += ($ins->jumlah_pokok + $ins->jumlah_bunga + $ins->denda_kumulatif);
+            } else {
+                // Jika belum bayar, cek apakah melewati jatuh tempo (denda berjalan)
+                $dendaBerjalan = 0;
+                if (Carbon::now()->gt(Carbon::parse($ins->tanggal_jatuh_tempo))) {
+                    $hariTelat = Carbon::parse($ins->tanggal_jatuh_tempo)->diffInDays(Carbon::now());
+                    $dendaBerjalan = $hariTelat * 5000;
+                }
+                $totalDenda += $dendaBerjalan;
+                $totalSetoran += ($ins->jumlah_pokok + $ins->jumlah_bunga + $dendaBerjalan);
+            }
+        }
+
+        // 5. Generate PDF dengan layout Landscape A4 agar tabel data renggang dan rapi
+        $pdf = Pdf::loadView('Admin.SPP.Loan.report_single', compact(
+            'loan', 
+            'nama_admin', 
+            'totalPokok', 
+            'totalBunga', 
+            'totalDenda', 
+            'totalSetoran'
+        ))->setPaper('a4', 'landscape');
+
+        return $pdf->stream('Laporan_Riwayat_Pinjaman_' . $loan->group->nama_kelompok . '.pdf');
+    }
+
 
     public function singleLoanReport($id)
     {
@@ -362,5 +638,62 @@ class SppLoanController extends Controller
         }
 
     }
+
+    public function sppLoan() {
+
+        $auth = Auth::guard('spp')->user();
+
+        $loans = SppLoan::where('group_id', $auth->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view("SPPMember.loan", [
+            'loans' => $loans, 
+            'noHp' => User::select('no_telepon')->where('id', 1)->get()
+        ]);
+    }
+
+    public function storeLoan(Request $request) {
+        // 1. VALIDASI KETAT: Selaras dengan front-end (Min 2 Juta, Max 20 Juta)
+        $request->validate([
+            'nominal_pengajuan' => 'required|numeric|min:2000000|max:20000000',
+            'tenor_bulan'       => 'required|in:6,10,12,24',
+            'keperluan'         => 'required|string|max:1000',
+            'group_id'          => 'required'
+        ], [
+            'nominal_pengajuan.required' => 'Nominal pengajuan modal wajib diisi.',
+            'nominal_pengajuan.numeric'  => 'Nominal pengajuan harus berupa angka murni.',
+            'nominal_pengajuan.min'      => 'Batas minimal pengajuan dana modal adalah Rp 2.000.000.',
+            'nominal_pengajuan.max'      => 'Batas maksimal pengajuan dana modal adalah Rp 20.000.000.', // Pengunci celah inspect element
+            'tenor_bulan.required'       => 'Jangka waktu tenor wajib dipilih.',
+            'tenor_bulan.in'             => 'Pilihan jangka waktu tenor tidak valid.',
+            'keperluan.required'         => 'Harap isi penjelasan tujuan penggunaan modal usaha kelompok Anda.'
+        ]);
+
+        // 2. PROTEKSI DOUBLE SUBMIT: Cek apakah kelompok masih punya pinjaman aktif/gantung
+        $hasActiveLoan = SppLoan::where('group_id', $request->group_id)
+            ->whereIn('status_loan', ['review', 'disetujui', 'berjalan', 'macet'])
+            ->exists();
+
+        if ($hasActiveLoan) {
+            return redirect()->back()
+                ->with('error', 'Pengajuan ditolak. Kelompok Anda masih memiliki pinjaman aktif yang sedang ditinjau atau belum lunas.');
+        }
+
+        // 3. EKSEKUSI PENYIMPANAN: Data masuk dengan status awal 'review'
+        SppLoan::create([
+            'group_id'          => $request->group_id,
+            'nominal_pengajuan' => $request->nominal_pengajuan,
+            'tenor_bulan'       => $request->tenor_bulan,
+            'keperluan'         => $request->keperluan,
+            'bunga_persen'      => 0.50, // Default ketetapan BUMDes 0.5% flat per bulan
+            'status_loan'       => 'review', 
+            'status_pencairan'  => 'belum_cair'
+        ]);
+
+        return redirect()->back()
+            ->with('success', 'Formulir pengajuan modal Anda sebesar Rp ' . number_format($request->nominal_pengajuan, 0, ',', '.') . ' berhasil dikirim! Silakan tunggu proses peninjauan dari tim admin BUMDes.');        
+    }
+
 }
 
