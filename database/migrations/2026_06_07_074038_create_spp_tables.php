@@ -19,9 +19,10 @@ return new class extends Migration
             $table->string('nama_kelompok');
             $table->string('nama_ketua');
             $table->string('no_hp_ketua', 15);
-            $table->string('nik_ketua', 16);
+            $table->string('nik_ketua', 16)->nullable();
             $table->string('file_ktp'); // Digunakan sebagai file berkas utama kelompok
             $table->text('alamat_kelompok');
+            $table->string('no_rek')->nullable();
             
             // Validasi Akun oleh Admin (Fitur Revisi Baru)
             $table->enum('status_validasi', ['pending', 'valid', 'ditolak'])->default('pending');
@@ -60,6 +61,8 @@ return new class extends Migration
             $table->enum('status_loan', ['review', 'disetujui', 'ditolak', 'berjalan', 'macet', 'lunas'])->default('review');
             $table->text('alasan_penolakan_loan')->nullable(); // Alasan jika pinjaman ditolak admin
 
+            $table->string('bukti_transfer')->nullable();
+
             $table->enum('status_pencairan', ['belum_cair', 'cair_awal', 'cair_penuh'])->default('belum_cair');
             $table->string('file_dokumen_perjanjian')->nullable();
             
@@ -88,6 +91,9 @@ return new class extends Migration
             $table->date('tanggal_bayar')->nullable();
             $table->decimal('denda_kumulatif', 12, 2)->default(0);
             $table->enum('status_bayar', ['belum_bayar', 'lunas', 'terlambat'])->default('belum_bayar');
+
+            $table->string('bukti_pembayaran')->nullable();
+            // $table->dateTime('waktu_bayar')->nullable();
             $table->timestamps();
         });
     }

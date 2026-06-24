@@ -18,6 +18,7 @@ return new class extends Migration
             $table->boolean('is_admin')->default(0);
             $table->string('no_telepon', 15)->nullable();
             $table->string('password'); 
+            $table->string('no_rek')->nullable(); 
             $table->timestamps();
         });
     }

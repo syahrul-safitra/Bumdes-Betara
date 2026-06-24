@@ -29,7 +29,8 @@ class SppLoanController extends Controller
 
         return view('Admin.SPP.Loan.index2', [
             'loans' => $loans,
-            'status' => $status 
+            'status' => $status,
+            // 'no_rek' => User::select('no_rek')->where('id', 1)->get()
         ]);
 
     }
@@ -39,7 +40,8 @@ class SppLoanController extends Controller
 
         $request->validate([
             'no_kontrak' => 'required|string|unique:spp_loans,no_kontrak',
-            'file_dokumen_perjanjian' => 'required|mimes:pdf|max:5120', 
+            'file_dokumen_perjanjian' => 'required|max:5120', 
+            'bukti_transfer' => 'nullable||max:2048'
         ], [
             'no_kontrak.required' => 'Nomor kontrak resmi wajib diisi.',
             'no_kontrak.unique' => 'Nomor kontrak sudah digunakan oleh kelompok lain.',
@@ -60,6 +62,20 @@ class SppLoanController extends Controller
                 $file = $request->file('file_dokumen_perjanjian');
                 $filename = 'SPK_' . time() . '_' . str_replace(' ', '_', $file->getClientOriginalName());
                 $file->move(public_path('File/SPP/Berkas'), $filename);
+                
+                // Simpan nama file ke object model/database Anda, contoh:
+                // $loan->file_dokumen_perjanjian = $filename;
+            }
+
+            // 2. Pindahkan berkas Bukti Transfer ke folder /public/File/ menggunakan metode move
+            if ($request->hasFile('bukti_transfer')) {
+                $fileTransfer = $request->file('bukti_transfer');
+                // Membuat nama unik berkas dengan prefix TF_SPP_
+                $filenameTransfer = 'TF_SPP_' . time() . '_' . str_replace(' ', '_', $fileTransfer->getClientOriginalName());
+                $fileTransfer->move(public_path('File/SPP/Berkas'), $filenameTransfer);
+
+                // Simpan nama file ke object model/database Anda, contoh:
+                // $loan->bukti_transfer = $filenameTransfer;
             }
 
             // 2. Update data induk pinjaman
@@ -68,10 +84,11 @@ class SppLoanController extends Controller
                 'plafon_disetujui' => $plafon,
                 'total_dicairkan' => 2000000.00, // Nominal dana awal mutlak 2 Juta
                 'file_dokumen_perjanjian' => $filename,
+                'bukti_transfer' => $filenameTransfer, // 🔥 REVISI BARU: Menyimpan berkas bukti transfer resmi
                 'status_loan' => 'disetujui', // Berubah jadi disetujui (siap melangkah ke angsuran 1)
                 'status_pencairan' => 'cair_awal'
             ]);
-
+            
             // 3. Catat transaksi pencairan tahap 1 ke tabel spp_disbursements
             SppDisbursement::create([
                 'loan_id' => $loan->id,
@@ -206,12 +223,82 @@ class SppLoanController extends Controller
             ->orderBy('angsuran_ke', 'asc')
             ->get();
 
-        return view('SPPMember.installments', compact('loan', 'installments'));
+        $noRek = User::select('no_rek')->where('id', 1)->get();
+
+        return view('SPPMember.installments', compact('loan', 'installments', 'noRek'));
     }
 
 
+    public function payInstallmentRev(Request $request, SppInstallment $installment) {
+    
+            $request->validate([
+                'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ], [
+                'bukti_pembayaran.required' => 'Bukti transfer wajib diunggah.',
+                'bukti_pembayaran.image' => 'Berkas harus berupa dokumen gambar.',
+                'bukti_pembayaran.mimes' => 'Format gambar yang didukung hanya jpeg, png, atau jpg.',
+                'bukti_pembayaran.max' => 'Ukuran gambar maksimal adalah 2MB.',
+            ]);
 
+            // Cari data angsuran berdasarkan ID transaksi baris tabel
+            // Keamanan tambahan: Pastikan angsuran yang dipilih memang belum lunas
+            if ($installment->status_bayar === 'lunas') {
+                return redirect()->back()->with('error', 'Angsuran bulan ini sudah berstatus lunas sebelumnya.');
+            }
 
+            try {
+                DB::transaction(function () use ($request, $installment) {
+                    
+                    // ====================================================
+                    // 🔥 LOGIKA BARU: HITUNG DENDA KETERLAMBATAN NYATA
+                    // ====================================================
+                    $dueDate = Carbon::parse($installment->tanggal_jatuh_tempo);
+                    $today = Carbon::today();
+                    $nominalDenda = 0;
+                    $dendaPerHari = 5000; // Sesuai aturan denda sistem Anda
+
+                    // Jika hari ini sudah melewati tanggal jatuh tempo, hitung dendanya
+                    if ($today->gt($dueDate)) {
+                        $selisihHari = $today->diffInDays($dueDate);
+                        $nominalDenda = $selisihHari * $dendaPerHari;
+                    }
+
+                    // Proses pemindahan berkas gambar bukti transfer
+                    if ($request->hasFile('bukti_pembayaran')) {
+                        $file = $request->file('bukti_pembayaran');
+                        $filename = 'BAYAR_SPP_' . $installment->loan_id . '_ANGSURAN_' . $installment->angsuran_ke . '_' . time() . '.' . $file->getClientOriginalExtension();
+                        $file->move(public_path('File/SPP/Berkas'), $filename);
+
+                        // Update data angsuran (Simpan juga nilai denda ke database jika ada kolomnya)
+                        $installment->update([
+                            'status_bayar' => 'lunas',
+                            'bukti_pembayaran' => $filename,
+                            'tanggal_bayar' => Carbon::now(),
+                            
+                            // Sesuaikan nama kolom denda di tabel Anda (misal: 'jumlah_denda' atau 'denda')
+                            'denda_kumulatif' => $nominalDenda, 
+                        ]);
+                    }
+
+                    // Cek sisa tenor angsuran
+                    $sisaAngsuran = SppInstallment::where('loan_id', $installment->loan_id)
+                        ->where('status_bayar', 'belum_bayar')
+                        ->count();
+
+                    if ($sisaAngsuran === 0) {
+                        SppLoan::where('id', $installment->loan_id)->update([
+                            'status_loan' => 'lunas'
+                        ]);
+                    }
+                });
+
+                return redirect()->back()->with('success', 'Bukti transfer berhasil diunggah dan status dinyatakan LUNAS!');
+
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            }
+    
+    }
 
 
 

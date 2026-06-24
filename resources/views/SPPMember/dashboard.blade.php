@@ -130,7 +130,7 @@
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Anggota</p>
-                        <p class="text-2xl font-black text-slate-800 mt-0.5">{{ $totalAnggota ?? 0 }} Orang</p>
+                        <p class="text-2xl font-black text-slate-800 mt-0.5">{{ $spp->members->count() + 1 ?? 0 }} Orang</p>
                     </div>
                 </div>
                 {{-- Status Kredit --}}
@@ -140,7 +140,14 @@
                     </div>
                     <div>
                         <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Status Pinjaman</p>
-                        <p class="text-lg font-black text-slate-800 mt-1">{{ $statusLoan ?? 'Tidak Ada Pinjaman' }}</p>
+                        <p
+                            class="text-base font-black mt-1 
+        @if ($statusLoan == 'Sedang Berjalan') text-indigo-600 
+        @elseif(str_contains($statusLoan, 'Disetujui') || str_contains($statusLoan, 'Tahap 2')) text-emerald-600 
+        @elseif($statusLoan == 'Lunas Total') text-slate-500 
+        @else text-slate-800 @endif">
+                            {{ $statusLoan }}
+                        </p>
                     </div>
                 </div>
                 {{-- Sisa Hutang --}}
@@ -172,7 +179,7 @@
                             <img src="https://illustrations.popsy.co/slate/financial-statement.svg"
                                 class="w-32 mx-auto mb-4 opacity-60" alt="">
                             <p class="text-sm font-bold text-slate-400">Belum ada riwayat pengajuan pinjaman modal.</p>
-                            <a href="{{ url('/group/loans') }}"
+                            <a href="{{ url('/spp-group-all') }}"
                                 class="btn btn-sm bg-indigo-600 hover:bg-indigo-700 text-white font-bold border-none rounded-xl text-xs mt-3 px-4">
                                 <i class="fa-solid fa-plus mr-1"></i> Ajukan Sekarang
                             </a>

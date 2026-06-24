@@ -29,7 +29,6 @@
                         </span>
                     @elseif($loan->status_loan == 'berjalan')
                         {{-- Cek apakah sisa dananya sudah benar-benar diserahkan atau baru terbuka gemboknya --}}
-
                         @if ($loan->status_pencairan == 'cair_penuh')
                             <span
                                 class="badge bg-indigo-50 text-indigo-700 border-indigo-200 font-black text-xs px-4 py-3 rounded-xl uppercase tracking-wider">
@@ -51,6 +50,16 @@
                             class="badge bg-red-50 text-red-700 border-red-200 font-black text-xs px-4 py-3 rounded-xl uppercase tracking-wider">
                             {{ $loan->status_loan }}
                         </span>
+                    @endif
+
+                    {{-- TOMBOL BARU: Lihat Bukti Transfer (Muncul jika berkas fisik tersedia di folder /public/File/SPP/BuktiTransfer) --}}
+                    @if (in_array($loan->status_loan, ['disetujui', 'berjalan', 'lunas']) &&
+                            $loan->bukti_transfer &&
+                            $loan->bukti_transfer != '-')
+                        <a href="{{ asset('File/SPP/Berkas/' . $loan->bukti_transfer) }}" target="_blank"
+                            class="btn btn-sm bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/60 text-indigo-700 font-black text-xs rounded-xl px-4 py-2.5 h-auto min-h-0 normal-case flex items-center gap-1.5 shadow-sm transition-all duration-200">
+                            <i class="fa-solid fa-receipt text-[11px]"></i> Bukti Transfer
+                        </a>
                     @endif
 
                     {{-- TOMBOL BARU: Cetak Rekap Transaksi (Hanya muncul jika pinjaman sudah disetujui, berjalan, atau lunas) --}}
@@ -286,14 +295,49 @@
                                 <td class="p-5">
                                     {{ $ins->tanggal_bayar ? \Carbon\Carbon::parse($ins->tanggal_bayar)->format('d M Y') : '-' }}
                                 </td>
-                                <td class="p-5 text-center">
+                                <td class="p-5 text-center vertical-align-middle">
                                     @if ($ins->status_bayar == 'lunas')
-                                        <span
-                                            class="badge bg-emerald-50 text-emerald-700 border-emerald-100 font-bold text-[10px] rounded-lg py-2">Lunas</span>
+                                        <div class="flex flex-col items-center justify-center gap-1 w-full mx-auto">
+                                            {{-- Badge Status Lunas --}}
+                                            <span
+                                                class="badge bg-emerald-50 text-emerald-700 border-emerald-100 font-bold text-[10px] rounded-lg py-2 min-w-[90px] text-center">
+                                                Lunas
+                                            </span>
+
+                                            {{-- Deteksi Sumber Pembayaran --}}
+                                            @if ($ins->bukti_pembayaran && $ins->bukti_pembayaran != '-')
+                                                {{-- JIKA VIA TRANSFER: Tampilkan Tombol Intip Bukti --}}
+                                                <a href="{{ asset('File/SPP/Berkas/' . $ins->bukti_pembayaran) }}"
+                                                    target="_blank"
+                                                    class="btn btn-xs h-5 min-h-0 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/60 text-indigo-700 font-extrabold text-[9px] rounded-md px-2 normal-case flex items-center gap-0.5 mt-1 transition-all">
+                                                    <i class="fa-solid fa-receipt text-[8px]"></i> Bukti TF
+                                                </a>
+                                            @else
+                                                {{-- JIKA TUNAI: Tampilkan Penanda Cash --}}
+                                                <span
+                                                    class="text-[9px] text-slate-400 font-bold mt-0.5 flex items-center gap-0.5 justify-center">
+                                                    <i class="fa-solid fa-money-bill-wave text-[8px]"></i> Tunai / Kasir
+                                                </span>
+                                            @endif
+                                        </div>
                                     @else
-                                        <span
-                                            class="badge bg-amber-50 text-amber-700 border-amber-100 font-bold text-[10px] rounded-lg py-2">Belum
-                                            Bayar</span>
+                                        {{-- Kondisi Belum Bayar / Menunggak di Sisi Admin --}}
+                                        <div class="flex flex-col items-center justify-center min-h-[36px] w-full mx-auto">
+                                            @if ($dendaHariIni > 0)
+                                                {{-- Perhitungan denda real-time admin --}}
+                                                <span
+                                                    class="badge bg-red-50 text-red-700 border-red-100 font-bold text-[10px] rounded-lg py-2 min-w-[90px] text-center">
+                                                    Menunggak
+                                                </span>
+                                                <div class="text-[9px] text-red-500 font-black mt-0.5">Telat
+                                                    {{ $selisihHari }} Hari</div>
+                                            @else
+                                                <span
+                                                    class="badge bg-amber-50 text-amber-700 border-amber-100 font-bold text-[10px] rounded-lg py-2 min-w-[90px] text-center">
+                                                    Belum Bayar
+                                                </span>
+                                            @endif
+                                        </div>
                                     @endif
                                 </td>
                                 <td class="p-5 text-center">

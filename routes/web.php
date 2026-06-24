@@ -232,6 +232,7 @@ Route::post('/spp-group-loan', [SppLoanController::class, 'storeLoan'])->middlew
 
 Route::get('/spp-group-all', [SppLoanController::class, 'sppLoanAll'])->middleware('isSpp');
 Route::get('/spp-group-all/{loan}', [SppLoanController::class, 'showLoan'])->middleware('isSpp');
+Route::post('/spp-group-payloan/{installment}', [SppLoanController::class, 'payInstallmentRev'])->middleware('isSpp');
 // =========================================================================
 
 // ================== SPP ADMIN ============================================

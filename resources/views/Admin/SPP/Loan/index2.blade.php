@@ -18,9 +18,26 @@
                 <i class="fa-solid fa-circle-check text-base"></i> {{ session('success') }}
             </div>
         @endif
+
         @if (session('error'))
             <div class="alert alert-error rounded-2xl shadow-sm text-sm font-bold text-white bg-red-500 border-none">
                 <i class="fa-solid fa-circle-xmark text-base"></i> {{ session('error') }}
+            </div>
+        @endif
+
+        {{-- 🔥 REVISI BARU: Menampilkan Semua Eror Validasi Form --}}
+        @if ($errors->any())
+            <div
+                class="alert alert-error rounded-2xl shadow-sm text-sm font-bold text-white bg-red-500 border-none flex flex-col items-start gap-1">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                    <span>Terjadi Kesalahan Pengisian:</span>
+                </div>
+                <ul class="list-disc list-inside text-xs font-semibold pl-6 space-y-0.5 opacity-90">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
         @endif
 
@@ -37,6 +54,10 @@
             <a href="{{ url('/spp-loan?status=berjalan') }}"
                 class="tab rounded-xl font-bold text-xs px-5 transition-all {{ $status == 'berjalan' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
                 Sedang Berjalan
+            </a>
+            <a href="{{ url('/spp-loan?status=lunas') }}"
+                class="tab rounded-xl font-bold text-xs px-5 transition-all {{ $status == 'lunas' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
+                Lunas Total
             </a>
             <a href="{{ url('/spp-loan?status=ditolak') }}"
                 class="tab rounded-xl font-bold text-xs px-5 transition-all {{ $status == 'ditolak' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-800' }}">
@@ -101,7 +122,7 @@
                                         <div class="flex items-center justify-center gap-2">
                                             {{-- Tombol Setuju --}}
                                             <button
-                                                onclick="openApproveModal({{ $loan->id }}, '{{ $loan->group->nama_kelompok }}', {{ $loan->nominal_pengajuan }})"
+                                                onclick="openApproveModal({{ $loan->id }}, '{{ $loan->group->nama_kelompok }}', {{ $loan->nominal_pengajuan }}, '{{ $loan->group->no_rek ?? '-' }}')"
                                                 class="btn btn-xs bg-emerald-600 hover:bg-emerald-700 border-none text-white font-bold rounded-lg px-3 py-1.5 normal-case">
                                                 <i class="fa-solid fa-check mr-1"></i> Setujui
                                             </button>
@@ -150,6 +171,22 @@
                 @csrf
                 @method('PUT')
 
+                {{-- Info Rekening Tujuan Transfer Ketua (TAMPILAN INFORMASI) --}}
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider block mb-1">Rekening Tujuan
+                        Pencairan (Ketua)</span>
+                    <div class="flex items-center gap-2.5">
+                        <div
+                            class="w-7 h-7 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-credit-card text-xs"></i>
+                        </div>
+                        <div>
+                            <p id="modal_info_rekening" class="text-xs font-extrabold text-slate-800 tracking-wide">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Nomor Kontrak --}}
                 <div class="form-control">
                     <label class="label text-xs font-bold uppercase text-slate-500 tracking-wider">Nomor Kontrak / SPK
                         Resmi</label>
@@ -157,10 +194,19 @@
                         class="input input-bordered w-full rounded-xl border-slate-200 bg-slate-50/50 font-bold text-xs text-slate-700 focus:border-indigo-500">
                 </div>
 
+                {{-- Berkas Perjanjian --}}
                 <div class="form-control">
                     <label class="label text-xs font-bold uppercase text-slate-500 tracking-wider">Upload Berkas PDF
                         Perjanjian</label>
                     <input type="file" name="file_dokumen_perjanjian" required accept="application/pdf"
+                        class="file-input file-input-bordered file-input-md w-full rounded-xl border-slate-200 bg-slate-50/50 text-xs font-bold text-slate-700">
+                </div>
+
+                {{-- Upload Bukti Transfer Pencairan --}}
+                <div class="form-control">
+                    <label class="label text-xs font-bold uppercase text-slate-500 tracking-wider">Upload Bukti Transfer
+                        Pencairan (JPG/PNG/PDF)</label>
+                    <input type="file" name="bukti_transfer" accept="image/*,application/pdf"
                         class="file-input file-input-bordered file-input-md w-full rounded-xl border-slate-200 bg-slate-50/50 text-xs font-bold text-slate-700">
                     <label class="label text-[10px] text-slate-400 font-medium mt-0.5">Sistem akan otomatis mencatatkan
                         pencairan dana awal sebesar <span class="font-bold text-emerald-600">Rp 2.000.000</span>.</label>
@@ -212,9 +258,14 @@
 
     {{-- ================= JAVASCRIPT MODAL BINDER ================= --}}
     <script>
-        function openApproveModal(id, namaKelompok, nominal) {
+        function openApproveModal(id, namaKelompok, nominal, noRekening) {
             document.getElementById('approve_nama_kelompok').innerText = namaKelompok;
             document.getElementById('approve_nominal').innerText = 'Rp ' + nominal.toLocaleString('id-ID');
+
+            // 🔥 Masukkan info nomor rekening ketua ke dalam modal
+            document.getElementById('modal_info_rekening').innerText = noRekening && noRekening !== '-' ? noRekening :
+                'Tidak ada data nomor rekening';
+
             document.getElementById('form_approve').action = `spp-loan-approve/${id}`;
             document.getElementById('modal_approve').showModal();
         }

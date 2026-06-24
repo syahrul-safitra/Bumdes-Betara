@@ -132,6 +132,18 @@
                                     <p class="text-[11px] text-red-500 font-bold mt-1 ml-1">{{ $message }}</p>
                                 @enderror
                             </div>
+
+                            {{-- REVISI BARU: Nomor Rekening Kelompok --}}
+                            <div class="form-control">
+                                <label class="label text-xs font-bold text-slate-600 uppercase ml-1">Nomor Rekening
+                                    Kelompok (Ketua)</label>
+                                <input type="text" name="no_rek" value="{{ old('no_rek', $spp->no_rek ?? '') }}"
+                                    placeholder="Contoh: Bank Jambi 700123xxx a.n Kelompok"
+                                    class="input input-bordered w-full rounded-2xl bg-white @error('no_rek') border-red-500 @else border-slate-200 @enderror focus:border-indigo-500 transition-all">
+                                @error('no_rek')
+                                    <p class="text-[11px] text-red-500 font-bold mt-1 ml-1">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         {{-- Upload Berkas Kolektif / KTP Ketua --}}

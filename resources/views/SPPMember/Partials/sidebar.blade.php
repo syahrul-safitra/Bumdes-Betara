@@ -110,13 +110,13 @@
             </div>
 
             {{-- Tombol Logout --}}
-            <form action="{{ url('/group/logout') }}" method="POST" class="mt-3">
+            {{-- <form action="{{ url('/group/logout') }}" method="POST" class="mt-3">
                 @csrf
                 <button type="submit"
                     class="btn btn-sm w-full rounded-xl bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white border-none transition-all text-xs font-bold">
                     <i class="fa-solid fa-right-from-bracket mr-1.5"></i> Keluar Aplikasi
                 </button>
-            </form>
+            </form> --}}
         </div>
 
     </aside>

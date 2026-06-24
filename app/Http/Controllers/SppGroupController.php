@@ -6,8 +6,11 @@ use App\Models\SppGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\SppMember;
+use App\Models\SppInstallment;
+use App\Models\SppLoan;
 use App\Models\User;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -349,7 +352,7 @@ class SppGroupController extends Controller
         // 1. Validasi Input Data Esensial Ketua
         $validated = $request->validate([
             'nama_ketua'   => 'required|string|max:255',
-            'nik_ketua'    => 'required|string|size:16|unique:spp_groups,nik_ketua',
+            // 'nik_ketua'    => 'required|string|size:16|unique:spp_groups,nik_ketua',
             'email'        => 'required|string|email|max:255|unique:spp_groups,email',
             'no_hp_ketua'  => 'required|string|max:15',
             'password'     => 'required|string|min:6',
@@ -362,7 +365,7 @@ class SppGroupController extends Controller
         // 2. Simpan Akun Dasar ke Tabel `spp_groups`
         $group = SppGroup::create([
             'nama_ketua'       => $validated['nama_ketua'],
-            'nik_ketua'        => $validated['nik_ketua'],
+            // 'nik_ketua'        => $validated['nik_ketua'],
             'email'            => $validated['email'],
             'no_hp_ketua'      => $validated['no_hp_ketua'],
             'password'         => Hash::make($validated['password']),
@@ -387,9 +390,75 @@ class SppGroupController extends Controller
 
     public function sppDashboard() {
 
+        $group = Auth::guard('spp')->user();
+
+        // Inisialisasi awal variabel baru
+        $tagihanBulanIni = null; // Di-set null agar memicu kondisi @else di blade jika tidak ada tagihan
+        $jatuhTempo = '-';
+        
+        $statusLoan = 'Tidak Ada Pinjaman';
+        $sisaHutang = 0;
+
+        if ($group) {
+            $activeLoan = SppLoan::where('group_id', $group->id)
+                ->whereIn('status_loan', ['disetujui', 'berjalan'])
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if ($activeLoan) {
+                // [Logika Sebelumnya] Penentuan status loan
+                if ($activeLoan->status_loan == 'disetujui') {
+                    $statusLoan = 'Disetujui (Cair Awal)';
+                } elseif ($activeLoan->status_loan == 'berjalan') {
+                    $statusLoan = $activeLoan->status_pencairan == 'cair_penuh' ? 'Sedang Berjalan' : 'Siap Cair Tahap 2';
+                }
+
+                // [Logika Sebelumnya] Hitung sisa total pokok
+                $sisaHutang = SppInstallment::where('loan_id', $activeLoan->id)
+                    ->where('status_bayar', 'belum_bayar')
+                    ->sum('jumlah_pokok');
+
+                // ==========================================
+                // 🔥 LOGIKA TERBARU: HITUNG TAGIHAN BULAN INI
+                // ==========================================
+                
+                // Ambil 1 angsuran tertua yang belum dibayar (menghindari lompat bulan)
+                $currentInstallment = SppInstallment::where('loan_id', $activeLoan->id)
+                    ->where('status_bayar', 'belum_bayar')
+                    ->orderBy('angsuran_ke', 'asc')
+                    ->first();
+
+                if ($currentInstallment) {
+                    $dueDate = Carbon::parse($currentInstallment->tanggal_jatuh_tempo);
+                    $today = Carbon::today();
+                    $dendaPerHari = 5000;
+                    $totalDenda = 0;
+
+                    // Hitung denda jika hari ini sudah melewati tanggal jatuh tempo
+                    if ($today->gt($dueDate)) {
+                        $selisihHari = $today->diffInDays($dueDate);
+                        $totalDenda = $selisihHari * $dendaPerHari;
+                    }
+
+                    // Total tagihan = Pokok + Jasa Bunga + Total Denda Berjalan
+                    $tagihanBulanIni = $currentInstallment->jumlah_pokok + $currentInstallment->jumlah_bunga + $totalDenda;
+                    
+                    // Format tanggal jatuh tempo Indonesia (Contoh: 10 Juli 2026)
+                    $jatuhTempo = $dueDate->translatedFormat('d F Y');
+                }
+            } else {
+                $checkLunas = SppLoan::where('group_id', $group->id)->where('status_loan', 'lunas')->exists();
+                if ($checkLunas) { $statusLoan = 'Lunas Total'; }
+            }
+        }
+
         return view('SPPMember.dashboard', [
             'spp' => Auth::guard('spp')->user(),
-            'no_telepon' => User::select('no_telepon')->where('id', 1)->get()
+            'no_telepon' => User::select('no_telepon')->where('id', 1)->get(),
+            'statusLoan' => $statusLoan,
+            'sisaHutang' => $sisaHutang,
+            'tagihanBulanIni' => $tagihanBulanIni,
+            'jatuhTempo' => $jatuhTempo
         ]);
     }
 
@@ -413,6 +482,7 @@ class SppGroupController extends Controller
             'alamat_kelompok' => 'required|string',
             'password' => 'nullable|string|min:8',
             'file_ktp' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048', // Maksimal 2MB
+            'no_rek' => 'nullable|string|max:100'
         ], [
             'nik_ketua.unique' => 'NIK Ketua sudah terdaftar di kelompok lain.',
             'email.unique' => 'Email ini sudah digunakan.',
@@ -428,6 +498,7 @@ class SppGroupController extends Controller
             'email' => $request->email,
             'no_hp_ketua' => $request->no_hp_ketua,
             'nama_kelompok' => $request->nama_kelompok,
+            'no_rek' => $request->no_rek,
             'alamat_kelompok' => $request->alamat_kelompok,
         ];
 
@@ -463,7 +534,7 @@ class SppGroupController extends Controller
             'nama_anggota'   => 'required|string|max:255',
             'nik'    => 'required|string|size:16|unique:spp_members,nik',
             'file_ktp'       => 'required|image|mimes:jpg,jpeg,png|max:2048', // Wajib gambar, maks 2MB,
-            'group_id' => 'required'
+            'group_id' => 'required',
         ], [
             'nik.unique'   => 'NIK Anggota ini sudah terdaftar dalam sistem SPP.',
             'nik.size'     => 'NIK Anggota harus tepat berukuran 16 digit.',
@@ -483,7 +554,7 @@ class SppGroupController extends Controller
             // Pindahkan langsung ke public/File/KtpAnggota
             $file->move(public_path('File/SPP/KTP'), $filename);
         }
-
+        
         // 3. Simpan Informasi Anggota ke Database
         SppMember::create([
             'group_id'       => $request->group_id, // Otomatis terikat dengan ketua kelompok yang sedang login

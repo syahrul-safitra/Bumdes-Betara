@@ -244,7 +244,9 @@
             </div>
 
             {{-- Tahap 4: Serah Terima Kendaraan --}}
-            <div class="flex gap-4">
+            <div class="flex gap-4 relative">
+                {{-- Garis penghubung vertikal ke tahap 5 --}}
+                <div class="absolute left-4 top-10 bottom-0 w-[2px] bg-slate-100 z-0"></div>
                 <div
                     class="w-9 h-9 bg-emerald-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-emerald-100 italic">
                     4
@@ -270,8 +272,34 @@
                 </div>
             </div>
 
-        </div>
+            {{-- Tahap 5: Ketentuan & Tanggung Jawab Kerusakan (BARU) --}}
+            <div class="flex gap-4">
+                <div
+                    class="w-9 h-9 bg-red-500 text-white rounded-xl font-black flex items-center justify-center flex-shrink-0 z-10 shadow-md shadow-red-100 italic">
+                    5
+                </div>
+                <div class="space-y-2 pt-1">
+                    <h4 class="font-black text-slate-800 text-sm">Ketentuan & Tanggung Jawab Kerusakan</h4>
+                    <p class="text-xs text-slate-500 leading-relaxed">
+                        Klausul mutlak operasional Bagas Auto Car selama masa masa sewa berlangsung:
+                    </p>
+                    <div class="bg-red-50/60 border border-red-100 rounded-2xl p-4 flex items-start gap-3">
+                        <i class="fa-solid fa-shield-halved text-red-600 text-base mt-0.5 shrink-0"></i>
+                        <div>
+                            <span
+                                class="text-[11px] font-black text-red-900 uppercase tracking-wide block mb-0.5">Tanggung
+                                Jawab Penyewa</span>
+                            <p class="text-[11px] font-medium text-red-700 leading-relaxed m-0">
+                                Segala bentuk kerusakan, kehilangan komponen kendaraan, atau kelalaian penggunaan selama
+                                armada berada di tangan konsumen menjadi <strong class="text-red-900">tanggung jawab
+                                    penuh oleh pihak yang menyewa</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+        </div>
         {{-- Footer Aksi --}}
         <div class="modal-action mt-8 flex justify-end">
             <form method="dialog">

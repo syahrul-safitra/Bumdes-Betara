@@ -94,7 +94,7 @@
                         </div>
 
                         {{-- Input NIK Ketua --}}
-                        <div class="form-control">
+                        {{-- <div class="form-control">
                             <label class="label text-xs font-bold text-slate-600 uppercase ml-1">NIK Ketua (16
                                 Digit)</label>
                             <input type="text" name="nik_ketua" maxlength="16" value="{{ old('nik_ketua') }}"
@@ -104,7 +104,7 @@
                                 <p class="mt-1 ml-1 text-[11px] font-bold text-red-500"><i
                                         class="fa-solid fa-circle-exclamation mr-1"></i> {{ $message }}</p>
                             @enderror
-                        </div>
+                        </div> --}}
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             {{-- Input Email --}}

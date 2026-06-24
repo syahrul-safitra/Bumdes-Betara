@@ -24,3 +24,12 @@ Rental sudah semua.
 <!-- buat middleware -->
 
 <!-- Ubah modal Cara Rental & Cara SPP -->
+
+========================================
+
+<!-- dashboard ketua belum terintegrasi. -->
+
+tambah yang sudah lunas di bagian admin
+
+========================================
+No. Rek (BUMDES) : Tambahkan juga bukti tf bumdes.

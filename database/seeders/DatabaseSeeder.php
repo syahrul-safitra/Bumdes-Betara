@@ -24,7 +24,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'is_admin' => '1',
             'no_telepon' => '082387120434',
-            'password' => 'password'
+            'password' => 'password',
+            'no_rek' => 'BSI | 123 | Admin Bumdes'
         ]);
         
         \App\Models\User::create([
