@@ -184,7 +184,7 @@
                                     {{-- Konten Teks --}}
                                     <h3 class="text-base font-black text-slate-800 tracking-tight">Konfirmasi Validasi</h3>
                                     <p class="text-xs text-slate-400 mt-2 leading-relaxed">
-                                        Apakah Anda yakin ingin menyetujui kelompok <strong class="text-slate-700">Kelompok
+                                        Apakah Anda yakin ingin menyetujui k <strong class="text-slate-700">
                                             {{ $group->nama_kelompok }}</strong>? Setelah disetujui, ketua kelompok akan
                                         langsung dapat mengajukan pinjaman modal usaha.
                                     </p>

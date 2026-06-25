@@ -302,9 +302,100 @@ class SppLoanController extends Controller
     
     // }
 
+    // public function payInstallmentRev(Request $request, SppInstallment $installment) 
+    // {
+    //     // 1. Validasi Input Berkas (Wajib Gambar & Maksimal 2MB)
+    //     $request->validate([
+    //         'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+    //     ], [
+    //         'bukti_pembayaran.required' => 'Bukti transfer wajib diunggah.',
+    //         'bukti_pembayaran.image' => 'Berkas harus berupa dokumen gambar.',
+    //         'bukti_pembayaran.mimes' => 'Format gambar yang didukung hanya jpeg, png, atau jpg.',
+    //         'bukti_pembayaran.max' => 'Ukuran gambar maksimal adalah 2MB.',
+    //     ]);
+
+    //     // 2. Proteksi Keamanan: Pastikan angsuran yang dipilih memang belum lunas
+    //     if ($installment->status_bayar === 'lunas') {
+    //         return redirect()->back()->with('error', 'Angsuran bulan ini sudah berstatus lunas sebelumnya.');
+    //     }
+
+    //     try {
+    //         // Jalankan Database Transaction untuk menjaga keamanan dan konsistensi data keuangan
+    //         DB::transaction(function () use ($request, $installment) {
+                
+    //             // ====================================================
+    //             // 💸 LOGIKA HITUNG DENDA KETERLAMBATAN NYATA
+    //             // ====================================================
+    //             $dueDate = Carbon::parse($installment->tanggal_jatuh_tempo);
+    //             $today = Carbon::today();
+    //             $nominalDenda = 0;
+    //             $dendaPerHari = 5000; // Ketetapan denda sistem Rp 5.000 per hari
+
+    //             // Jika hari ini sudah melewati tanggal jatuh tempo, hitung selisih harinya
+    //             if ($today->gt($dueDate)) {
+    //                 $selisihHari = $today->diffInDays($dueDate);
+    //                 $nominalDenda = $selisihHari * $dendaPerHari;
+    //             }
+
+    //             // ====================================================
+    //             // 📦 PROSES FILE & UPDATE TRANSAKSI
+    //             // ====================================================
+    //             if ($request->hasFile('bukti_pembayaran')) {
+    //                 $file = $request->file('bukti_pembayaran');
+                    
+    //                 // Menyusun nama berkas unik agar tidak bentrok di server
+    //                 $filename = 'BAYAR_SPP_' . $installment->loan_id . '_ANGSURAN_' . $installment->angsuran_ke . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    
+    //                 // Pindahkan file fisik secara manual ke direktori publik
+    //                 $file->move(public_path('File/SPP/Berkas'), $filename);
+
+    //                 // Update baris angsuran menjadi LUNAS beserta nilai denda berjalan
+    //                 $installment->update([
+    //                     'status_bayar' => 'lunas',
+    //                     'bukti_pembayaran' => $filename,
+    //                     'tanggal_bayar' => Carbon::now(),
+    //                     'denda_kumulatif' => $nominalDenda, 
+    //                 ]);
+
+    //                 // ====================================================
+    //                 // 🔥 SOLUSI UTAMA: AKTIFKAN STATUS PINJAMAN MENJADI BERJALAN
+    //                 // ====================================================
+    //                 // Jika yang dibayar adalah angsuran ke-1, naikkan status pinjaman dari 'disetujui' ke 'berjalan'
+    //                 // Ini pemicu utama agar tombol pencairan kedua muncul otomatis di sisi admin
+    //                 if ($installment->angsuran_ke == 1) {
+    //                     $installment->loan()->update([
+    //                         'status_loan' => 'berjalan'
+    //                     ]);
+    //                 }
+    //             }
+
+    //             // ====================================================
+    //             // 🔒 PENGECEKAN PELUNASAN TOTAL CONTRACT
+    //             // ====================================================
+    //             // Hitung sisa tenor angsuran pada pinjaman ini yang statusnya masih 'belum_bayar'
+    //             $sisaAngsuran = SppInstallment::where('loan_id', $installment->loan_id)
+    //                 ->where('status_bayar', 'belum_bayar')
+    //                 ->count();
+
+    //             // Jika seluruh sisa tenor angsuran sudah habis dibayar (bernilai 0), tutup pinjaman utama menjadi Lunas Total
+    //             if ($sisaAngsuran === 0) {
+    //                 $installment->loan()->update([
+    //                     'status_loan' => 'lunas'
+    //                 ]);
+    //             }
+    //         });
+
+    //         return redirect()->back()->with('success', 'Bukti transfer berhasil diunggah. Angsuran Bulan Ke-' . $installment->angsuran_ke . ' dinyatakan LUNAS!');
+
+    //     } catch (\Exception $e) {
+    //         // Menangkap galat jika database atau folder gagal beroperasi
+    //         return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+    //     }
+    // }
+
     public function payInstallmentRev(Request $request, SppInstallment $installment) 
     {
-        // 1. Validasi Input Berkas (Wajib Gambar & Maksimal 2MB)
+        // 1. Validasi Input Berkas (Wajib Dokumen Gambar & Maksimal 2MB)
         $request->validate([
             'bukti_pembayaran' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ], [
@@ -320,36 +411,38 @@ class SppLoanController extends Controller
         }
 
         try {
-            // Jalankan Database Transaction untuk menjaga keamanan dan konsistensi data keuangan
+            // Jalankan Database Transaction untuk menjaga keamanan data finansial dari kegagalan sistem
             DB::transaction(function () use ($request, $installment) {
                 
                 // ====================================================
-                // 💸 LOGIKA HITUNG DENDA KETERLAMBATAN NYATA
+                // 💸 LOGIKA 1: HITUNG DENDA KETERLAMBATAN NYATA
                 // ====================================================
                 $dueDate = Carbon::parse($installment->tanggal_jatuh_tempo);
                 $today = Carbon::today();
                 $nominalDenda = 0;
-                $dendaPerHari = 5000; // Ketetapan denda sistem Rp 5.000 per hari
+                $dendaPerHari = 5000; // Ketetapan denda sistem BUMDes Rp 5.000 per hari
 
-                // Jika hari ini sudah melewati tanggal jatuh tempo, hitung selisih harinya
+                // Jika tanggal hari ini melewati batas jatuh tempo, hitung akumulasi dendanya
                 if ($today->gt($dueDate)) {
                     $selisihHari = $today->diffInDays($dueDate);
                     $nominalDenda = $selisihHari * $dendaPerHari;
                 }
 
                 // ====================================================
-                // 📦 PROSES FILE & UPDATE TRANSAKSI
+                // 📦 LOGIKA 2: PROSES BERKAS GAMBAR BUKTI TRANSFER
                 // ====================================================
                 if ($request->hasFile('bukti_pembayaran')) {
                     $file = $request->file('bukti_pembayaran');
                     
-                    // Menyusun nama berkas unik agar tidak bentrok di server
-                    $filename = 'BAYAR_SPP_' . $installment->loan_id . '_ANGSURAN_' . $installment->angsuran_ke . '_' . time() . '.' . $file->getClientOriginalExtension();
+                    // Menyusun tata penamaan file unik di server
+                    $filename = 'BAYAR_SPP_' . $installment->loan_id . 
+                                '_ANGSURAN_' . $installment->angsuran_ke . 
+                                '_' . time() . '.' . $file->getClientOriginalExtension();
                     
-                    // Pindahkan file fisik secara manual ke direktori publik
+                    // Pindahkan berkas gambar secara manual ke direktori publik tujuan
                     $file->move(public_path('File/SPP/Berkas'), $filename);
 
-                    // Update baris angsuran menjadi LUNAS beserta nilai denda berjalan
+                    // Update data baris tabel angsuran saat ini menjadi Lunas
                     $installment->update([
                         'status_bayar' => 'lunas',
                         'bukti_pembayaran' => $filename,
@@ -358,37 +451,37 @@ class SppLoanController extends Controller
                     ]);
 
                     // ====================================================
-                    // 🔥 SOLUSI UTAMA: AKTIFKAN STATUS PINJAMAN MENJADI BERJALAN
+                    // 🔥 LOGIKA 3: TRIGGER AKTIVASI STATUS PINJAMAN (BERJALAN)
                     // ====================================================
-                    // Jika yang dibayar adalah angsuran ke-1, naikkan status pinjaman dari 'disetujui' ke 'berjalan'
-                    // Ini pemicu utama agar tombol pencairan kedua muncul otomatis di sisi admin
+                    // Jika angsuran pertama sukses dibayar, naikkan status dari 'disetujui' ke 'berjalan'
+                    // Ini memicu tombol pencairan sisa dana penuh muncul di sisi admin BUMDes
                     if ($installment->angsuran_ke == 1) {
                         $installment->loan()->update([
                             'status_loan' => 'berjalan'
                         ]);
                     }
-                }
 
-                // ====================================================
-                // 🔒 PENGECEKAN PELUNASAN TOTAL CONTRACT
-                // ====================================================
-                // Hitung sisa tenor angsuran pada pinjaman ini yang statusnya masih 'belum_bayar'
-                $sisaAngsuran = SppInstallment::where('loan_id', $installment->loan_id)
-                    ->where('status_bayar', 'belum_bayar')
-                    ->count();
+                    // ====================================================
+                    // 🔒 LOGIKA 4: PENGECEKAN otomatis PELUNASAN KONTRAK TOTAL
+                    // ====================================================
+                    // Hitung jumlah sisa angsuran yang berstatus 'belum_bayar' untuk pinjaman ini
+                    $sisaAngsuran = SppInstallment::where('loan_id', $installment->loan_id)
+                        ->where('status_bayar', 'belum_bayar')
+                        ->count();
 
-                // Jika seluruh sisa tenor angsuran sudah habis dibayar (bernilai 0), tutup pinjaman utama menjadi Lunas Total
-                if ($sisaAngsuran === 0) {
-                    $installment->loan()->update([
-                        'status_loan' => 'lunas'
-                    ]);
+                    // Jika sisa angsuran sudah habis (0), kunci kontrak besar pinjaman menjadi Lunas Total
+                    if ($sisaAngsuran === 0) {
+                        $installment->loan()->update([
+                            'status_loan' => 'lunas'
+                        ]);
+                    }
                 }
             });
 
             return redirect()->back()->with('success', 'Bukti transfer berhasil diunggah. Angsuran Bulan Ke-' . $installment->angsuran_ke . ' dinyatakan LUNAS!');
 
         } catch (\Exception $e) {
-            // Menangkap galat jika database atau folder gagal beroperasi
+            // Jika terjadi gangguan pada database atau folder server, gagalkan semua perubahan data
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
