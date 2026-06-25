@@ -26,6 +26,7 @@ class AdminController extends Controller
             'name' => 'required|max:100',
             'password' => 'nullable|max:15|min:5',
             'no_telepon' => 'nullable|max:15',
+            'no_rek' => 'nullable|max:100',
             'email' => [
                 'required',
                 'email',

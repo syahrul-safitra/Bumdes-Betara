@@ -102,6 +102,14 @@
             </div>
         </section>
 
+        <section id="struktur" class="scroll-mt-32 text-center">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8">Struktur Organisasi</h2>
+            <div class="max-w-4xl mx-auto bg-white p-4 rounded-3xl shadow-xl border border-emerald-100">
+                <img src="{{ asset('Img/cp.jpg') }}" class="w-full rounded-2xl" alt="Struktur Organisasi BUMDes">
+                <p class="mt-4 text-sm text-slate-400">Periode Kepengurusan 2026</p>
+            </div>
+        </section>
+
         <section id="layanan" class="scroll-mt-32">
             <div class="text-center mb-12">
                 <h2 class="text-3xl font-bold text-slate-800 uppercase tracking-widest">Layanan & Unit Usaha</h2>
@@ -112,11 +120,6 @@
                     $layanan = [
                         ['title' => 'LED BUBERTA', 'desc' => 'Simpan Pinjam Kelompok Perempuan.'],
                         ['title' => 'BUBERTA RENT', 'desc' => 'Jasa Rental Sewa Kendaraan.'],
-                        // ['title' => 'BUBERTA FINANCE', 'desc' => 'Pengkreditan barang dan elektronik.'],
-                        // ['title' => 'TOKO GUBERTA', 'desc' => 'Tata Boga & Pengadaian Barang.'],
-                        // ['title' => 'GADA MASETARA BERKAH', 'desc' => 'Pelayanan Jasa Godin.'],
-                        // ['title' => 'SERVICE ELECTRONIC', 'desc' => 'Jasa perbaikan alat elektronik.'],
-                        // ['title' => 'UNIT AYAM PETELUR', 'desc' => 'Produksi telur lokal desa.'],
                     ];
                 @endphp
 
