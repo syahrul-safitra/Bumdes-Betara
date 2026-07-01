@@ -43,7 +43,7 @@
                                 class="mb-2 ml-1 text-xs font-black uppercase italic tracking-widest text-slate-500 block">
                                 Durasi Sewa (Bulan)
                             </label>
-                            <select name="berapa_bulan" id="berapa_bulan" onchange="hitungEstimasi()"
+                            <select name="berapa_bulan" id="berapa_bulan"
                                 class="select select-bordered h-14 w-full rounded-2xl border-slate-200 bg-slate-50 font-bold text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-50/50">
                                 @for ($i = 1; $i <= 3; $i++)
                                     <option value="{{ $i }}" {{ old('berapa_bulan') == $i ? 'selected' : '' }}>
@@ -67,8 +67,22 @@
                                 <option value="0" {{ old('is_dp') == '0' ? 'selected' : '' }}>Bayar Tunai Langsung di
                                     Kantor (Full Cash)</option>
                                 <option value="1" {{ old('is_dp') == '1' ? 'selected' : '' }}>Bayar Uang Muka
-                                    (Transfer DP 20%)</option>
+                                    (Transfer DP 20%</option>
                             </select>
+                        </div>
+
+                        {{-- 🔥 KOTAK PREVIEW TANGGAL KEMBALI INTERAKTIF --}}
+                        <div id="wrapper_preview_kembali"
+                            class="rounded-2xl bg-indigo-50/80 border border-indigo-100 p-4 text-xs text-indigo-900 flex items-start gap-3 transition-all duration-300">
+                            <div
+                                class="w-7 h-7 bg-indigo-600 text-white rounded-lg flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                                <i class="fa-solid fa-calendar-check text-[11px]"></i>
+                            </div>
+                            <div class="space-y-0.5">
+                                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-wider block">Estimasi
+                                    Jadwal Pengembalian</span>
+                                <p class="text-sm font-black text-slate-800" id="text_preview_kembali">-</p>
+                            </div>
                         </div>
 
                         {{-- Info Tambahan Ketentuan --}}
@@ -79,19 +93,68 @@
                                 <li>Paket ini hanya mendukung sistem penyewaan <strong>Lepas Kunci</strong>.</li>
                                 <li>Tanggal pengembalian dihitung otomatis pas sesuai kalender bulanan sejak armada diambil.
                                 </li>
-                                {{-- TAMBAHAN KETERANGAN KERUSAKAN --}}
                                 <li class="text-red-700 font-semibold"><i
                                         class="fa-solid fa-circle-exclamation mr-0.5 text-red-500"></i> Segala bentuk
                                     kerusakan armada selama masa sewa sepenuhnya <strong>ditanggung oleh customer</strong>.
                                 </li>
                             </ul>
                         </div>
+
                         {{-- Button Submit --}}
                         <button type="submit"
                             class="btn h-14 w-full rounded-2xl border-none bg-indigo-600 text-base font-black uppercase italic tracking-tighter text-white shadow-xl shadow-indigo-100 transition-all hover:bg-indigo-700 active:scale-95">
                             <i class="fa-solid fa-car-side mr-2 text-indigo-300"></i> Lanjutkan Booking
                         </button>
                     </form>
+
+                    {{-- 🛠️ SKRIP JAVASCRIPT PREVIEW --}}
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function() {
+                            const inputTanggal = document.getElementById('tanggal_peminjaman');
+                            const selectBulan = document.getElementById('berapa_bulan');
+                            const textPreview = document.getElementById('text_preview_kembali');
+
+                            function updateTanggalKembali() {
+                                if (!inputTanggal.value) return;
+
+                                // 1. Buat objek tanggal dari input (tambahkan 'T00:00:00' agar zona waktu tidak bergeser)
+                                let date = new Date(inputTanggal.value + 'T00:00:00');
+
+                                // 2. Ambil jumlah bulan yang dipilih (1, 2, atau 3)
+                                let jumlahBulan = parseInt(selectBulan.value);
+
+                                // 3. Hitung total hari (1 bulan dikunci = 29 hari)
+                                let totalHariPenambahan = jumlahBulan * 29;
+
+                                // 4. Tambahkan total hari langsung ke tanggal asal
+                                // JavaScript otomatis menangani perpindahan bulan dan tahun dengan aman
+                                date.setDate(date.getDate() + totalHariPenambahan);
+
+                                // 5. Format Output ke Bahasa Indonesia (Contoh: Kamis, 30 Juli 2026)
+                                const opsiFormat = {
+                                    year: 'numeric',
+                                    month: 'long',
+                                    day: 'numeric',
+                                    weekday: 'long'
+                                };
+                                const tanggalFormatted = date.toLocaleDateString('id-ID', opsiFormat);
+
+                                // Tampilkan ke halaman
+                                textPreview.innerHTML =
+                                    `${tanggalFormatted} `;
+                            }
+
+                            // Pasang event listener
+                            inputTanggal.addEventListener('change', updateTanggalKembali);
+                            selectBulan.addEventListener('change', function() {
+                                updateTanggalKembali();
+                                if (typeof hitungEstimasi === "function") hitungEstimasi();
+                            });
+
+                            // Jalankan saat pertama kali halaman dimuat
+                            updateTanggalKembali();
+                        });
+                    </script>
                 </div>
             </div>
 

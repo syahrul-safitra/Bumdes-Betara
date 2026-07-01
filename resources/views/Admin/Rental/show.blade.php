@@ -291,7 +291,13 @@
                         <div class="text-center lg:text-left">
                             <p class="text-[10px] font-black uppercase text-slate-400">Status Rental</p>
                             <span class="text-xl font-black text-slate-700">
-                                {{ strtoupper(str_replace('_', ' ', $rental->status_rental)) }}
+
+                                @if ($rental->status_rental == 'sedang_dipinjam')
+                                    Sudah Diambil
+                                @else
+                                    {{ strtoupper(str_replace('_', ' ', $rental->status_rental)) }}
+                                @endif
+
                             </span>
                         </div>
                     </div>
@@ -336,14 +342,28 @@
             <form id="formUpdateStatus" action="{{ url('set-status/' . $rental->id) }}" method="POST"
                 class="space-y-3">
                 @csrf
-                @foreach (['belum_diambil', 'sedang_dipinjam', 'telah_dikembalikan'] as $status)
+                @php
+                    // Mapping status database ke teks tampilan front-end yang diinginkan
+                    $statusMapping = [
+                        'belum_diambil' => 'belum diambil',
+                        'sedang_dipinjam' => 'sudah diambil', // <-- Mengubah teks tanpa ubah value DB
+                        'telah_dikembalikan' => 'telah dikembalikan',
+                    ];
+                @endphp
+
+                @foreach ($statusMapping as $valueDB => $teksTampilan)
                     <label
                         class="group flex cursor-pointer items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 p-5 transition-all hover:border-emerald-200 hover:bg-emerald-50">
+
+                        {{-- Menampilkan teks kustom yang sudah dipetakan (Capitalize) --}}
                         <span class="font-bold capitalize text-slate-600 group-hover:text-emerald-700">
-                            {{ str_replace('_', ' ', $status) }}
+                            {{ $teksTampilan }}
                         </span>
-                        <input type="radio" name="status_rental" value="{{ $status }}"
-                            class="radio radio-emerald" @checked($rental->status_rental == $status) />
+
+                        {{-- Nilai value HTML tetap menggunakan kode asli database ($valueDB) --}}
+                        <input type="radio" name="status_rental" value="{{ $valueDB }}"
+                            class="radio radio-emerald" @checked($rental->status_rental == $valueDB) />
+
                     </label>
                 @endforeach
 

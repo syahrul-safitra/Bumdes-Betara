@@ -124,8 +124,8 @@
                                                 Diambil</span>
                                         @elseif($item->status_rental == 'sedang_dipinjam')
                                             <span
-                                                class="badge border-none bg-sky-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-sky-700">Sedang
-                                                Jalan</span>
+                                                class="badge border-none bg-sky-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-sky-700">Sudah
+                                                Diambil</span>
                                         @else
                                             <span
                                                 class="badge border-none bg-emerald-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-emerald-700">Selesai</span>
@@ -221,8 +221,8 @@
                                                 Diambil</span>
                                         @elseif($item->status_rental == 'sedang_dipinjam')
                                             <span
-                                                class="badge border-none bg-sky-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-sky-700">Sedang
-                                                Jalan</span>
+                                                class="badge border-none bg-sky-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-sky-700">Sudah
+                                                Diambil</span>
                                         @else
                                             <span
                                                 class="badge border-none bg-emerald-100 px-4 py-3 text-[10px] font-black uppercase italic tracking-tighter text-emerald-700">Selesai</span>

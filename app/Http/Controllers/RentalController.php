@@ -574,7 +574,8 @@ class RentalController extends Controller
         
         // Gandakan objek Carbon agar tanggalAwal tidak ikut berubah saat ditambah bulan
         // Menggunakan copy() agar tanggal asli tidak berubah, lalu tambahkan (berapa_bulan * 30) hari
-        $tanggalAkhir = $tanggalAwal->copy()->addDays((int)$validated['berapa_bulan'] * 30); 
+        // $tanggalAkhir = $tanggalAwal->copy()->addDays((int)$validated['berapa_bulan'] * 30); 
+        $tanggalAkhir = $tanggalAwal->copy()->addDays((int)$validated['berapa_bulan'] * 29); 
         
         // Masukkan hasil kalkulasi tanggal ke array validated
         $validated['tanggal_pengembalian'] = $tanggalAkhir->format('Y-m-d');

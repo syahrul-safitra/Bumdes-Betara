@@ -33,3 +33,8 @@ tambah yang sudah lunas di bagian admin
 
 ========================================
 No. Rek (BUMDES) : Tambahkan juga bukti tf bumdes.
+
+---
+
+ubah algortima penganggalan pada pemesanan perbulan.
+ubah jika sudah diambil atau sudah dikembalikan.

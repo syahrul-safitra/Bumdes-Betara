@@ -25,6 +25,7 @@
                             <span
                                 class="badge badge-lg {{ $rental->status_pembayaran == 'pending' ? 'bg-amber-400 text-amber-900' : 'bg-emerald-500 text-white' }} rounded-xl border-none px-6 py-4 font-bold">
                                 <i class="fa-solid fa-money-bill-wave mr-2 opacity-50"></i>
+
                                 {{ strtoupper(str_replace('_', ' ', $rental->status_pembayaran)) }}
                             </span>
 
@@ -45,7 +46,14 @@
                                 class="badge badge-md {{ $statusColor[$rental->status_rental] ?? 'bg-slate-700' }} rounded-lg border-none px-4 py-3 text-[10px] font-black uppercase tracking-widest">
                                 <i
                                     class="fa-solid {{ $statusIcon[$rental->status_rental] ?? 'fa-circle' }} mr-1.5 opacity-70"></i>
-                                {{ str_replace('_', ' ', $rental->status_rental) }}
+
+
+                                @if ($rental->status_rental == 'sedang_dipinjam')
+                                    Sudah Diambil
+                                @else
+                                    {{ str_replace('_', ' ', $rental->status_rental) }}
+                                @endif
+
                             </span>
                         </div>
                     </div>
